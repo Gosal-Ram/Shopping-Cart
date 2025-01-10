@@ -6,7 +6,7 @@
     <cfset allowedPages = ["/login.cfm"]>
     <cffunction  name="onRequest"> 
         <cfargument  name="requestPage">
-        <cfif structKeyExists(session, "userInput") OR ArrayContains(allowedPages, requestPage)>
+        <cfif structKeyExists(session, "userId") OR ArrayContains(allowedPages, requestPage)>
             <cfinclude template = "#arguments.requestPage#">
         <cfelse>
             <cfinclude template = "/login.cfm">
