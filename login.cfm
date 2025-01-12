@@ -35,42 +35,19 @@
             <input type="submit" name="submitBtn"  class="btn btn-primary rounded mt-4" value = "Log in">
           </form>
           <cfif structKeyExists(form,"submitBtn")>   
-            <cfquery name ="local.queryUserLogin">
-              SELECT 
-                  fldEmail,
-                  fldPhone,
-                  fldRoleId,
-                  fldHashedPassword,
-                  fldUserSaltString
-              FROM 
-                  tblUser 
-              WHERE(
-                  fldEmail = <cfqueryparam value = "#form.userInput#" cfsqltype="CF_SQL_VARCHAR"> 
-              OR
-                  fldPhone = <cfqueryparam value = "#form.userInput#" cfsqltype="CF_SQL_VARCHAR">)
-              AND  
-                  fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_INTEGER">       
-            </cfquery>
-            <cfif queryRecordCount(local.queryUserLogin)>
-              <cfif local.queryUserLogin.fldHashedPassword EQ hash(form.password & local.queryUserLogin.fldUserSaltString, "SHA-512")>
-                User Login Successfull
-                <cfset session.isLoggedIn = true>
-                <cfset session.userInput = form.userInput>
-                <cfset session.roleId = local.queryUserLogin.fldRoleId>
-                <!---<cflocation  url = "Home.cfm" addToken="no">   --->
-              <cfelse>
-                Invalid password
-              </cfif>
-            <cfelse>
-              User name doesn't exist
-            </cfif>
+            <cfset loginResult = application.obj.logIn(form.userInput,form.password)>
+            <cfoutput>
+                <span>
+                  #loginResult#
+                </span>
+            </cfoutput>
           </cfif>
           <div class="text-center">
-            Don't have a account <a href="" class="text-decoration-none ">Register here</a>
+            Didn't have a account <a href="" class="text-decoration-none ">Register here</a>
           </div>
         </div>
       </main>
-      <script src="assets/js/script.js"></script>
+      <script src="assets/js/shoppingCart.js"></script>
     </body>
 </html>
 
