@@ -10,50 +10,47 @@
         <script src="assets/js/jquery-3.7.1.min.js"></script>
     </head>
     <body>
-      <header class="d-flex p-1 justify-content-between align-items-center w-100 bg-primary sticky-top">
-          <div>
-              <a href = "" class = "text-light text-decoration-none">
-                <img src="./assets/images/grocery-cart.png" class = "py-2" alt="" width="25">
-                <span>SHOPPING CART</span>    
-              </a>  
-          </div>
-          <div class="ms-auto d-flex ">
-            <a class="btn text-light" href="">
-              ADMIN
-              <img src="./assets/images/user.png" alt="" width="18" height="18" class="">
-            </a>
-          </div>
-      </header>
+      <cfinclude  template="header.cfm">
       <main>
-        <div class="container flex-column mx-auto my-5 p-5 w-50 justify-content-center bg-light shadow-lg">
+        <div class="container flex-column mx-auto my-5 p-5 w-50 justify-content-center bg-light shadow-lg" id ="mainDiv">
           <div class = "d-flex justify-content-between align-items-center mb-3">
             <h3>Categories</h3>
-            <button type="button" onclick = "openAddCategoryModal()" class = "btn btn-secondary rounded" data-bs-toggle="modal" data-bs-target="#staticBackdrop">New</button>
+            <button type="button"
+                    onclick = "openAddCategoryModal()"
+                    class = "btn btn-secondary rounded" 
+                    data-bs-toggle="modal" 
+                    data-bs-target="#staticBackdrop">
+                    New
+            </button>
           </div>
           <cfset categoryResult = application.obj.fetchCategories()>
           <cfoutput>
+            <span class="text-success" id ="categoryFunctionResult"></span>        
             <cfloop query="categoryResult">
             <div class = "d-flex justify-content-between align-items-center" id = "#fldCategory_Id#">
-              <div>#fldCategoryName#</div>
+              <div id = "categoryname-#fldCategory_Id#">#fldCategoryName#</div>
               <div>
-                <button type="button" onclick = "editCategory(#fldCategory_Id#)" class = "btn btn-outline-info  px-3 my-2" data-bs-toggle="modal" data-bs-target="##staticBackdrop">
+                <button type="button" 
+                        onclick = "editCategory(#fldCategory_Id#)" 
+                        class = "btn btn-outline-info  px-3 my-2" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="##staticBackdrop">
                   <img src="./assets/images/editing.png" alt="" width="18" height="18" class="">
                 </button>
                 <button class = "btn btn-outline-info  px-3 my-2" onClick = "deleteCategory(#fldCategory_Id#)">
                   <img src="./assets/images/trash.png" alt="" width="18" height="18" class="">
                 </button>
-                <button class = "btn btn-outline-info  px-3 my-2">
+                <a class = "btn btn-outline-info  px-3 my-2" href ="subCategory.cfm?categoryId=#fldCategory_Id#&categoryName=#fldCategoryName#">
                   <img src="./assets/images/right-arrow.png" alt="" width="18" height="18" class="">
-                </button>
+                </a>
               </div>
             </div>
             </cfloop>
-              <span class="text-success" id ="categoryResult"></span>        
           </cfoutput>
         </div>
       </main>
       <footer></footer>
-      <script src="assets/js/shoppingCart.js"></script>
+      <script src="assets/js/category.js"></script>
 
 
       <!-- Modal -->
@@ -72,7 +69,14 @@
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button onClick = addCategory() type="submit" name = "modalSubmitBtn" class="btn btn-primary" id = "modalSubmitBtn" value = "">Add</button>
+                <button onClick = saveCategory() 
+                        type="button" 
+                        name = "modalSubmitBtn" 
+                        class="btn btn-primary" 
+                        id = "modalSubmitBtn" 
+                        value = "">
+                        Add
+                </button>
               </div>
             </div>
           </div>
