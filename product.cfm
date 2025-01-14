@@ -3,48 +3,56 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Sub Categories</title>
+        <title>Products</title>
         <link rel="stylesheet" href="assets/bootstrap-5.3.3-dist/css/bootstrap.min.css">
         <link href="assets/images/shopping-cart.png" rel="icon">
         <script src="assets/bootstrap-5.3.3-dist/js/bootstrap.min.js"></script>
         <script src="assets/js/jquery-3.7.1.min.js"></script>
     </head>
     <body>
+      <cfset subCategoryId = url.subCategoryId>
+      <cfset subCategoryName = url.subCategoryName>
       <cfset categoryId = url.categoryId>
-      <cfset categoryName = url.categoryName>
+
       <cfoutput>
         <cfinclude  template="header.cfm">
         <main>
           <div class="container flex-column mx-auto my-5 p-5 w-50 justify-content-center bg-light shadow-lg" id ="mainDiv">
             <div class = "d-flex justify-content-between align-items-center mb-3" >
-              <h3>#categoryName#</h3>
+              <h3>#subCategoryName#</h3>
               <button type="button"
-                      onclick = "openAddSubCategoryModal()"
+                      onclick = "openAddProductModal()"
                       class = "btn btn-secondary rounded" 
                       data-bs-toggle="modal" 
                       data-bs-target="##staticBackdrop">
                       New
               </button>
             </div>
-            <cfset subCategoryResult = application.obj.fetchSubCategories(categoryId)>
-            <span class="text-success" id ="subCategoryFunctionResult"></span>
-            <cfloop query="subCategoryResult">
-              <div class = "d-flex justify-content-between align-items-center" id = "#fldSubCategory_Id#">
-                <div id = "subcategoryname-#fldSubCategory_Id#">#fldSubCategoryName#</div>
-                <div>
+            <cfset productResult = application.obj.fetchProducts(subCategoryId)>
+            <span class="text-success" id ="productFunctionResult"></span>
+            <cfloop query="productResult">
+              <div class = "d-flex justify-content-between align-items-center w-100 col-6" id = "#fldProduct_Id#">
+                <div class="col-6">
+                  <div id = "productname-#fldProduct_Id#" class="h5 text-bold">#fldProductName#</div>
+                  <div class = "d-flex justify-content-between align-items-center">
+                    <div>
+                      <div class="h6">#fldBrandName#</div>
+                      <div> #fldPrice#</div>
+                    </div>
+                    <img src="./assets/images/productImages/#fldImageFileName#" alt="" width="85" height="" class="">
+                  </div>
+                </div>
+                <div class="">
                   <button type="button" 
-                          onclick = "editSubCategory(#fldSubCategory_Id#)" 
+                          onclick = "editProductOpenModal(#fldProduct_Id#)" 
                           class = "btn btn-outline-info  px-3 my-2" 
                           data-bs-toggle="modal" 
                           data-bs-target="##staticBackdrop">
                     <img src="./assets/images/editing.png" alt="" width="18" height="18" class="">
                   </button>
-                  <button class = "btn btn-outline-info  px-3 my-2" onClick = "deleteSubCategory(#fldSubCategory_Id#)">
+                  <button class = "btn btn-outline-info  px-3 my-2" onClick = "deleteProduct(#fldProduct_Id#)">
                     <img src="./assets/images/trash.png" alt="" width="18" height="18" class="">
                   </button>
-                  <a class = "btn btn-outline-info  px-3 my-2" href ="product.cfm?subCategoryId=#fldSubCategory_Id#&subCategoryName=#fldSubCategoryName#">
-                    <img src="./assets/images/right-arrow.png" alt="" width="18" height="18" class="">
-                  </a>
                 </div>
               </div>
             </cfloop>
@@ -54,18 +62,18 @@
 
 
       <!-- Modal -->
-      <form method="POST" id="categoryAddForm" onsubmit="return modalValidate()">
+      <form method="POST" id="productAddForm" enctype="multipart/form-data" onsubmit="return modalValidate()">
         <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
           <div class="modal-dialog">
             <div class="modal-content">
               <div class="modal-header">
-                <h1 class="modal-title fs-5" id="staticBackdropLabel">Add Sub Category</h1>
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Add Product</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
                   <label class="modalLabel mb-2">Category Name</label>
-                  <select class="form-select mb-2" id = categorySelect>
-                  <cfset getOptions = application.obj.fetchCategories()>
+                  <select class="form-select mb-2" id = "categorySelect" name = "selectedCategoryId">
+                    <cfset getOptions = application.obj.fetchCategories()>
                     <cfloop query="getOptions">
                       <option 
                         <cfif categoryId EQ #getOptions.fldCategory_Id#>
@@ -77,12 +85,51 @@
                     </cfloop>
                   </select>
                   <label class="modalLabel mb-2">Sub Category Name</label>
-                  <input type="text" name="subCategoryName" id="subCategoryName" value="" placeholder="Sub Category Name" class="form-control">
-                  <div id="subCategoryNameError" class="text-danger"></div>
+                  <select class="form-select mb-2" id = "selectedSubCategoryId" name = "selectedSubCategoryId"> 
+                    <cfset getSubCategoryOptions = application.obj.fetchSubCategories(categoryId)>
+                    <cfloop query="getSubCategoryOptions">
+                      <option 
+                        <cfif subCategoryId EQ #getSubCategoryOptions.fldSubCategory_Id#>
+                          selected
+                        </cfif>
+                        value="#getSubCategoryOptions.fldSubCategory_Id#">
+                        #getSubCategoryOptions.fldSubCategoryName#
+                      </option>
+                    </cfloop>
+                  </select>
+                  <label class="modalLabel mb-2">Product Name</label>
+                  <input type="text" name="productName" id="productName" value="" placeholder="Product Name" class="form-control">
+                  <div id="productNameError" class="text-danger"></div>
+                  <label class="modalLabel mb-2">Product Brand</label>
+                  <select class="form-select mb-2" id = "brandSelect"  name= "selectedBrandId">
+                    <option    selected value> - Select a Brand - </option>
+                    <cfset getBrandOptions = application.obj.fetchBrands()>
+                    <cfloop query="getBrandOptions">
+                      <option 
+                        <!--- <cfif brandId EQ #getBrandOptions.fldBrand_Id#>
+                          selected
+                        </cfif> --->
+                        value="#getBrandOptions.fldBrand_Id#">
+                        #getBrandOptions.fldBrandName#
+                      </option>
+                    </cfloop>
+                  </select>
+                  <label class="modalLabel mb-2">Product Description</label>
+                  <input type="text" name="productDescription" id="productDescription" value="" placeholder="Product Description" class="form-control">
+                  <div id="productDescriptionError" class="text-danger"></div>
+                  <label class="modalLabel mb-2">Product Price</label>
+                  <input type="number" name="productPrice" id="productPrice" value="" placeholder="Product Price" class="form-control">
+                  <div id="productPriceError" class="text-danger"></div>
+                  <label class="modalLabel mb-2">Product Tax</label>
+                  <input type="number" name="productTax" id="productTax" value="" placeholder="Product Tax" class="form-control">
+                  <div id="productTaxError" class="text-danger"></div>
+                  <label for="imgFiles" class="modalLabel mb-2">Product Images</label>
+                  <input type="file" name="productImages" id="imgFiles" class="form-control" multiple>
+                  <div id="productImagesError" class="text-danger"></div>
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button onClick = saveSubCategory() 
+                <button onClick = "saveProduct()" 
                         type="button" 
                         name = "modalSubmitBtn" 
                         class="btn btn-primary" 
@@ -96,6 +143,6 @@
         </div>
       </form>
       </cfoutput>
-      <script src="assets/js/subCategory.js"></script>
+      <script src="assets/js/product.js"></script>
     </body>
 </html>
