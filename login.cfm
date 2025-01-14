@@ -47,7 +47,7 @@
           </div>
         </div>
       </main>
-      <script src="assets/js/shoppingCart.js"></script>
+      <script src="assets/js/login.js"></script>
     </body>
 </html>
 
