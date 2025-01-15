@@ -37,7 +37,8 @@
     <cffunction  name="fetchCategories">
         <cfquery name="local.queryGetCategories">
             SELECT 
-                fldCategoryName,fldCategory_Id
+                fldCategoryName,
+                fldCategory_Id
             FROM 
                 tblcategory
             WHERE 
@@ -50,7 +51,8 @@
     <cffunction  name="fetchBrands">
         <cfquery name="local.queryGetBrands">
             SELECT 
-                fldBrand_Id,fldBrandName
+                fldBrand_Id,
+                fldBrandName
             FROM 
                 tblbrands
             WHERE 
@@ -63,7 +65,8 @@
         <cfargument  name="categoryId">
         <cfquery name="local.queryGetSubCategories">
             SELECT 
-                fldSubCategoryName,fldSubCategory_Id
+                fldSubCategoryName,
+                fldSubCategory_Id
             FROM 
                 tblSubCategory
             WHERE 
@@ -99,6 +102,23 @@
                 pi.fldDefaultImage = 1
         </cfquery> 
         <cfreturn local.queryGetProducts>
+    </cffunction>
+
+    <cffunction  name="fetchProductImages" access = "remote" returnFormat = "JSON">
+        <cfargument  name="productId">
+        <cfquery name="local.queryGetProductImages">
+            SELECT 
+                fldProductImage_Id,
+                fldProductId,
+                fldImageFileName,
+                fldDefaultImage
+            FROM 
+                tblproductimages      
+            WHERE 
+                fldProductId = <cfqueryparam value = "#arguments.productId#" cfsqltype = "cf_sql_integer"> AND
+                fldActive = 1
+        </cfquery> 
+        <cfreturn local.queryGetProductImages>
     </cffunction>
 
     <cffunction  name="fetchProductInfo" access = "remote" returnFormat = "JSON">
@@ -221,8 +241,9 @@
     <cffunction  name="addCategory" access = "remote" returnFormat = "JSON">
         <cfargument type="string" required="true" name="categoryName">       
         <cfset local.categoryId = 0>
+        <cfset local.addCategoryResult = {} >
         <cfif categoryUniqueCheck(arguments.categoryName,local.categoryId) GT 0>
-            <cfset local.addCategoryResult = "Category Name already exists">
+            <cfset local.addCategoryResult["resultMsg"] = "Category Name already exists">
         <cfelse>
             <cfquery name="local.queryAddCategory" result = "local.resultQueryAddCategory">
                 INSERT INTO 
@@ -232,8 +253,8 @@
                     <cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_integer">
                 )
             </cfquery> 
-        <!---             <cfset local.addCategoryResult = local.resultQueryAddCategory> --->
-            <cfset local.addCategoryResult = "Category Added">
+               <cfset local.addCategoryResult["categoryId"] = local.resultQueryAddCategory.generated_Key> 
+             <cfset local.addCategoryResult["resultMsg"]  = "Category Added">
         </cfif>
         <cfreturn local.addCategoryResult>
     </cffunction>
@@ -247,7 +268,10 @@
         <cfelse>
             <cfquery name="local.queryAddSubCategory" result = "local.resultQueryAddSubCategory">
                 INSERT INTO 
-                    tblsubcategory(fldSubCategoryName,fldCategoryId,fldCreatedBy)
+                    tblsubcategory(
+                        fldSubCategoryName,
+                        fldCategoryId,
+                        fldCreatedBy)
                 VALUES (
                     <cfqueryparam value = "#arguments.subCategoryName#" cfsqltype = "CF_SQL_VARCHAR">,
                     <cfqueryparam value = "#arguments.selectedCategoryId#" cfsqltype = "CF_SQL_INTEGER">,
@@ -286,7 +310,14 @@
 
             <cfquery name="local.queryAddProduct" result = "local.resultQueryAddProduct">
                 INSERT INTO 
-                    tblproduct(fldProductName, fldSubCategoryId, fldBrandId, fldDescription, fldPrice, fldTax, fldCreatedBy)
+                    tblproduct(
+                        fldProductName,
+                        fldSubCategoryId,
+                        fldBrandId, 
+                        fldDescription, 
+                        fldPrice, 
+                        fldTax, 
+                        fldCreatedBy)
                 VALUES (
                     <cfqueryparam value="#arguments.productName#" cfsqltype="CF_SQL_VARCHAR">,
                     <cfqueryparam value="#arguments.selectedSubCategoryId#" cfsqltype="CF_SQL_INTEGER">,
@@ -302,7 +333,11 @@
 
                 <cfquery name="local.queryAddProductImages">
                     INSERT INTO 
-                        tblproductimages(fldProductId, fldImageFileName, fldDefaultImage, fldCreatedBy)
+                        tblproductimages(
+                            fldProductId, 
+                            fldImageFileName, 
+                            fldDefaultImage, 
+                            fldCreatedBy)
                     VALUES (
                         <cfqueryparam value="#local.resultQueryAddProduct.generated_Key#" cfsqltype="CF_SQL_INTEGER">,
                         <cfqueryparam value="#item.serverfile#" cfsqltype="CF_SQL_VARCHAR">,
@@ -406,18 +441,14 @@
                 fldProduct_Id = <cfqueryparam value = "#arguments.productId#" cfsqltype = "cf_sql_integer"> 
             </cfquery> 
 
-            <cfloop array="#local.productUploadedImages#" item="item" index = "index">
+            <cfloop array="#local.productUploadedImages#" item="item">
                 <cfquery name="local.queryAddProductImages">
                     INSERT INTO 
                         tblproductimages(fldProductId, fldImageFileName, fldDefaultImage, fldCreatedBy)
                     VALUES (
                         <cfqueryparam value="#arguments.productId#" cfsqltype="CF_SQL_INTEGER">,
                         <cfqueryparam value="#item.serverfile#" cfsqltype="CF_SQL_VARCHAR">,
-                        <cfif index EQ 1>
-                             <cfqueryparam value="1" cfsqltype="CF_SQL_INTEGER">,
-                        <cfelse>
-                             <cfqueryparam value="0" cfsqltype="CF_SQL_INTEGER">,
-                        </cfif>
+                        <cfqueryparam value="0" cfsqltype="CF_SQL_INTEGER">,
                         <cfqueryparam value="#session.userId#" cfsqltype="CF_SQL_INTEGER">
                     )
                 </cfquery>
@@ -425,6 +456,43 @@
             <cfset local.editProductResult = "Sub Category Edited">
         </cfif>
         <cfreturn local.editProductResult>
+    </cffunction>
+
+    <cffunction  name="editDefaultImg" access = "remote">
+        <cfargument name="productId">
+        <cfargument name="productImageId">
+        <cfquery name="local.queryDeleteDefaultImg">
+            UPDATE 
+                tblproductimages
+            SET 
+                fldDefaultImage = 0
+            WHERE 
+                fldProductId = <cfqueryparam value = "#arguments.productId#" cfsqltype = "cf_sql_integer"> 
+        </cfquery>
+
+        <cfquery name="local.querySetDefaultImg">
+            UPDATE 
+                tblproductimages
+            SET 
+                fldDefaultImage = 1
+            WHERE 
+                fldProductId = <cfqueryparam value = "#arguments.productId#" cfsqltype = "cf_sql_integer"> AND
+                fldProductImage_Id = <cfqueryparam value = "#arguments.productImageId#" cfsqltype = "cf_sql_integer">
+        </cfquery>
+    </cffunction>
+
+
+    <cffunction  name="deleteImg" access = "remote">
+        <cfargument name="productImageId">
+        <cfquery name="local.queryDeleteDefaultImg">
+            UPDATE 
+                tblproductimages
+            SET 
+                fldActive = 0,
+                fldDeactivatedBy = <cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_integer">
+            WHERE 
+                fldProductImage_Id = <cfqueryparam value = "#arguments.productImageId#" cfsqltype = "cf_sql_integer"> 
+        </cfquery>
     </cffunction>
 
     <cffunction  name="deleteCategory" access="remote">
@@ -472,5 +540,5 @@
     <cffunction  name="logOut" access="remote">
        <cfset structClear(session)>
     </cffunction>
-    
+
 </cfcomponent>

@@ -29,8 +29,8 @@ function saveCategory(){
             success:function(response){
                 // alert(response)
                 let responseParsed = JSON.parse(response);
-                // let categoryId = JSON.parse(response);
-                document.getElementById("categoryFunctionResult").innerHTML = responseParsed;
+                let categoryId = responseParsed.categoryId;
+                document.getElementById("categoryFunctionResult").innerHTML = responseParsed.resultMsg;
                 let categoryEachDiv = 
                 `<div class = "d-flex justify-content-between align-items-center" id = "${categoryId}">
                     <div id = "categoryname-${categoryId}">${categoryName}</div>
@@ -50,7 +50,7 @@ function saveCategory(){
                         </a>
                     </div>
                 </div>`
-                // $("#mainDiv").append(categoryEachDiv);
+                $("#mainDiv").append(categoryEachDiv);
             }
         })
     }
