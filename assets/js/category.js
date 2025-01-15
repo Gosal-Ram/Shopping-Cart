@@ -13,12 +13,19 @@ function clearErrorMessages(){
 
 function openAddCategoryModal(){
     clearErrorMessages();
+    let categoryName = $("#categoryName");
+    categoryName.removeClass("border-danger")
     document.querySelector(".modal-title").textContent = "Add Category";
     document.getElementById("categoryAddForm").reset();
     document.getElementById("modalSubmitBtn").value = "";
 }
 
 function saveCategory(){
+    let isModalValid = modalValidate()
+    if(!isModalValid){
+        return;
+    }
+
     const categoryName = document.getElementById("categoryName").value
     // console.log(categoryName)
     if (document.getElementById("modalSubmitBtn").value.length==0){
@@ -51,6 +58,7 @@ function saveCategory(){
                     </div>
                 </div>`
                 $("#mainDiv").append(categoryEachDiv);
+                // location.reload();
             }
         })
     }
@@ -74,6 +82,8 @@ function saveCategory(){
 
 function editCategory(fldCategory_Id){
     clearErrorMessages();
+    let categoryName = $("#categoryName");
+    categoryName.removeClass("border-danger")
     document.querySelector(".modal-title").textContent = "Edit Category";
     // autopopulate category name
     document.getElementById("categoryName").value = document.getElementById(fldCategory_Id).childNodes[1].textContent;
@@ -84,9 +94,9 @@ function editCategory(fldCategory_Id){
 function modalValidate(){
     let isValid = true;
     // const namePattern = /^[a-zA-Z\s- ]+$/
-    let categoryName = document.getElementById("categoryName").value;
+    let categoryName = $("#categoryName");
     
-    if (categoryName.trim().length==0) {
+    if (categoryName.val().trim().length===0) {
         document.getElementById("categoryNameError").textContent = "Enter Category Name";
         categoryName.addClass("border-danger");
         isValid = false;

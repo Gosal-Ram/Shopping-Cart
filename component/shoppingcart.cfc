@@ -263,8 +263,9 @@
         <cfargument type="string" required="true" name="subCategoryName">       
         <cfargument type="string" required="true" name="selectedCategoryId">    
         <cfset local.subCategoryId = 0>   
+        <cfset local.addSubCategoryResult = {} >
         <cfif subCategoryUniqueCheck(arguments.subCategoryName,arguments.selectedCategoryId,local.subCategoryId) GT 0>
-            <cfset local.addSubCategoryResult = "SubCategory Name already exists">
+            <cfset local.addSubCategoryResult["resultMsg"] = "SubCategory Name already exists">
         <cfelse>
             <cfquery name="local.queryAddSubCategory" result = "local.resultQueryAddSubCategory">
                 INSERT INTO 
@@ -278,7 +279,9 @@
                     <cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_integer">
                 )
             </cfquery> 
-            <cfset local.addSubCategoryResult = local.resultQueryAddSubCategory.generated_key>
+            
+            <cfset local.addSubCategoryResult["resultMsg"] = "SubCategory Added">
+            <cfset local.addSubCategoryResult["subCategoryid"] = local.resultQueryAddSubCategory.generated_key>
         </cfif>
         <cfreturn local.addSubCategoryResult>
     </cffunction>
@@ -294,9 +297,9 @@
         <cfargument type="string" required="true" name="productImages">
 
         <cfset local.productId = 0>   
-        <cfset local.addProductResult= "">
+        <cfset local.addProductResult = {}>
         <cfif productUniqueCheck(arguments.productName,local.productId,arguments.selectedSubCategoryId) GT 0>
-            <cfset local.addProductResult = "Product Name already exists">
+            <cfset local.addProductResult["resutMsg"] = "Product Name already exists">
         <cfelse>
             <cffile
                 action="uploadall"
@@ -307,7 +310,6 @@
                 result="local.productUploadedImages"
                 allowedextensions=".png,.jpg,.jpeg">
             
-
             <cfquery name="local.queryAddProduct" result = "local.resultQueryAddProduct">
                 INSERT INTO 
                     tblproduct(
@@ -350,8 +352,8 @@
                     )
                 </cfquery>
             </cfloop>
-            <!---<cfset local.addProductResult = local.resultQueryAddProduct.generated_key> --->
-            <cfset local.addProductResult = "Product added">
+            <cfset local.addProductResult["productId"] = local.resultQueryAddProduct.generated_key> 
+            <cfset local.addProductResult["resultMsg"] = "Product added">
         </cfif>
         <cfreturn local.addProductResult>
     </cffunction>
@@ -384,7 +386,7 @@
         <cfargument required="true" name="subCategoryId">
         <cfset local.editSubCategoryResult = "">
 
-        <cfif subCategoryUniqueCheck(arguments.subCategoryName,arguments..selectedCategoryId,arguments.subCategoryId) GT 0>
+        <cfif subCategoryUniqueCheck(arguments.subCategoryName,arguments.selectedCategoryId,arguments.subCategoryId) GT 0>
             <cfset local.editSubCategoryResult = "Sub Category Name already exists">
         <cfelse>
             <cfquery name="local.queryEditSubCategory">
@@ -480,7 +482,6 @@
                 fldProductImage_Id = <cfqueryparam value = "#arguments.productImageId#" cfsqltype = "cf_sql_integer">
         </cfquery>
     </cffunction>
-
 
     <cffunction  name="deleteImg" access = "remote">
         <cfargument name="productImageId">
