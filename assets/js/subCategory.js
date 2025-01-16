@@ -69,11 +69,18 @@ function saveSubCategory(){
                 if (categoryId != selectedCategoryId){
                     document.getElementById(subCategoryId).remove()
                 }
-                if(responseParsed != "Sub Category Name already exists"){
-                    document.getElementById("subcategoryname-"+subCategoryId).textContent=subCategoryName
+                if(responseParsed.resultMsg != "Sub Category Name already exists"){
+                    // document.getElementById("subcategoryname-"+subCategoryId).textContent=subCategoryName
+                    document.getElementById("subcategoryname-"+subCategoryId).textContent=responseParsed.subCategoryName
 
+
+                    // console.log(
+                    //     "product.cfm?subCategoryId=" + responseParsed.subCategoryName + 
+                    //     "&subCategoryName=" + encodeURIComponent(responseParsed.subCategoryName) + 
+                    //     "&categoryId=" + responseParsed.selectedCategoryId
+                    // );
                 }
-                document.getElementById("subCategoryFunctionResult").innerHTML = responseParsed;
+                document.getElementById("subCategoryFunctionResult").innerHTML = responseParsed.resultMsg;
             }
     })
     }

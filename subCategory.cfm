@@ -42,7 +42,9 @@
                   <button class = "btn btn-outline-info  px-3 my-2" onClick = "deleteSubCategory(#fldSubCategory_Id#)">
                     <img src="./assets/images/trash.png" alt="" width="18" height="18" class="">
                   </button>
-                  <a class = "btn btn-outline-info  px-3 my-2" href ="product.cfm?subCategoryId=#fldSubCategory_Id#&subCategoryName=#fldSubCategoryName#&categoryId=#categoryId#">
+                  <a class = "btn btn-outline-info  px-3 my-2" 
+                  id="subcategory-link-#fldSubCategory_Id#"
+                  href ="product.cfm?subCategoryId=#fldSubCategory_Id#&subCategoryName=#fldSubCategoryName#&categoryId=#categoryId#">
                     <img src="./assets/images/right-arrow.png" alt="" width="18" height="18" class="">
                   </a>
                 </div>

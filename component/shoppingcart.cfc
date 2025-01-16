@@ -17,16 +17,19 @@
                 fldPhone = <cfqueryparam value = "#arguments.userInput#" cfsqltype="CF_SQL_VARCHAR">)AND  
                 fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_INTEGER">       
         </cfquery>
-        <cfif local.queryUserLogin.recordcount GT 0>
+
+        <cfif arguments.userInput EQ "" OR arguments.password EQ "">
+            <cfset local.loginResult = "Please provide both username/email and password.">
+        <cfelseif local.queryUserLogin.recordcount GT 0>
             <cfif local.queryUserLogin.fldHashedPassword EQ hash(arguments.password & local.queryUserLogin.fldUserSaltString, "SHA-512")>
-            <cfset local.loginResult = "User Login Successful">
-            <cfset session.isLoggedIn = true>
-            <cfset session.userId = local.queryUserLogin.fldUser_Id>
-            <cfset session.userName = arguments.userInput>
-            <cfset session.roleId = local.queryUserLogin.fldRoleId>
-            <cflocation  url = "category.cfm" addToken="no">   
+                <cfset local.loginResult = "User Login Successful">
+                <cfset session.isLoggedIn = true>
+                <cfset session.userId = local.queryUserLogin.fldUser_Id>
+                <cfset session.userName = arguments.userInput>
+                <cfset session.roleId = local.queryUserLogin.fldRoleId>
+                <cflocation  url = "category.cfm" addToken="no">   
             <cfelse>
-            <cfset local.loginResult = "Invalid password">
+                <cfset local.loginResult = "Invalid password">
             </cfif>
         <cfelse>
             <cfset local.loginResult = "User name doesn't exist">
@@ -242,7 +245,9 @@
         <cfargument type="string" required="true" name="categoryName">       
         <cfset local.categoryId = 0>
         <cfset local.addCategoryResult = {} >
-        <cfif categoryUniqueCheck(arguments.categoryName,local.categoryId) GT 0>
+        <cfif arguments.categoryName EQ "">
+            <cfset local.addCategoryResult["resultMsg"] = "Enter Category Name ">
+        <cfelseif categoryUniqueCheck(arguments.categoryName,local.categoryId) GT 0>
             <cfset local.addCategoryResult["resultMsg"] = "Category Name already exists">
         <cfelse>
             <cfquery name="local.queryAddCategory" result = "local.resultQueryAddCategory">
@@ -253,8 +258,8 @@
                     <cfqueryparam value = "#session.userId#" cfsqltype = "cf_sql_integer">
                 )
             </cfquery> 
-               <cfset local.addCategoryResult["categoryId"] = local.resultQueryAddCategory.generated_Key> 
-             <cfset local.addCategoryResult["resultMsg"]  = "Category Added">
+            <cfset local.addCategoryResult["categoryId"] = local.resultQueryAddCategory.generated_Key> 
+            <cfset local.addCategoryResult["resultMsg"]  = "Category Added">
         </cfif>
         <cfreturn local.addCategoryResult>
     </cffunction>
@@ -264,7 +269,10 @@
         <cfargument type="string" required="true" name="selectedCategoryId">    
         <cfset local.subCategoryId = 0>   
         <cfset local.addSubCategoryResult = {} >
-        <cfif subCategoryUniqueCheck(arguments.subCategoryName,arguments.selectedCategoryId,local.subCategoryId) GT 0>
+
+        <cfif arguments.subCategoryName EQ "" OR arguments.selectedCategoryId EQ "">
+            <cfset local.addSubCategoryResult["resultMsg"] = "Please enter a Subcategory Name and select a valid Category">
+        <cfelseif subCategoryUniqueCheck(arguments.subCategoryName,arguments.selectedCategoryId,local.subCategoryId) GT 0>
             <cfset local.addSubCategoryResult["resultMsg"] = "SubCategory Name already exists">
         <cfelse>
             <cfquery name="local.queryAddSubCategory" result = "local.resultQueryAddSubCategory">
@@ -298,8 +306,17 @@
 
         <cfset local.productId = 0>   
         <cfset local.addProductResult = {}>
-        <cfif productUniqueCheck(arguments.productName,local.productId,arguments.selectedSubCategoryId) GT 0>
-            <cfset local.addProductResult["resutMsg"] = "Product Name already exists">
+        <cfif arguments.productName EQ "" OR 
+           arguments.selectedSubCategoryId EQ "" OR 
+           arguments.selectedCategoryId EQ "" OR 
+           arguments.selectedBrandId EQ "" OR 
+           arguments.productDescription EQ "" OR 
+           arguments.productPrice EQ "" OR 
+           arguments.productTax EQ "" OR 
+           arguments.productImages EQ "">
+            <cfset local.addProductResult["resultMsg"] = "Please fill in all the required fields for adding a product.">
+        <cfelseif productUniqueCheck(arguments.productName,local.productId,arguments.selectedSubCategoryId) GT 0>
+            <cfset local.addProductResult["resultMsg"] = "Product Name already exists">
         <cfelse>
             <cffile
                 action="uploadall"
@@ -332,7 +349,6 @@
             </cfquery> 
 
             <cfloop array="#local.productUploadedImages#" item="item" index = "index">
-
                 <cfquery name="local.queryAddProductImages">
                     INSERT INTO 
                         tblproductimages(
@@ -362,8 +378,9 @@
         <cfargument type="string" required="true" name="categoryName">
         <cfargument required="true" name="categoryId">
         <cfset local.editCategoryResult = "">
-
-        <cfif categoryUniqueCheck(arguments.categoryName,arguments.categoryId) GT 0>
+        <cfif arguments.categoryName EQ "">
+            <cfset local.editCategoryResult = "Enter Category Name ">
+        <cfelseif categoryUniqueCheck(arguments.categoryName,arguments.categoryId) GT 0>
             <cfset local.editCategoryResult = "Category Name already exists">
         <cfelse>
             <cfquery name="local.queryEditCategory">
@@ -384,10 +401,12 @@
         <cfargument type="string" required="true" name="subCategoryName">
         <cfargument required="true" name="selectedCategoryId">
         <cfargument required="true" name="subCategoryId">
-        <cfset local.editSubCategoryResult = "">
+        <cfset local.editSubCategoryResult = {}>
 
-        <cfif subCategoryUniqueCheck(arguments.subCategoryName,arguments.selectedCategoryId,arguments.subCategoryId) GT 0>
-            <cfset local.editSubCategoryResult = "Sub Category Name already exists">
+        <cfif arguments.subCategoryName EQ "" OR arguments.selectedCategoryId EQ "">
+            <cfset local.editSubCategoryResult["resultMsg"] = "Please enter a Subcategory Name and select a valid Category">
+        <cfelseif subCategoryUniqueCheck(arguments.subCategoryName,arguments.selectedCategoryId,arguments.subCategoryId) GT 0>
+            <cfset local.editSubCategoryResult["resultMsg"] = "Sub Category Name already exists">
         <cfelse>
             <cfquery name="local.queryEditSubCategory">
             UPDATE 
@@ -399,7 +418,10 @@
             WHERE 
                 fldSubCategory_Id = <cfqueryparam value = "#arguments.subCategoryId#" cfsqltype = "cf_sql_integer"> 
             </cfquery> 
-            <cfset local.editSubCategoryResult = "Sub Category Edited">
+            <cfset local.editSubCategoryResult["resultMsg"] = "Sub Category Edited">
+            <cfset local.editSubCategoryResult["subCategoryName"] = arguments.subCategoryName>
+            <cfset local.editSubCategoryResult["subCategoryId"] = arguments.subCategoryId>
+            <cfset local.editSubCategoryResult["selectedCategoryId"] = arguments.selectedCategoryId>
         </cfif>
         <cfreturn local.editSubCategoryResult>
     </cffunction>
@@ -416,7 +438,16 @@
         <cfargument type="string" required="true" name="productId">
         <cfset local.editProductResult = "">
 
-       <cfif productUniqueCheck(arguments.productName,arguments.productId,arguments.selectedSubCategoryId) GT 0>
+        <cfif arguments.productName EQ "" OR 
+           arguments.selectedSubCategoryId EQ "" OR 
+           arguments.selectedCategoryId EQ "" OR 
+           arguments.selectedBrandId EQ "" OR 
+           arguments.productDescription EQ "" OR 
+           arguments.productPrice EQ "" OR 
+           arguments.productTax EQ "" OR 
+           arguments.productImages EQ "">
+            <cfset local.editProductResult= "Please fill in all the required fields for adding a product.">
+        <cfelseif productUniqueCheck(arguments.productName,arguments.productId,arguments.selectedSubCategoryId) GT 0>
             <cfset local.editProductResult = "Product Name already exists">
         <cfelse>
             <cffile
