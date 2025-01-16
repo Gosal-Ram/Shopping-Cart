@@ -72,8 +72,6 @@ function saveSubCategory(){
                 if(responseParsed.resultMsg != "Sub Category Name already exists"){
                     // document.getElementById("subcategoryname-"+subCategoryId).textContent=subCategoryName
                     document.getElementById("subcategoryname-"+subCategoryId).textContent=responseParsed.subCategoryName
-
-
                     // console.log(
                     //     "product.cfm?subCategoryId=" + responseParsed.subCategoryName + 
                     //     "&subCategoryName=" + encodeURIComponent(responseParsed.subCategoryName) + 

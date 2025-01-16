@@ -26,7 +26,7 @@
                       New
               </button>
             </div>
-            <cfset subCategoryResult = application.obj.fetchSubCategories(categoryId)>
+            <cfset subCategoryResult = application.shoppingCart.fetchSubCategories(categoryId)>
             <span class="text-success" id ="subCategoryFunctionResult"></span>
             <cfloop query="subCategoryResult">
               <div class = "d-flex justify-content-between align-items-center" id = "#fldSubCategory_Id#">
@@ -67,7 +67,7 @@
               <div class="modal-body">
                   <label class="modalLabel mb-2">Category Name</label>
                   <select class="form-select mb-2" id = categorySelect>
-                  <cfset getOptions = application.obj.fetchCategories()>
+                  <cfset getOptions = application.shoppingCart.fetchCategories()>
                     <cfloop query="getOptions">
                       <option 
                         <cfif categoryId EQ #getOptions.fldCategory_Id#>

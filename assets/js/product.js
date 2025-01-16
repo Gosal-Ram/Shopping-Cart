@@ -153,6 +153,7 @@ function saveProduct(){
             success:function(response){
                 // alert(response)
                 let responseParsed = JSON.parse(response);
+                console.log(responseParsed.resultMsg)
                 document.getElementById("productFunctionResult").innerHTML = responseParsed.resultMsg;
                 let productId = responseParsed.productId
                 location.reload();
@@ -161,11 +162,20 @@ function saveProduct(){
     }
     else{   
         // edit EXISTING PRODUCT
-        const formattedData = new FormData(document.getElementById("productAddForm"))
+        // const formattedData = new FormData(document.getElementById("productAddForm"))
         const productId =  document.getElementById("modalSubmitBtn").value
         formattedData.append("productId",productId)
+    
+        // let selectedBrandId=$("#brandSelect").val()
+        // let selectedSubCategoryId= $("#selectedSubCategoryId").val()
+        // let selectedCategoryId= $("#categorySelect").val()
+        // formattedData.append("selectedSubCategoryId",selectedSubCategoryId)
+        // formattedData.append("selectedBrandId",selectedBrandId)
+        // formattedData.append("selectedCategoryId",selectedCategoryId)
         // let productName= document.getElementById("productName").value
-        // let selectedSubCategoryId= document.getElementById("selectedSubCategoryId").value
+        // console.log(selectedBrandId)
+        // console.log(selectedSubCategoryId)
+        // console.log(selectedCategoryId)
         // console.log(productId)
         $.ajax({
             type:"POST",
@@ -175,19 +185,20 @@ function saveProduct(){
             processData: false,
             contentType: false,
             success:function(response){
-                location.reload();
+                console.log(response)
                 let responseParsed = JSON.parse(response);
                 // console.log(responseParsed)
-/*                 if (subCategoryId != selectedSubCategoryId){
+                /*                 if (subCategoryId != selectedSubCategoryId){
                     // for removing other subcategory products in page
                     document.getElementById(productId).remove()
-                } 
-                if(responseParsed != "Product Name already exists" && subCategoryId == selectedSubCategoryId){
-                    //setting edited details asynchronously without page refresh 
-                    document.getElementById("productname-"+productId).textContent = productName
-                    //price, brand
-                } */
+                    } 
+                    if(responseParsed != "Product Name already exists" && subCategoryId == selectedSubCategoryId){
+                        //setting edited details asynchronously without page refresh 
+                        document.getElementById("productname-"+productId).textContent = productName
+                        //price, brand
+                        } */
                 document.getElementById("productFunctionResult").innerHTML = responseParsed;
+                location.reload();
             }
     })
     }

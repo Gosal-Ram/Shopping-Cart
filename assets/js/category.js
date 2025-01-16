@@ -23,7 +23,7 @@ function openAddCategoryModal(){
 function saveCategory(){
     let isModalValid = modalValidate()
     if(!isModalValid){
-        return;
+        return false;  // client side validation failed case
     }
 
     const categoryName = document.getElementById("categoryName").value
@@ -36,6 +36,7 @@ function saveCategory(){
             success:function(response){
                 // alert(response)
                 let responseParsed = JSON.parse(response);
+                // console.log(responseParsed)
                 let categoryId = responseParsed.categoryId;
                 document.getElementById("categoryFunctionResult").innerHTML = responseParsed.resultMsg;
                 let categoryEachDiv = 

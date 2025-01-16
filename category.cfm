@@ -23,7 +23,7 @@
                     New
             </button>
           </div>
-          <cfset categoryResult = application.obj.fetchCategories()>
+          <cfset categoryResult = application.shoppingCart.fetchCategories()>
           <cfoutput>
             <span class="text-success" id ="categoryFunctionResult"></span>        
             <cfloop query="categoryResult">

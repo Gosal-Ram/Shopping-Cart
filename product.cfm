@@ -28,7 +28,7 @@
                 New
               </button>
             </div>
-            <cfset productResult = application.obj.fetchProducts(subCategoryId)>
+            <cfset productResult = application.shoppingCart.fetchProducts(subCategoryId)>
             <span class="text-success" id ="productFunctionResult"></span>
             <cfloop query="productResult">
               <div class = "d-flex justify-content-between align-items-center w-100 col-6" id = "#fldProduct_Id#">
@@ -69,7 +69,7 @@
 
 
         <!-- Save product Modal -->
-        <form method="POST" id="productAddForm" enctype="multipart/form-data" onsubmit="return modalValidate()">
+        <form method="POST" id="productAddForm" enctype="multipart/form-data" onsubmit="modalValidate()">
           <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog">
               <div class="modal-content">
@@ -80,7 +80,7 @@
                 <div class="modal-body">
                     <label class="modalLabel mb-2">Category Name</label>
                     <select class="form-select mb-2" id = "categorySelect" name = "selectedCategoryId">
-                      <cfset getOptions = application.obj.fetchCategories()>
+                      <cfset getOptions = application.shoppingCart.fetchCategories()>
                       <cfloop query="getOptions">
                         <option 
                           <cfif categoryId EQ #getOptions.fldCategory_Id#>
@@ -93,7 +93,7 @@
                     </select>
                     <label class="modalLabel mb-2">Sub Category Name</label>
                     <select class="form-select mb-2" id = "selectedSubCategoryId" name = "selectedSubCategoryId"> 
-                      <cfset getSubCategoryOptions = application.obj.fetchSubCategories(categoryId)>
+                      <cfset getSubCategoryOptions = application.shoppingCart.fetchSubCategories(categoryId)>
                       <cfloop query="getSubCategoryOptions">
                         <option 
                           <cfif subCategoryId EQ #getSubCategoryOptions.fldSubCategory_Id#>
@@ -110,7 +110,7 @@
                     <label class="modalLabel mb-2">Product Brand</label>
                     <select class="form-select mb-2" id = "brandSelect"  name= "selectedBrandId">
                       <option selected value> - Select a Brand - </option>
-                      <cfset getBrandOptions = application.obj.fetchBrands()>
+                      <cfset getBrandOptions = application.shoppingCart.fetchBrands()>
                       <cfloop query="getBrandOptions">
                         <option 
                           value="#getBrandOptions.fldBrand_Id#">
