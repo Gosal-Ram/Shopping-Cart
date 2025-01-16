@@ -1,11 +1,15 @@
 function openAddSubCategoryModal(){
     document.getElementById("subCategoryNameError").textContent=""
     document.querySelector(".modal-title").textContent = "Add Sub Category";
-    document.getElementById("categoryAddForm").reset();
+    document.getElementById("SubCategoryAddForm").reset();
     document.getElementById("modalSubmitBtn").value = "";
 }
 
 function saveSubCategory(){
+    let isModalValid = modalValidate()
+    if(!isModalValid){
+        return;
+    }
     let params = new URLSearchParams(document.location.search);
     let categoryId =params.get("categoryId")
     let subCategoryId = document.getElementById("modalSubmitBtn").value
@@ -23,8 +27,9 @@ function saveSubCategory(){
             data:{subCategoryName: subCategoryName, selectedCategoryId:selectedCategoryId},
             success:function(response){
                 // alert(response)
-                let subCategoryId = JSON.parse(response);
-                // document.getElementById("subCategoryFunctionResult").innerHTML = responseParsed;
+                let responseParsed = JSON.parse(response);
+                document.getElementById("subCategoryFunctionResult").innerHTML = responseParsed.resultMsg;
+                let subCategoryId = responseParsed.subCategoryid
                 let subCategoryEachDiv = 
                 `<div class = "d-flex justify-content-between align-items-center" id = "${subCategoryId}">
                 <div id = "subcategoryname-${subCategoryId}">${subCategoryName}</div>
@@ -45,6 +50,8 @@ function saveSubCategory(){
                 </div>
               </div>`
                 $("#mainDiv").append(subCategoryEachDiv);
+                
+                // location.reload();
             }
         })
     }
@@ -73,7 +80,10 @@ function saveSubCategory(){
 }
 
 function editSubCategory(fldSubCategory_Id){
+    document.getElementById("SubCategoryAddForm").reset();
     document.getElementById("subCategoryNameError").textContent=""
+    let subCategoryName = $("#subCategoryName");
+    subCategoryName.removeClass("border-danger")
     document.querySelector(".modal-title").textContent = "Edit Sub Category";
     // autopopulate category name
     document.getElementById("subCategoryName").value = document.getElementById(fldSubCategory_Id).childNodes[1].textContent;
@@ -83,10 +93,11 @@ function editSubCategory(fldSubCategory_Id){
 
 function modalValidate(){
     let isValid = true;
-    let subCategoryName = document.getElementById("subCategoryName").value;
+    let subCategoryName = $("#subCategoryName");
     
-    if (subCategoryName.trim().length==0) {
+    if (subCategoryName.val().trim().length==0) {
         document.getElementById("subCategoryNameError").textContent = "Enter Category Name";
+        subCategoryName.addClass("border-danger");
         isValid = false;
     }
     return isValid;
