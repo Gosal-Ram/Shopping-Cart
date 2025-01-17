@@ -21,7 +21,7 @@ function openAddCategoryModal(){
 }
 
 function saveCategory(){
-    let isModalValid = modalValidate()
+    let isModalValid = modalValidate();
     if(!isModalValid){
         return false;  // client side validation failed case
     }
@@ -31,8 +31,10 @@ function saveCategory(){
     if (document.getElementById("modalSubmitBtn").value.length==0){
         $.ajax({
             type:"POST",
-            url: "component/shoppingcart.cfc?method=addCategory",
-            data:{categoryName: categoryName},
+            url: "component/shoppingcart.cfc",
+            data:{categoryName: categoryName,
+                method : "addCategory"
+            },
             success:function(response){
                 // alert(response)
                 let responseParsed = JSON.parse(response);
@@ -47,7 +49,7 @@ function saveCategory(){
                                 onclick = "editCategory(${categoryId})" 
                                 class = "btn btn-outline-info  px-3 my-2" 
                                 data-bs-toggle="modal" 
-                                data-bs-target="##staticBackdrop">
+                                data-bs-target="#staticBackdrop">
                         <img src="./assets/images/editing.png" alt="" width="18" height="18" class="">
                         </button>
                         <button class = "btn btn-outline-info  px-3 my-2" onClick = "deleteCategory(${categoryId})">
@@ -64,16 +66,18 @@ function saveCategory(){
         })
     }
     else{   
-        const categoryId =  document.getElementById("modalSubmitBtn").value
+        const categoryId =  document.getElementById("modalSubmitBtn").value;
         $.ajax({
             type:"POST",
-            url: "component/shoppingcart.cfc?method=editCategory",
-            data:{categoryName: categoryName,categoryId : categoryId},
+            url: "component/shoppingcart.cfc",
+            data:{categoryName: categoryName,
+                categoryId : categoryId,
+                method : "editCategory"},
             success:function(response){
                 let responseParsed = JSON.parse(response);
                 console.log(responseParsed)
                 if(responseParsed != "Category Name already exists"){
-                    document.getElementById("categoryname-"+categoryId).textContent=categoryName
+                    document.getElementById("categoryname-"+categoryId).textContent=categoryName;
                 }
                 document.getElementById("categoryFunctionResult").innerHTML = responseParsed;
             }
@@ -84,7 +88,7 @@ function saveCategory(){
 function editCategory(fldCategory_Id){
     clearErrorMessages();
     let categoryName = $("#categoryName");
-    categoryName.removeClass("border-danger")
+    categoryName.removeClass("border-danger");
     document.querySelector(".modal-title").textContent = "Edit Category";
     // autopopulate category name
     document.getElementById("categoryName").value = document.getElementById(fldCategory_Id).childNodes[1].textContent;
@@ -114,23 +118,13 @@ function deleteCategory(fldCategory_Id){
     if(confirm("Confirm delete")){
         $.ajax({
             type:"POST",
-            url: "component/shoppingcart.cfc?method=deleteCategory",
-            data:{categoryId: fldCategory_Id},
+            url: "component/shoppingcart.cfc",
+            data:{categoryId: fldCategory_Id,
+                  method:"deleteCategory"
+            },
             success:function(){
-            document.getElementById(fldCategory_Id).remove()  
+            document.getElementById(fldCategory_Id).remove();
             }
         })
     }
 }
-
-function logOut(){
-    if(confirm("Confirm logout")){
-        $.ajax({
-            type:"POST",
-            url: "component/shoppingcart.cfc?method=logOut",
-            success:function(){
-              location.reload();
-            }
-        })
-    }
-} 

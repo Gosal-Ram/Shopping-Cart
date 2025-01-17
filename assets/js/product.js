@@ -105,11 +105,12 @@ function openAddProductModal(){
     document.getElementById("modalSubmitBtn").value = "";
     document.getElementById("categorySelect").onchange = function() {
 		const categoryId = this.value;
-        console.log(categoryId)
+        // console.log(categoryId);
         $.ajax({
             type: "POST",
-            url: "component/shoppingcart.cfc?method=fetchSubCategories",
+            url: "component/shoppingcart.cfc",
             data: {
+                method :"fetchSubCategories",
                 categoryId: categoryId
             },
             success: function(response) {
@@ -132,54 +133,41 @@ function openAddProductModal(){
 function saveProduct(){
     let isModalValid = modalValidate()
     if(!isModalValid){
-        return;
+        return false;
     }
     let params = new URLSearchParams(document.location.search);
     // let subCategoryId =params.get("subCategoryId")
     // let categoryId =params.get("categoryId")
     // let productId = document.getElementById("modalSubmitBtn").value
     // console.log(productId)
-    const formattedData = new FormData(document.getElementById("productAddForm"))
+    const formattedData = new FormData(document.getElementById("productAddForm"));
     if (document.getElementById("modalSubmitBtn").value.length==0){
+        formattedData.append("method","addProduct");
         // add NEW PRODUCT
         $.ajax({
             type:"POST",
-            url: "component/shoppingcart.cfc?method=addProduct",
-            data:formattedData ,
-            // for uploading img
+            url: "component/shoppingcart.cfc",
+            data: formattedData,
             enctype: 'multipart/form-data',
             processData: false,
             contentType: false,
             success:function(response){
-                // alert(response)
                 let responseParsed = JSON.parse(response);
-                console.log(responseParsed.resultMsg)
-                document.getElementById("productFunctionResult").innerHTML = responseParsed.resultMsg;
-                let productId = responseParsed.productId
+                // console.log(responseParsed.resultMsg);
                 location.reload();
+                document.getElementById("productFunctionResult").innerHTML = responseParsed.resultMsg;
             }
         })
     }
     else{   
         // edit EXISTING PRODUCT
-        // const formattedData = new FormData(document.getElementById("productAddForm"))
-        const productId =  document.getElementById("modalSubmitBtn").value
-        formattedData.append("productId",productId)
-    
-        // let selectedBrandId=$("#brandSelect").val()
-        // let selectedSubCategoryId= $("#selectedSubCategoryId").val()
-        // let selectedCategoryId= $("#categorySelect").val()
-        // formattedData.append("selectedSubCategoryId",selectedSubCategoryId)
-        // formattedData.append("selectedBrandId",selectedBrandId)
-        // formattedData.append("selectedCategoryId",selectedCategoryId)
-        // let productName= document.getElementById("productName").value
-        // console.log(selectedBrandId)
-        // console.log(selectedSubCategoryId)
-        // console.log(selectedCategoryId)
-        // console.log(productId)
+        // const formattedData = new FormData(document.getElementById("productAddForm"));
+        const productId =  document.getElementById("modalSubmitBtn").value;
+        formattedData.append("productId",productId);
+        formattedData.append("method","editProduct");
         $.ajax({
             type:"POST",
-            url: "component/shoppingcart.cfc?method=editProduct",
+            url: "component/shoppingcart.cfc",
             data:formattedData,
             enctype: 'multipart/form-data',
             processData: false,
@@ -211,8 +199,10 @@ function editProductOpenModal(fldProduct_Id){
     
     $.ajax({
         type:"POST",
-        url: "component/shoppingcart.cfc?method=fetchProductInfo",
-        data:{productId:fldProduct_Id},
+        url: "component/shoppingcart.cfc?",
+        data:{productId:fldProduct_Id,
+              method : "fetchProductInfo"
+        },
         success:function(response){
             // alert(response)
             let responseParsed = JSON.parse(response);
@@ -230,14 +220,15 @@ function editProductOpenModal(fldProduct_Id){
 function openImgCarousal(fldProduct_Id) {
     $.ajax({
         type: "POST",
-        url: "component/shoppingcart.cfc?method=fetchProductImages",
+        url: "component/shoppingcart.cfc",
         data: {
-            productId: fldProduct_Id
+            productId: fldProduct_Id,
+            method : "fetchProductImages"
         },
         success: function(response) {
             const responseParsed = JSON.parse(response);
             $("#carousalDiv").empty();
-            console.log(responseParsed)
+            // console.log(responseParsed);
             for (let i = 0; i < responseParsed.DATA.length; i++) {
                 /* 
                 responseParsed.DATA[i][3]   -- fldDefaultImg 
@@ -246,13 +237,13 @@ function openImgCarousal(fldProduct_Id) {
                 let activeAttribute =""
                 let imgDiv = "";
                 if (responseParsed.DATA[i][3] === 1) {   //if thumbnail img
-                    activeAttribute = "active"
+                    activeAttribute = "active";
                     imgDiv = `
                         <div class="text-center p-2">
                             Thumbnail Image
                         </div>`;
                 } else { //all other img
-                    activeAttribute = ""
+                    activeAttribute = "";
                     imgDiv = `
                         <div class="d-flex justify-content-center pb-3 gap-5">
                             <button class="btn btn-outline-success" value="${responseParsed.DATA[i][0]}" onclick="setDefaultImage(${responseParsed.DATA[i][1]})">Set Thumbnail</button>
@@ -275,9 +266,10 @@ function setDefaultImage(productId){
     const productImageId = event.target.value;
     $.ajax({
         type:"POST",
-        url: "component/shoppingcart.cfc?method=editDefaultImg",
+        url: "component/shoppingcart.cfc",
         data:{productId:productId,
-            productImageId:productImageId
+            productImageId:productImageId,
+            method : "editDefaultImg"
         },
         success:function(){
             location.reload();
@@ -289,9 +281,9 @@ function deleteImage(){
     const productImageId = event.target.value;
     $.ajax({
         type:"POST",
-        url: "component/shoppingcart.cfc?method=deleteImg",
-        data:{productImageId:productImageId
-        },
+        url: "component/shoppingcart.cfc",
+        data:{productImageId:productImageId,
+              method: "deleteImg"},
         success:function(){
             location.reload();
         }
@@ -302,47 +294,14 @@ function deleteProduct(fldProduct_Id){
     if(confirm("Confirm delete")){
         $.ajax({
             type:"POST",
-            url: "component/shoppingcart.cfc?method=deleteProduct",
-            data:{productId: fldProduct_Id},
+            url: "component/shoppingcart.cfc",
+            data:{productId: fldProduct_Id,
+                method : "deleteProduct"
+            },
             success:function(){
-            document.getElementById(fldProduct_Id).remove()  
+            document.getElementById(fldProduct_Id).remove();
             }
         })
     }
 }
-
-function logOut(){
-    if(confirm("Confirm logout")){
-        $.ajax({
-            type:"POST",
-            url: "component/shoppingcart.cfc?method=logOut",
-            success:function(){
-              location.reload();
-            }
-        })
-    }
-} 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
+  
