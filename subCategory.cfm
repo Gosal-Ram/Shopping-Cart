@@ -26,7 +26,7 @@
                       New
               </button>
             </div>
-            <cfset subCategoryResult = application.obj.fetchSubCategories(categoryId)>
+            <cfset subCategoryResult = application.shoppingCart.fetchSubCategories(categoryId)>
             <span class="text-success" id ="subCategoryFunctionResult"></span>
             <cfloop query="subCategoryResult">
               <div class = "d-flex justify-content-between align-items-center" id = "#fldSubCategory_Id#">
@@ -42,7 +42,9 @@
                   <button class = "btn btn-outline-info  px-3 my-2" onClick = "deleteSubCategory(#fldSubCategory_Id#)">
                     <img src="./assets/images/trash.png" alt="" width="18" height="18" class="">
                   </button>
-                  <a class = "btn btn-outline-info  px-3 my-2" href ="product.cfm?subCategoryId=#fldSubCategory_Id#&subCategoryName=#fldSubCategoryName#&categoryId=#categoryId#">
+                  <a class = "btn btn-outline-info  px-3 my-2" 
+                  id="subcategory-link-#fldSubCategory_Id#"
+                  href ="product.cfm?subCategoryId=#fldSubCategory_Id#&subCategoryName=#fldSubCategoryName#&categoryId=#categoryId#">
                     <img src="./assets/images/right-arrow.png" alt="" width="18" height="18" class="">
                   </a>
                 </div>
@@ -65,7 +67,7 @@
               <div class="modal-body">
                   <label class="modalLabel mb-2">Category Name</label>
                   <select class="form-select mb-2" id = categorySelect>
-                  <cfset getOptions = application.obj.fetchCategories()>
+                  <cfset getOptions = application.shoppingCart.fetchCategories()>
                     <cfloop query="getOptions">
                       <option 
                         <cfif categoryId EQ #getOptions.fldCategory_Id#>
