@@ -6,9 +6,9 @@ function openAddSubCategoryModal(){
 }
 
 function saveSubCategory(){
-    let isModalValid = modalValidate()
+    let isModalValid = modalValidate();
     if(!isModalValid){
-        return;
+        return false;
     }
     let params = new URLSearchParams(document.location.search);
     let categoryId =params.get("categoryId")
@@ -23,8 +23,10 @@ function saveSubCategory(){
         // add NEW SUB CATEGORY
         $.ajax({
             type:"POST",
-            url: "component/shoppingcart.cfc?method=addSubCategory",
-            data:{subCategoryName: subCategoryName, selectedCategoryId:selectedCategoryId},
+            url: "component/shoppingcart.cfc",
+            data:{subCategoryName: subCategoryName, 
+                selectedCategoryId:selectedCategoryId,
+                method : "addSubCategory"},
             success:function(response){
                 // alert(response)
                 let responseParsed = JSON.parse(response);
@@ -61,8 +63,12 @@ function saveSubCategory(){
         // console.log(categoryId)
         $.ajax({
             type:"POST",
-            url: "component/shoppingcart.cfc?method=editSubCategory",
-            data:{subCategoryName: subCategoryName, selectedCategoryId:selectedCategoryId, subCategoryId : subCategoryId},
+            url: "component/shoppingcart.cfc",
+            data:{subCategoryName: subCategoryName, 
+                selectedCategoryId:selectedCategoryId, 
+                subCategoryId : subCategoryId,
+                method : "editSubCategory"
+            },
             success:function(response){
                 let responseParsed = JSON.parse(response);
                 // console.log(responseParsed)
@@ -112,23 +118,13 @@ function deleteSubCategory(fldSubCategory_Id){
     if(confirm("Confirm delete")){
         $.ajax({
             type:"POST",
-            url: "component/shoppingcart.cfc?method=deleteSubCategory",
-            data:{subCategoryId: fldSubCategory_Id},
+            url: "component/shoppingcart.cfc",
+            data:{subCategoryId: fldSubCategory_Id,
+                method : "deleteSubCategory"
+            },
             success:function(){
-            document.getElementById(fldSubCategory_Id).remove()  
+            document.getElementById(fldSubCategory_Id).remove();  
             }
         })
     }
 }
-
-function logOut(){
-    if(confirm("Confirm logout")){
-        $.ajax({
-            type:"POST",
-            url: "component/shoppingcart.cfc?method=logOut",
-            success:function(){
-              location.reload();
-            }
-        })
-    }
-} 

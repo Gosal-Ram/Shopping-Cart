@@ -23,15 +23,15 @@ function loginValidate(){
     };
 
     const userNameValue = userName.val().trim();
-    if (!userNameValue) {
+    if (userNameValue === 0) {
         setError(userName, userNameError, "Enter phone number or email id");
-    } else if (!phoneRegex.test(userNameValue) && !emailRegex.test(userNameValue)) {
+    } else if (phoneRegex.test(userNameValue) === false && emailRegex.test(userNameValue) === false) {
         setError(userName, userNameError, "Enter a valid phone number or email id");
     } else {
         clearError(userName, userNameError);
     }
     const passwordValue = pwd.val().trim();
-    if (!passwordValue) {
+    if (passwordValue == 0) {
         setError(pwd, pwdError, "Enter your password");
     } else {
         clearError(pwd, pwdError);
