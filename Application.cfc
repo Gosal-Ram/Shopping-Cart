@@ -2,16 +2,16 @@
     <cfset this.name = "shoppingCart">
     <cfset this.sessionManagement = "true">
     <cfset this.dataSource = "ShoppingCart">
-        <cfset application.shoppingCart = createObject("component","component.shoppingcart")>
+        <!--- <cfset application.shoppingCart = createObject("component","component.shoppingcart")> --->
 
-<!---<cffunction  name="onApplicationStart" returnType = "boolean">
+<cffunction  name="onApplicationStart" returnType = "boolean">
         <cfset application.shoppingCart = createObject("component","component.shoppingcart")>
         <cfreturn true>
-    </cffunction> --->
+    </cffunction>
 
     <cffunction  name="onRequestStart" returnType="boolean"> 
         <cfargument name="targetPage" type="String" required=true> 
-        <cfif structKeyExists(session, "userId") OR targetPage EQ "/login.cfm">
+        <cfif structKeyExists(session, "userId") OR targetPage EQ "/login.cfm" OR targetPage EQ "/signup.cfm">
             <cfreturn true>
         <cfelse>
             <cflocation  url = "/login.cfm">
@@ -19,9 +19,9 @@
         </cfif>
 
 
-        <!---         <cfif structKeyExists(url,"reload") AND url.reload EQ 1>
+                <cfif structKeyExists(url,"reload") AND url.reload EQ 1>
             <cfset onApplicationStart()>
-        </cfif> --->
+        </cfif>
     </cffunction>
 
     <cffunction name="onMissingTemplate" returnType="boolean">
