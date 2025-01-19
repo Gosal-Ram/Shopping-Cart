@@ -1,5 +1,7 @@
 <cfif cgi.SCRIPT_NAME EQ "/login.cfm">
   <script src="assets/js/login.js"></script>
+<cfelseif cgi.SCRIPT_NAME EQ "/signup.cfm"> 
+  <script src="assets/js/signup.js"></script>
 <cfelseif cgi.SCRIPT_NAME EQ "/category.cfm"> 
   <script src="assets/js/category.js"></script>
 <cfelseif cgi.SCRIPT_NAME EQ "/subCategory.cfm"> 

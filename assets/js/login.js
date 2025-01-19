@@ -9,7 +9,7 @@ function loginValidate(){
     pwd.removeClass("border-danger")
     let isValid = true;
     const phoneRegex = /^[0-9]{10}$/;
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; 
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
     const setError = (element, errorElement, message) => {
         errorElement.textContent = message;

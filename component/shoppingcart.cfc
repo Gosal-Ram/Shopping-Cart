@@ -1,4 +1,5 @@
 <cfcomponent>
+    <!--- ADMIN DASHBOARD --->
     <cffunction  name="logIn" access = "public" returnType="string" >
         <cfargument name ="userInput" type="string" required ="true">
         <cfargument name ="password" type="string" required = "true">
@@ -599,5 +600,78 @@
     <cffunction  name="logOut" access="remote" returnType = "void" >
        <cfset structClear(session)>
     </cffunction>
+
+    <!--- USER     --->
+    <cffunction  name="signUp" access = "public" returnType="string" >
+        <cfargument name="firstName" type="string" required="yes">
+        <cfargument name="lastName" type="string" required="yes">
+        <cfargument name="emailId" type="string" required="yes">
+        <cfargument name="pwd1" type="string" required="yes">
+        <cfargument name="pwd2" type="string" required="yes">
+        <cfargument name="phone" type="string" required="yes">
+
+        <cfset local.signUpResult = "">
+        <cfif len(trim(arguments.firstName)) EQ 0>
+            <cfset local.signUpResult = "First Name is required.">
+        </cfif>
+
+        <cfif len(trim(arguments.lastName)) EQ 0>
+            <cfset local.signUpResult = "Last Name is required.">
+        </cfif>
+
+        <cfif isValid(email, arguments.emailId)>
+            <cfset local.signUpResult = "Enter a valid Email ID.">
+        </cfif>
+
+        <cfif arguments.pwd1 NEQ arguments.pwd2>
+            <cfset local.signUpResult = "Passwords do not match.">
+        </cfif>
+
+        <cfif isValid(telephone, arguments.phone, 10, 10)>
+            <cfset local.signUpResult = "Enter a valid 10-digit phone number.">
+        </cfif>
+
+        <cfquery name ="local.queryUserUniqueCheck" datasource="ShoppingCart">
+            SELECT 
+                fldEmail,
+                fldPhone
+            FROM 
+                tblUser 
+            WHERE(
+                fldEmail = <cfqueryparam value = "#arguments.emailId#" cfsqltype="VARCHAR"> 
+                OR fldPhone = <cfqueryparam value = "#arguments.phone#" cfsqltype="VARCHAR">)
+                AND fldActive = <cfqueryparam value="1" cfsqltype="INTEGER">       
+        </cfquery>
+
+        <cfif local.queryUserUniqueCheck.recordcount GT 0>
+            <cfset local.signUpResult = "User mail or phone already exists">
+        <cfelse>
+            <cfquery name ="local.queryInsertUserDetails" datasource = "ShoppingCart">
+                INSERT INTO 
+                    tblUser(fldFirstName,
+                            fldLastName,
+                            fldEmail,
+                            fldPhone,
+                            fldRoleId)
+                VALUES(
+                    <cfqueryparam value = "#arguments.firstName#" cfsqltype = "VARCHAR">,
+                    <cfqueryparam value = "#arguments.lastName#" cfsqltype = "VARCHAR">,
+                    <cfqueryparam value = "#arguments.emailId#" cfsqltype = "VARCHAR">,
+                    <cfqueryparam value = "#arguments.phone#" cfsqltype = "VARCHAR">,
+                    <cfqueryparam value = "2" cfsqltype = "INTEGER">
+                )
+            </cfquery>
+            <cfset local.signUpResult = "User Login Successful">
+            <cfset session.isLoggedIn = true>
+            <cfset session.firstName = arguments.firstName>
+            <cfset session.fldLastName = arguments.fldLastName>
+            <cfset session.roleId = local.queryInsertUserDetails.fldRoleId>
+            <cflocation url = "home.cfm" addToken="no">   
+        </cfif>
+        
+        <cfreturn local.signUpResult>
+    </cffunction>
+
+
 
 </cfcomponent>

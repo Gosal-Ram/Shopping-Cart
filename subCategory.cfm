@@ -1,7 +1,7 @@
 <cfset variables.categoryId = url.categoryId>
 <cfset variables.categoryName = url.categoryName>
 <cfoutput>
-  <cfinclude  template="adminHeader.cfm">
+  <cfinclude  template="header.cfm">
   <main>
     <div class="container flex-column mx-auto my-5 p-5 w-50 justify-content-center bg-light shadow-lg" id ="mainDiv">
       <div class = "d-flex justify-content-between align-items-center mb-3" >
@@ -86,5 +86,5 @@
   </div>
 </form>
 </cfoutput>
-<cfinclude  template="adminFooter.cfm">
+<cfinclude  template="footer.cfm">
 
