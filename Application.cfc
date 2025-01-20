@@ -4,23 +4,23 @@
     <cfset this.dataSource = "ShoppingCart">
         <!--- <cfset application.shoppingCart = createObject("component","component.shoppingcart")> --->
 
-<cffunction  name="onApplicationStart" returnType = "boolean">
+    <cffunction  name="onApplicationStart" returnType = "boolean">
         <cfset application.shoppingCart = createObject("component","component.shoppingcart")>
         <cfreturn true>
     </cffunction>
 
-    <cffunction  name="onRequestStart" returnType="boolean"> 
-        <cfargument name="targetPage" type="String" required=true> 
-        <cfif structKeyExists(session, "userId") OR targetPage EQ "/login.cfm" OR targetPage EQ "/signup.cfm">
-            <cfreturn true>
+    <cffunction  name="onRequestStart"  <!---returnType="boolean" --->> 
+        <cfargument name="requestPage" type="String" required=true> 
+        <cfif structKeyExists(url,"reload") AND url.reload EQ 1>
+<!---             <cfdump  var="hello"> --->
+             <cfset onApplicationStart()>  
+<!---             <cfreturn true> --->
+        </cfif>     
+        <cfif structKeyExists(session, "userId") OR requestPage EQ "/login.cfm" OR requestPage EQ "/signup.cfm">
+<!---             <cfreturn true> --->
         <cfelse>
             <cflocation  url = "/login.cfm">
-            <cfreturn true>
-        </cfif>
-
-
-                <cfif structKeyExists(url,"reload") AND url.reload EQ 1>
-            <cfset onApplicationStart()>
+<!---             <cfreturn true> --->
         </cfif>
     </cffunction>
 
@@ -35,6 +35,7 @@
         <!--- If an error occurs, return false and the default error
         handler will run. --->
         <cfreturn true />
+
     </cffunction>
 <!---     <cffunction name="onError" returnType="void">
         <cfargument type="String" name="EventName" required=true/>
