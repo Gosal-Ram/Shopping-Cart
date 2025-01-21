@@ -1,6 +1,6 @@
 <cfinclude template="header.cfm">
-<cfset variables.categoryId = url.categoryId>
-<!--- <cfdump  var="#variables.categoryId#"> --->
+<cfset variables.search = url.s>
+<!--- <cfdump  var="#variables.search#"> 
 <cfoutput>
 
 </cfoutput>

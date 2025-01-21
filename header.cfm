@@ -38,20 +38,21 @@
           </div>
           <!-- USER -->
           <cfif structKeyExists(session, "roleId") AND session.roleId EQ 2>
-            <!-- <form action="searchResults.cfm" method="get" class="form">  -->
+             <form action="searchResults.cfm" method="get" class="form"> 
             <div class="input-group w-50 my-2" >  
                 <input class="form-control border-end-0 border rounded-pill" 
                       placeholder="Search.." 
                       type="search" 
                       value="" 
-                      id="searchInput">
+                      id="searchInput"
+                      name="s">
                 <span class="ms-2">
                   <button class="btn btn-outline-secondary bg-white border-start-0 border rounded-pill" type="submit">
                     <i class="fa fa-search"></i>
                   </button>
                 </span>
             </div>
-          <!-- </form>  -->
+           </form>  
           </cfif>
           <!-- ADMIN -->
           <cfif structKeyExists(session, "roleId") AND session.roleId EQ 1>
