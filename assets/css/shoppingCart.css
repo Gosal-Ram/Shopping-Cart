@@ -2,6 +2,10 @@
     width: 100%;
 }
 
+.filterInputContainer{
+    width: 70%;
+}
+
 .toggleContainer:hover .dropdown-menu {
     display: block;
 }
@@ -12,7 +16,12 @@
     width: 23% ;
     height: 50%;
 }
-
+.productDescription{    
+    text-overflow: ellipsis;
+    text-wrap: nowrap;
+    width: 100%;
+    overflow: hidden;
+}
 /* footer */
 
 footer{

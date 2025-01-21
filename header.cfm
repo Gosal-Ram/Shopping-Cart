@@ -20,31 +20,40 @@
           <title>SHOPPING CART</title>
         </cfif> 
         <link rel="stylesheet" href="assets/bootstrap-5.3.3-dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="assets/bootstrap-5.3.3-dist/js/bootstrap.bundle.js">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <link rel="stylesheet" href="assets/css/shoppingCart.css">
         <link href="assets/images/shopping-cart.png" rel="icon">
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
         <script src="assets/bootstrap-5.3.3-dist/js/bootstrap.min.js"></script>
         <script src="assets/js/jquery-3.7.1.min.js"></script>
     </head>
-    <body>
+    <body class = "overflow-x-hidden">
       <header class="d-flex p-1 justify-content-between align-items-center w-100 bg-primary sticky-top">
           <div class="ms-2 me-4">
-            <a href = "" class = "text-light text-decoration-none">
+            <a href = "home.cfm" class = "text-light text-decoration-none">
               <img src="./assets/images/grocery-cart.png" class = "py-2" alt="" width="25">
               <span>SHOPPING CART</span>    
             </a>  
           </div>
+          <!-- USER -->
           <cfif structKeyExists(session, "roleId") AND session.roleId EQ 2>
-            <div class="input-group w-50 my-2" >
-              <input class="form-control border-end-0 border rounded-pill" placeholder="Search.." type="search" value="" id="searchInput">
-              <span class="ms-2">
-                  <button class="btn btn-outline-secondary bg-white border-start-0 border rounded-pill" type="button">
-                      <i class="fa fa-search"></i>
+            <!-- <form action="searchResults.cfm" method="get" class="form">  -->
+            <div class="input-group w-50 my-2" >  
+                <input class="form-control border-end-0 border rounded-pill" 
+                      placeholder="Search.." 
+                      type="search" 
+                      value="" 
+                      id="searchInput">
+                <span class="ms-2">
+                  <button class="btn btn-outline-secondary bg-white border-start-0 border rounded-pill" type="submit">
+                    <i class="fa fa-search"></i>
                   </button>
-              </span>
+                </span>
             </div>
+          <!-- </form>  -->
           </cfif>
-
+          <!-- ADMIN -->
           <cfif structKeyExists(session, "roleId") AND session.roleId EQ 1>
             <div class="mx-2">
                 <a class="btn text-light" href="">
@@ -72,27 +81,31 @@
             </div>
       </header>
       <!---<cfif cgi.SCRIPT_NAME EQ "/home.cfm">  --->
+      <!-- USER -->
       <cfif structKeyExists(session, "roleId") AND session.roleId EQ 2> 
         <cfoutput>
-        <cfset local.getAllCategories = application.shoppingCart.fetchCategories()>   
-        <!---         <cfdump  var="#local.getAllCategories#"> --->
+        <cfset variables.getAllCategories = application.shoppingCart.fetchCategories()>
+        <cfset variables.key = generateSecretKey("AES")>
+        <!---         <cfdump  var="#variables.getAllCategories#"> --->
         <nav class="navbar-expand-lg categoriesNavbar sticky-top bg-light">
           <div class="container-fluid">
             <div class="collapse navbar-collapse" id="">
               <ul class="navbar-nav justify-content-evenly w-100">
-                <cfloop query="local.getAllCategories">
+                <cfloop query="variables.getAllCategories">
                   <!---  <cfdump  var="#getAllCategories.fldCategory_Id#"> --->
                   <li class="nav-item toggleContainer">
-                    <a class="nav-link" href="" id="#local.getAllCategories.fldCategory_Id#" role="button">
-                        #local.getAllCategories.fldCategoryName#
+                    <a class="nav-link" href="userCategory.cfm?categoryId=#getAllCategories.fldCategory_Id#" id="#variables.getAllCategories.fldCategory_Id#" role="button">
+                        #variables.getAllCategories.fldCategoryName#
                     </a>
                     <ul class="dropdown-menu">
-                      <cfset local.getAllSubCategories = application.shoppingCart.fetchSubCategories(categoryId =local.getAllCategories.fldCategory_Id)>
-                        <!---    <cfdump  var="#local.getAllSubCategories#"> --->
-                      <cfloop query="local.getAllSubCategories">
+                      <cfset variables.getAllSubCategories = application.shoppingCart.fetchSubCategories(categoryId =variables.getAllCategories.fldCategory_Id)>
+                        <!---    <cfdump  var="#variables.getAllSubCategories#"> --->
+                      <cfloop query="variables.getAllSubCategories">
+<!---                         <cfset variables.encryptedSubCatName = encrypt("#getAllSubCategories.fldSubCategoryName#","#variables.key#","AES","Base64")>       --->
                         <li>
-                          <a class="dropdown-item" >
-                            #local.getAllSubCategories.fldSubCategoryName#
+<!---                           <a class="dropdown-item" href = "userSubCategory.cfm?subCategoryId=#getAllSubCategories.fldSubCategory_Id#&subCategoryName=#variables.encryptedSubCatName#&subCategoryPin=#variables.key#" > --->
+                          <a class="dropdown-item" href = "userSubCategory.cfm?subCategoryId=#variables.getAllSubCategories.fldSubCategory_Id#&subCategoryName=#variables.getAllSubCategories.fldSubCategoryName#" >
+                            #variables.getAllSubCategories.fldSubCategoryName#
                           </a>
                         </li>
                       </cfloop>
@@ -105,11 +118,4 @@
         </nav>
         </cfoutput>
       </cfif>
-
-<!---       <cfdump  var="#cgi#"> 
-
-looop 1 href href="userCategories.cfm?categoryId=#getCategories.categoryId[i]#"
-
-looop 2 href="userSubCategories.cfm?subCategoryId=#getSubCategories.subCategoryId[i]#&subCategoryName=#getSubCategories.subCategoryName[i]#"
---->
 

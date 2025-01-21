@@ -62,6 +62,20 @@
         <cfreturn local.queryGetCategories>
     </cffunction>
 
+    <cffunction  name="fetchCategoryInfo" access = "public" returnType="query">
+        <cfargument name = "categoryId" type="integer" required="true">
+        <cfquery name="local.queryGetCategoriesInfo" datasource="ShoppingCart">
+            SELECT 
+                fldCategoryName
+            FROM 
+                tblcategory
+            WHERE                  
+                fldCategory_Id = <cfqueryparam value = "#arguments.categoryId#" cfsqltype = "integer">
+                AND fldActive = <cfqueryparam value="1" cfsqltype="INTEGER">
+        </cfquery> 
+        <cfreturn local.queryGetCategoriesInfo>
+    </cffunction>
+
     <cffunction  name="fetchBrands" access = "public" returnType="query">
         <cfquery name="local.queryGetBrands" datasource="ShoppingCart">
             SELECT 
@@ -95,6 +109,9 @@
 
     <cffunction  name="fetchProducts" access = "public" returnType="query">
         <cfargument name="subCategoryId" type="integer" required="true">
+        <cfargument  name="sortFlag" type="integer">
+        <cfargument  name="filterMin" type="integer">
+        <cfargument  name="filterMax" type="integer">
 
         <cfquery name="local.queryGetProducts" datasource="ShoppingCart">
             SELECT 
@@ -115,10 +132,23 @@
                 tblproductimages pi 
                 ON p.fldProduct_Id = pi.fldProductId 
             WHERE 
-                p.fldCreatedBy = <cfqueryparam value = "#session.userId#" cfsqltype = "integer"> 
-                AND p.fldSubCategoryId = <cfqueryparam value = "#arguments.subCategoryId#" cfsqltype = "VARCHAR">
+                p.fldSubCategoryId = <cfqueryparam value = "#arguments.subCategoryId#" cfsqltype = "VARCHAR">
                 AND p.fldActive = 1 
                 AND pi.fldDefaultImage = 1
+
+            <cfif structKeyExists(arguments, "sortFlag")>
+                <cfif arguments.sortFlag EQ 1>  
+                    ORDER BY
+                        p.fldPrice
+                        <cfelseif arguments.sortFlag EQ 2 >
+                    ORDER BY
+                        p.fldPrice DESC
+                </cfif>
+            </cfif>
+            <cfif structKeyExists(arguments, "filterMin") AND structKeyExists(arguments, "filterMax")>
+                AND p.fldPrice BETWEEN <cfqueryparam value = "#arguments.filterMin#" cfsqltype = "INTEGER"> 
+                AND <cfqueryparam value = "#arguments.filterMax#" cfsqltype = "INTEGER">
+            </cfif>
         </cfquery> 
         <cfreturn local.queryGetProducts>
     </cffunction>
