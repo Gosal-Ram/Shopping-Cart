@@ -8,6 +8,8 @@
         <cfquery name ="local.queryUserLogin" datasource="ShoppingCart">
             SELECT 
                 fldUser_Id,
+                fldFirstName,
+                fldLastName,
                 fldEmail,
                 fldPhone,
                 fldRoleId,
@@ -27,10 +29,15 @@
             <cfif local.queryUserLogin.fldHashedPassword EQ hash(arguments.password & local.queryUserLogin.fldUserSaltString, "SHA-512")>
                 <cfset local.loginResult = "User Login Successful">
                 <cfset session.isLoggedIn = true>
+                <cfset session.firstName = local.queryUserLogin.fldFirstName>
+                <cfset session.lastName = local.queryUserLogin.fldLastName>
                 <cfset session.userId = local.queryUserLogin.fldUser_Id>
-                <cfset session.userName = arguments.userInput>
                 <cfset session.roleId = local.queryUserLogin.fldRoleId>
-                <cflocation url = "category.cfm" addToken="no">   
+                <cfif local.queryUserLogin.fldRoleId EQ 1>
+                    <cflocation url = "category.cfm" addToken="no">
+                <cfelse>
+                    <cflocation url = "home.cfm" addToken="no">  
+                </cfif>
             <cfelse>
                 <cfset local.loginResult = "Invalid password">
             </cfif>
@@ -48,8 +55,9 @@
             FROM 
                 tblcategory
             WHERE 
-                fldCreatedBy = <cfqueryparam value = "#session.userId#" cfsqltype = "integer"> 
-                AND fldActive = <cfqueryparam value="1" cfsqltype="INTEGER">
+                <!---  fldCreatedBy = <cfqueryparam value = "#session.userId#" cfsqltype = "integer"> 
+                AND --->
+                fldActive = <cfqueryparam value="1" cfsqltype="INTEGER">
         </cfquery> 
         <cfreturn local.queryGetCategories>
     </cffunction>
@@ -76,8 +84,10 @@
             FROM 
                 tblSubCategory
             WHERE 
-                fldCreatedBy = <cfqueryparam value = "#session.userId#" cfsqltype = "integer"> 
-                AND fldCategoryId = <cfqueryparam value = "#arguments.categoryId#" cfsqltype = "VARCHAR">
+            
+                <!--- fldCreatedBy = <cfqueryparam value = "#session.userId#" cfsqltype = "integer"> 
+                AND --->
+                 fldCategoryId = <cfqueryparam value = "#arguments.categoryId#" cfsqltype = "VARCHAR">
                 AND fldActive = <cfqueryparam value="1" cfsqltype="INTEGER">
         </cfquery> 
         <cfreturn local.queryGetSubCategories>
@@ -111,6 +121,54 @@
                 AND pi.fldDefaultImage = 1
         </cfquery> 
         <cfreturn local.queryGetProducts>
+    </cffunction>
+
+    <cffunction  name="fetchProductsRandom" access = "public" returnType="array">
+        <cfquery name="local.queryGetProductsRandom" datasource="ShoppingCart">
+            SELECT 
+                p.fldProductName,
+                p.fldProduct_Id,
+                p.fldBrandId,
+                p.fldDescription,
+                p.fldPrice,
+                p.fldTax,
+                b.fldBrandName,
+                pi.fldImageFilename
+            FROM 
+                tblproduct p      
+            INNER JOIN
+                tblbrands b 
+                ON p.fldBrandId = b.fldBrand_Id
+            INNER JOIN
+                tblproductimages pi 
+                ON p.fldProduct_Id = pi.fldProductId 
+            WHERE 
+                p.fldActive = 1 
+                AND pi.fldDefaultImage = 1
+            ORDER BY RAND()
+        </cfquery>
+        <cfset local.randomProductsArray = []>
+        <cfloop query="local.queryGetProductsRandom">
+            <cfset local.randomProducts = { "productName" = "", 
+                                            "productId" = "", 
+                                            "brandId" = "",
+                                            "description" = "", 
+                                            "price" = "", 
+                                            "tax" = "", 
+                                            "brandName" = "", 
+                                            "imgName" = "" }>
+
+            <cfset local.randomProducts ["productName"] = local.queryGetProductsRandom.fldProductName>
+            <cfset local.randomProducts ["productId"] = local.queryGetProductsRandom.fldProduct_Id>
+            <cfset local.randomProducts ["brandId"] = local.queryGetProductsRandom.fldBrandId>
+            <cfset local.randomProducts ["description"] = local.queryGetProductsRandom.fldDescription>
+            <cfset local.randomProducts ["price"] = local.queryGetProductsRandom.fldPrice>
+            <cfset local.randomProducts ["tax"] = local.queryGetProductsRandom.fldTax>
+            <cfset local.randomProducts ["brandName"] = local.queryGetProductsRandom.fldBrandName>
+            <cfset local.randomProducts ["imgName"] = local.queryGetProductsRandom.fldImageFilename>
+            <cfset arrayAppend(local.randomProductsArray, local.randomProducts)>
+        </cfloop>
+        <cfreturn local.randomProductsArray>
     </cffunction>
 
     <cffunction  name="fetchProductImages" access = "remote" returnFormat = "JSON" returnType="query" >
@@ -619,17 +677,17 @@
             <cfset local.signUpResult = "Last Name is required.">
         </cfif>
 
-        <cfif isValid(email, arguments.emailId)>
+        <!--- <cfif isValid("email", arguments.emailId) NEQ 1>
             <cfset local.signUpResult = "Enter a valid Email ID.">
-        </cfif>
+        </cfif> --->
 
         <cfif arguments.pwd1 NEQ arguments.pwd2>
             <cfset local.signUpResult = "Passwords do not match.">
         </cfif>
 
-        <cfif isValid(telephone, arguments.phone, 10, 10)>
+        <!--- <cfif isValid("telephone", arguments.phone, 10, 10)>
             <cfset local.signUpResult = "Enter a valid 10-digit phone number.">
-        </cfif>
+        </cfif> --->
 
         <cfquery name ="local.queryUserUniqueCheck" datasource="ShoppingCart">
             SELECT 
@@ -646,32 +704,32 @@
         <cfif local.queryUserUniqueCheck.recordcount GT 0>
             <cfset local.signUpResult = "User mail or phone already exists">
         <cfelse>
+            <cfset local.saltString = generateSecretKey("AES")>
+            <cfset local.hashedPassword = hash(arguments.pwd1 & local.saltString, "SHA-512")>
             <cfquery name ="local.queryInsertUserDetails" datasource = "ShoppingCart">
                 INSERT INTO 
                     tblUser(fldFirstName,
                             fldLastName,
                             fldEmail,
                             fldPhone,
-                            fldRoleId)
+                            fldRoleId,
+                            fldHashedPassword,
+                            fldUserSaltString)
                 VALUES(
                     <cfqueryparam value = "#arguments.firstName#" cfsqltype = "VARCHAR">,
                     <cfqueryparam value = "#arguments.lastName#" cfsqltype = "VARCHAR">,
                     <cfqueryparam value = "#arguments.emailId#" cfsqltype = "VARCHAR">,
                     <cfqueryparam value = "#arguments.phone#" cfsqltype = "VARCHAR">,
-                    <cfqueryparam value = "2" cfsqltype = "INTEGER">
+                    <cfqueryparam value = "2" cfsqltype = "INTEGER">,
+                    <cfqueryparam value = "#local.hashedPassword#" cfsqltype = "VARCHAR">,
+                    <cfqueryparam value = "#local.saltString#" cfsqltype = "VARCHAR">
+
                 )
             </cfquery>
             <cfset local.signUpResult = "User Login Successful">
-            <cfset session.isLoggedIn = true>
-            <cfset session.firstName = arguments.firstName>
-            <cfset session.fldLastName = arguments.fldLastName>
-            <cfset session.roleId = local.queryInsertUserDetails.fldRoleId>
-            <cflocation url = "home.cfm" addToken="no">   
         </cfif>
         
         <cfreturn local.signUpResult>
     </cffunction>
-
-
 
 </cfcomponent>
