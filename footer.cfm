@@ -83,10 +83,10 @@
           <a href="" class="text-decoration-none text-white ms-1"><span class="">Help Center</span></a>
       </div>
       <div class="quickLink5 px-4">
-          <a href="" class="text-decoration-none text-white ms-1"><span class="">© 2007-2024 Flipkart.com</span></a>
+          <a href="" class="text-decoration-none text-white ms-1"><span class="">2007-2024 ShoppingCart.com</span></a>
       </div>
       <div class="quickLink5 px-4">
-          <img src="assets/images/payment-methods.svg" alt="cards"">
+          <img src="assets/images/payment-methods.svg" alt="cards">
       </div>
     </div>
   </div>
@@ -102,6 +102,8 @@
   <script src="assets/js/subCategory.js"></script>
 <cfelseif cgi.SCRIPT_NAME EQ "/product.cfm"> 
   <script src="assets/js/product.js"></script>
+<cfelseif cgi.SCRIPT_NAME EQ "/userProduct.cfm"> 
+  <script src="assets/js/userProduct.js"></script>
 <cfelseif cgi.SCRIPT_NAME EQ "/home.cfm"> 
   <script src="assets/js/home.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

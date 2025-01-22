@@ -5,6 +5,12 @@
 .filterInputContainer{
     width: 70%;
 }
+.searchInput{
+    width:100%;
+}
+.searchInputDiv{
+    width: 45%;
+}
 
 .toggleContainer:hover .dropdown-menu {
     display: block;
@@ -21,6 +27,21 @@
     text-wrap: nowrap;
     width: 100%;
     overflow: hidden;
+}
+.addToCartBtn{
+    background-color: #f8d340;
+}
+.addToCartBtn:hover{
+    background-color: #facc16;
+}
+.buyNowtBtn{
+    background-color: #fcb244;
+}
+.buyNowtBtn:hover{
+    background-color: #f3960b;
+}
+.homeImgContainer{
+    width: 70%;
 }
 /* footer */
 
