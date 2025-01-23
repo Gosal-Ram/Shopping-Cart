@@ -201,7 +201,7 @@ function editProductOpenModal(fldProduct_Id){
         type:"POST",
         url: "component/shoppingcart.cfc?",
         data:{productId:fldProduct_Id,
-              method : "fetchProductInfo"
+              method : "fetchProducts"
         },
         success:function(response){
             // alert(response)
