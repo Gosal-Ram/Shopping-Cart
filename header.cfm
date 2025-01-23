@@ -21,7 +21,8 @@
         </cfif> 
         <link rel="stylesheet" href="assets/bootstrap-5.3.3-dist/css/bootstrap.min.css">
         <link rel="stylesheet" href="assets/bootstrap-5.3.3-dist/js/bootstrap.bundle.js">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+        
         <link rel="stylesheet" href="assets/css/shoppingCart.css">
         <link href="assets/images/shopping-cart.png" rel="icon">
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
@@ -38,8 +39,8 @@
           </div>
           <!-- USER -->
           <cfif structKeyExists(session, "roleId") AND session.roleId EQ 2>
-             <form action="searchResults.cfm" method="get" class="form"> 
-            <div class="input-group w-50 my-2" >  
+             <form action="searchResults.cfm" method="get" class="searchInputDiv"> 
+            <div class="input-group my-2 " >  
                 <input class="form-control border-end-0 border rounded-pill" 
                       placeholder="Search.." 
                       type="search" 

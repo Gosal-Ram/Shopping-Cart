@@ -108,10 +108,12 @@
     </cffunction>
 
     <cffunction  name="fetchProducts" access = "public" returnType="query">
-        <cfargument name="subCategoryId" type="integer" required="true">
-        <cfargument  name="sortFlag" type="integer">
-        <cfargument  name="filterMin" type="integer">
-        <cfargument  name="filterMax" type="integer">
+        <cfargument name="subCategoryId" type="string">
+        <cfargument  name="sortFlag" type="string">
+        <cfargument  name="filterMin" type="string">
+        <cfargument  name="filterMax" type="string">
+        <cfargument  name="searchInput" type="string">
+
 
         <cfquery name="local.queryGetProducts" datasource="ShoppingCart">
             SELECT 
@@ -125,17 +127,18 @@
                 pi.fldImageFilename
             FROM 
                 tblproduct p      
-            INNER JOIN
-                tblbrands b 
-                ON p.fldBrandId = b.fldBrand_Id
-            INNER JOIN
-                tblproductimages pi 
-                ON p.fldProduct_Id = pi.fldProductId 
+                INNER JOIN tblbrands b ON p.fldBrandId = b.fldBrand_Id
+                INNER JOIN tblproductimages pi ON p.fldProduct_Id = pi.fldProductId 
             WHERE 
-                p.fldSubCategoryId = <cfqueryparam value = "#arguments.subCategoryId#" cfsqltype = "VARCHAR">
-                AND p.fldActive = 1 
+                p.fldActive = 1 
                 AND pi.fldDefaultImage = 1
 
+            <cfif structKeyExists(arguments, "subCategoryId") AND  len(trim(arguments.subCategoryId)) AND arguments.subCategoryId NEQ 0>
+				AND p.fldSubCategoryId = <cfqueryparam value = "#arguments.subCategoryId#" cfsqltype = "VARCHAR">
+			<cfelseif structKeyExists(arguments, "productId") AND  len(trim(arguments.productId)) AND arguments.productId NEQ 0>
+				AND p.fldProduct_Id = <cfqueryparam value = "#arguments.productId#" cfsqltype = "integer">
+			</cfif>
+                
             <cfif structKeyExists(arguments, "sortFlag")>
                 <cfif arguments.sortFlag EQ 1>  
                     ORDER BY
@@ -145,10 +148,20 @@
                         p.fldPrice DESC
                 </cfif>
             </cfif>
-            <cfif structKeyExists(arguments, "filterMin") AND structKeyExists(arguments, "filterMax")>
+
+            <cfif structKeyExists(arguments, "filterMin") 
+                AND structKeyExists(arguments, "filterMax")
+                AND LEN(TRIM(arguments.filterMin)) GT 0 
+                AND LEN(TRIM(arguments.filterMax)) GT 0 >
                 AND p.fldPrice BETWEEN <cfqueryparam value = "#arguments.filterMin#" cfsqltype = "INTEGER"> 
                 AND <cfqueryparam value = "#arguments.filterMax#" cfsqltype = "INTEGER">
             </cfif>
+            
+            <cfif structKeyExists(arguments, "searchInput") AND len(trim(arguments.searchInput))>
+					AND (p.fldProductName LIKE <cfqueryparam value = "%#arguments.searchInput#%" cfsqltype = "varchar">
+						OR p.fldDescription LIKE <cfqueryparam value = "%#arguments.searchInput#%" cfsqltype = "varchar">
+						OR b.fldBrandName LIKE <cfqueryparam value = "%#arguments.searchInput#%" cfsqltype = "varchar">)
+			</cfif>
         </cfquery> 
         <cfreturn local.queryGetProducts>
     </cffunction>
@@ -176,6 +189,7 @@
                 p.fldActive = 1 
                 AND pi.fldDefaultImage = 1
             ORDER BY RAND()
+            LIMIT 8
         </cfquery>
         <cfset local.randomProductsArray = []>
         <cfloop query="local.queryGetProductsRandom">
@@ -186,7 +200,7 @@
                                             "price" = "", 
                                             "tax" = "", 
                                             "brandName" = "", 
-                                            "imgName" = "" }>
+                                            "imgName" = ""}>
 
             <cfset local.randomProducts ["productName"] = local.queryGetProductsRandom.fldProductName>
             <cfset local.randomProducts ["productId"] = local.queryGetProductsRandom.fldProduct_Id>
@@ -424,10 +438,10 @@
                 action="uploadall"
                 destination="#expandpath("../assets/images/productImages")#"
                 nameconflict="MakeUnique"
-                accept="image/png,image/jpeg,.png,.jpg,.jpeg"
+                accept="image/png,image/jpeg,.png,.jpg,.jpeg,.avif"
                 strict="true"
                 result="local.productUploadedImages"
-                allowedextensions=".png,.jpg,.jpeg">
+                allowedextensions=".png,.jpg,.jpeg,.avif">
             
             <cfquery name="local.queryAddProduct" datasource="ShoppingCart" result = "local.resultQueryAddProduct">
                 INSERT INTO 
@@ -565,10 +579,10 @@
                 action="uploadall"
                 destination="#expandpath("../assets/images/productImages")#"
                 nameconflict="MakeUnique"
-                accept="image/png,image/jpeg,.jpeg"
+                accept="image/png,image/jpeg,.jpeg,.avif"
                 strict="true"
                 result="local.productUploadedImages"
-                allowedextensions=".png,.jpg,.jpeg">
+                allowedextensions=".png,.jpg,.jpeg,.avif">
 
             <cfquery name="local.queryEditProduct" datasource="ShoppingCart">
                 UPDATE 
