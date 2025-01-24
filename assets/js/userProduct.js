@@ -1,3 +1,6 @@
 function changeMainImage(src) {
-    document.getElementById('mainProductImage').src = src;
+    const activeItem = document.querySelector(".carousel-item.active img");
+    if (activeItem) {
+        activeItem.src = src;
+    }
 }

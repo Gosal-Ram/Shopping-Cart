@@ -9,7 +9,6 @@
     <div class="container my-5">
         <div class="row">
             <div class="col-md-6">
-                <!-- Product Image Carousel -->
                 <div class="d-flex">
                     <div class="me-3">
                         <div class="d-flex flex-column">
@@ -19,13 +18,11 @@
                                 alt="Product Thumbnail" 
                                 style="height: 65px; width: 90px;"
                                 onmouseover="changeMainImage(this.src)">
-                                <!-- onclick="changeMainImage(this.src)"> -->
                             </cfloop>
                         </div>
                     </div>
                     <div id="productCarousel" class="carousel slide" data-bs-ride="carousel" style="width: 100%;">
                         <div class="carousel-inner">
-                            <!-- Main Image -->
                             <div class="carousel-item active">
                                 <img src="assets/images/productImages/#variables.getAllProducts.fldImageFilename#" 
                                 id = "mainProductImage"
@@ -55,7 +52,8 @@
                 <cfloop query="variables.getAllProducts">
                 <h2 class="product-title">#variables.getAllProducts.fldProductName#</h2>
                 <p class="text-muted">Brand: #variables.getAllProducts.fldBrandName#</p>
-                <h3 class="text-danger"><i class="fa-solid fa-indian-rupee-sign me-1"></i>#variables.getAllProducts.fldPrice#</h3>
+                <h3 class="text-dark"><i class="fa-solid fa-indian-rupee-sign me-1"></i>#variables.getAllProducts.fldPrice#</h3>
+                <p class="text-success">Tax : <i class="fa-solid fa-indian-rupee-sign me-1"></i>#variables.getAllProducts.fldTax#</p>
                 <p class="product-description mt-4">#variables.getAllProducts.fldDescription#</p>
 
                 <div class="mt-4">

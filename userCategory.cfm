@@ -1,17 +1,16 @@
 <cfinclude template="header.cfm">
 <cfset variables.categoryId = url.categoryId>
-<!--- <cfdump  var="#variables.categoryId#"> --->
 <cfoutput>
 <main>
     <div class="container-fluid my-3 ms-3">
-        <cfset variables.getCategoryNames = application.shoppingCart.fetchCategoryInfo(variables.categoryId)>
-        <!---<cfdump  var="#variables.getCategoryNames.fldCategoryName#">--->
+        <cfset variables.getCategoryNames = application.shoppingCart.fetchCategories(variables.categoryId)>
         <h2>#variables.getCategoryNames.fldCategoryName#</h2>
         <cfset variables.getAllSubCategories = application.shoppingCart.fetchSubCategories(variables.categoryId)>
         <cfloop query="variables.getAllSubCategories">
+            <a class="h4 text-decoration-none" href = "userSubCategory.cfm?subCategoryId=#variables.getAllSubCategories.fldSubCategory_Id#&subCategoryName=#variables.getAllSubCategories.fldSubCategoryName#" >
             <h4> #variables.getAllSubCategories.fldSubCategoryName#</h4>
+            </a>
             <cfset variables.getAllProducts = application.shoppingCart.fetchProducts(subCategoryId = variables.getAllSubCategories.fldSubCategory_Id)>
-            <!---<cfdump  var="#variables.getAllProducts#"> --->
             <div class= "productListingContainer d-flex flex-sm-wrap ms-5 mb-3 ">
                 <cfloop query="variables.getAllProducts">
                     <a  class = "card m-2 p-2 productCard text-decoration-none" href = "userProduct.cfm?productId=#variables.getAllProducts.fldProduct_Id#">

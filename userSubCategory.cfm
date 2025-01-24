@@ -1,12 +1,10 @@
 <cfinclude  template="header.cfm">
 
-<!--- <cfdump  var="#session#"> --->
 <cfset variables.subCategoryId = url.subCategoryId>
-<!---     <cfdump  var="#variables.subCategoryId#"> --->
 <cfset variables.subCategoryName = url.subCategoryName>
 <cfset variables.getAllProducts = application.shoppingCart.fetchProducts(subCategoryId = variables.subCategoryId)>
 
-<!--- <cfdump  var="#form#"> --->
+
 <cfif structKeyExists(form, "sortASC")>
     <cfset variables.sortFlag = 1>
     <cfset variables.getAllProducts = application.shoppingCart.fetchProducts(subCategoryId = variables.subCategoryId,
@@ -16,6 +14,7 @@
     <cfset variables.getAllProducts = application.shoppingCart.fetchProducts(subCategoryId = variables.subCategoryId,
                                                                             sortFlag = variables.sortFlag)>
 </cfif>
+
 <cfif structKeyExists(form, "filterBtn")>
     <cfset variables.filterMin = form.filterMin>
     <cfset variables.filterMax = form.filterMax>
@@ -23,7 +22,6 @@
                                                                             filterMin = variables.filterMin,
                                                                             filterMax = variables.filterMax)>
 </cfif>
-<!---             <cfdump  var="#variables.getAllProducts#"> --->
 <cfoutput>
     <main>
         <form method ="post"> 

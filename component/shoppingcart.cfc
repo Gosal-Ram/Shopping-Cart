@@ -20,7 +20,7 @@
             WHERE(
                 fldEmail = <cfqueryparam value = "#arguments.userInput#" cfsqltype="VARCHAR"> 
                 OR fldPhone = <cfqueryparam value = "#arguments.userInput#" cfsqltype="VARCHAR">)
-                AND fldActive = <cfqueryparam value="1" cfsqltype="INTEGER">       
+                AND fldActive = 1       
         </cfquery>
 
         <cfif Len(Trim(arguments.userInput)) EQ 0 OR Len(Trim(arguments.password)) EQ 0>
@@ -48,6 +48,7 @@
     </cffunction>
 
     <cffunction  name="fetchCategories" access = "public" returnType="query">
+        <cfargument name = "categoryId" type="string" required="false">
         <cfquery name="local.queryGetCategories" datasource="ShoppingCart">
             SELECT 
                 fldCategoryName,
@@ -55,25 +56,12 @@
             FROM 
                 tblcategory
             WHERE 
-                <!---  fldCreatedBy = <cfqueryparam value = "#session.userId#" cfsqltype = "integer"> 
-                AND --->
-                fldActive = <cfqueryparam value="1" cfsqltype="INTEGER">
+                fldActive = 1
+                <cfif structKeyExists(arguments, "categoryId") AND len(trim(arguments.categoryId)) NEQ 0>
+                    AND fldCategory_Id = <cfqueryparam value = "#arguments.categoryId#" cfsqltype = "integer">
+                </cfif>
         </cfquery> 
         <cfreturn local.queryGetCategories>
-    </cffunction>
-
-    <cffunction  name="fetchCategoryInfo" access = "public" returnType="query">
-        <cfargument name = "categoryId" type="integer" required="true">
-        <cfquery name="local.queryGetCategoriesInfo" datasource="ShoppingCart">
-            SELECT 
-                fldCategoryName
-            FROM 
-                tblcategory
-            WHERE                  
-                fldCategory_Id = <cfqueryparam value = "#arguments.categoryId#" cfsqltype = "integer">
-                AND fldActive = <cfqueryparam value="1" cfsqltype="INTEGER">
-        </cfquery> 
-        <cfreturn local.queryGetCategoriesInfo>
     </cffunction>
 
     <cffunction  name="fetchBrands" access = "public" returnType="query">
@@ -84,7 +72,7 @@
             FROM 
                 tblbrands
             WHERE 
-                fldActive = <cfqueryparam value="1" cfsqltype="INTEGER">
+                fldActive = 1
         </cfquery> 
         <cfreturn local.queryGetBrands>
     </cffunction>
@@ -98,22 +86,20 @@
             FROM 
                 tblSubCategory
             WHERE 
-            
-                <!--- fldCreatedBy = <cfqueryparam value = "#session.userId#" cfsqltype = "integer"> 
-                AND --->
-                 fldCategoryId = <cfqueryparam value = "#arguments.categoryId#" cfsqltype = "VARCHAR">
-                AND fldActive = <cfqueryparam value="1" cfsqltype="INTEGER">
+                fldCategoryId = <cfqueryparam value = "#arguments.categoryId#" cfsqltype = "VARCHAR">
+                AND fldActive = 1
         </cfquery> 
         <cfreturn local.queryGetSubCategories>
     </cffunction>
 
-    <cffunction  name="fetchProducts" access = "public" returnType="query">
-        <cfargument name="subCategoryId" type="string">
-        <cfargument  name="sortFlag" type="string">
-        <cfargument  name="filterMin" type="string">
-        <cfargument  name="filterMax" type="string">
-        <cfargument  name="searchInput" type="string">
-
+    <cffunction  name="fetchProducts" access = "remote" returnFormat = "JSON" returnType="query">
+        <cfargument name="subCategoryId" type="string" required="false">
+        <cfargument name="sortFlag" type="string" required="false">
+        <cfargument name="filterMin" type="string" required="false">
+        <cfargument name="filterMax" type="string" required="false">
+        <cfargument name="searchInput" type="string" required="false">
+        <cfargument name="random" type="string" required="false">
+        <cfargument name="productId" type="string" required="false">
 
         <cfquery name="local.queryGetProducts" datasource="ShoppingCart">
             SELECT 
@@ -132,6 +118,10 @@
             WHERE 
                 p.fldActive = 1 
                 AND pi.fldDefaultImage = 1
+
+            <cfif structKeyExists(arguments, "productId") AND Len(trim(arguments.productId)) AND arguments.productId NEQ 0>
+                AND fldProduct_Id = <cfqueryparam value = "#arguments.productId#" cfsqltype = "VARCHAR">
+            </cfif>
 
             <cfif structKeyExists(arguments, "subCategoryId") AND  len(trim(arguments.subCategoryId)) AND arguments.subCategoryId NEQ 0>
 				AND p.fldSubCategoryId = <cfqueryparam value = "#arguments.subCategoryId#" cfsqltype = "VARCHAR">
@@ -162,11 +152,16 @@
 						OR p.fldDescription LIKE <cfqueryparam value = "%#arguments.searchInput#%" cfsqltype = "varchar">
 						OR b.fldBrandName LIKE <cfqueryparam value = "%#arguments.searchInput#%" cfsqltype = "varchar">)
 			</cfif>
+
+            <cfif structKeyExists(arguments, "random") AND Len(trim(arguments.random)) GT 0 AND  arguments.random EQ 1>
+                ORDER BY RAND()
+                LIMIT 8
+            </cfif>
         </cfquery> 
         <cfreturn local.queryGetProducts>
     </cffunction>
 
-    <cffunction  name="fetchProductsRandom" access = "public" returnType="array">
+    <!---     <cffunction  name="fetchProductsRandom" access = "public" returnType="array">
         <cfquery name="local.queryGetProductsRandom" datasource="ShoppingCart">
             SELECT 
                 p.fldProductName,
@@ -213,7 +208,7 @@
             <cfset arrayAppend(local.randomProductsArray, local.randomProducts)>
         </cfloop>
         <cfreturn local.randomProductsArray>
-    </cffunction>
+    </cffunction> --->
 
     <cffunction  name="fetchProductImages" access = "remote" returnFormat = "JSON" returnType="query" >
         <cfargument  name="productId" type="integer" required="true">
@@ -231,27 +226,6 @@
                 AND fldActive = 1
         </cfquery> 
         <cfreturn local.queryGetProductImages>
-    </cffunction>
-
-    <cffunction  name="fetchProductInfo" access = "remote" returnFormat = "JSON" returnType="query">
-        <cfargument name="productId" type="integer" required="true">
-        <cfquery name="local.queryGetProductInfo" datasource="ShoppingCart">
-            SELECT 
-                fldProductName,
-                fldProduct_Id,
-                fldBrandId,
-                fldDescription,
-                fldPrice,
-                fldTax
-            FROM 
-                tblproduct       
-            WHERE 
-                fldCreatedBy = <cfqueryparam value = "#session.userId#" cfsqltype = "integer"> 
-                AND fldProduct_Id = <cfqueryparam value = "#arguments.productId#" cfsqltype = "VARCHAR">
-                AND fldActive = 1 
-        </cfquery> 
-        <cfreturn local.queryGetProductInfo>
-
     </cffunction>
 
     <cffunction  name="categoryUniqueCheck" access = "public" returnType="numeric">

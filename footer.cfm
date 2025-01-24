@@ -92,23 +92,31 @@
   </div>
 </footer>
 
-<cfif cgi.SCRIPT_NAME EQ "/login.cfm">
-  <script src="assets/js/login.js"></script>
-<cfelseif cgi.SCRIPT_NAME EQ "/signup.cfm"> 
-  <script src="assets/js/signup.js"></script>
-<cfelseif cgi.SCRIPT_NAME EQ "/category.cfm"> 
-  <script src="assets/js/category.js"></script>
-<cfelseif cgi.SCRIPT_NAME EQ "/subCategory.cfm"> 
-  <script src="assets/js/subCategory.js"></script>
-<cfelseif cgi.SCRIPT_NAME EQ "/product.cfm"> 
-  <script src="assets/js/product.js"></script>
-<cfelseif cgi.SCRIPT_NAME EQ "/userProduct.cfm"> 
-  <script src="assets/js/userProduct.js"></script>
-<cfelseif cgi.SCRIPT_NAME EQ "/home.cfm"> 
-  <script src="assets/js/home.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<cfelse>
-</cfif> 
+<cfswitch expression="#cgi.SCRIPT_NAME#">
+  <cfcase value="/login.cfm">
+    <script src="assets/js/login.js"></script>
+  </cfcase>
+  <cfcase value="/signup.cfm">
+    <script src="assets/js/signup.js"></script>
+  </cfcase>
+  <cfcase value="/category.cfm">
+    <script src="assets/js/category.js"></script>
+  </cfcase>
+  <cfcase value="/subCategory.cfm">
+    <script src="assets/js/subCategory.js"></script>
+  </cfcase>
+  <cfcase value="/product.cfm">
+    <script src="assets/js/product.js"></script>
+  </cfcase>
+  <cfcase value="/userProduct.cfm">
+    <script src="assets/js/userProduct.js"></script>
+  </cfcase>
+  <cfcase value="/home.cfm">
+    <script src="assets/js/home.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </cfcase>
+</cfswitch>
+ 
   <script src="assets/js/common.js"></script>
     </body>
 </html>
