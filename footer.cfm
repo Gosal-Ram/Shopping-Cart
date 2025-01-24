@@ -112,7 +112,6 @@
     <script src="assets/js/userProduct.js"></script>
   </cfcase>
   <cfcase value="/home.cfm">
-    <script src="assets/js/home.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   </cfcase>
 </cfswitch>

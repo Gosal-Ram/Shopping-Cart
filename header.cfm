@@ -129,17 +129,23 @@
             <div class="container-fluid">
               <div class="collapse navbar-collapse">
                 <ul class="navbar-nav justify-content-evenly w-100">
-                  <cfloop query="variables.getAllCategories">
+                  <!--- <cfloop query="variables.getAllCategories"> --->
+                  <cfloop array="#variables.getAllCategories#" item="item">
+                    <cfset variables.encryptedCategoryId = encrypt("#item.categoryId#",application.key,"AES","Base64")>
+                    <cfset variables.encodedCategoryId = encodeForURL(variables.encryptedCategoryId)>
                     <li class="nav-item toggleContainer">
-                      <a class="nav-link" href="userCategory.cfm?categoryId=#getAllCategories.fldCategory_Id#" id="#variables.getAllCategories.fldCategory_Id#" role="button">
-                          #variables.getAllCategories.fldCategoryName#
+                      <a class="nav-link" href="userCategory.cfm?categoryId=#variables.encodedCategoryId#" id="#item.categoryId#" role="button">
+                          #item.categoryName#
                       </a>
                       <ul class="dropdown-menu">
-                        <cfset variables.getAllSubCategories = application.shoppingCart.fetchSubCategories(categoryId =variables.getAllCategories.fldCategory_Id)>
-                        <cfloop query="variables.getAllSubCategories">   
+                        <cfset variables.getAllSubCategories = application.shoppingCart.fetchSubCategories(categoryId ="#item.categoryId#")>
+                        <!---   <cfloop query="variables.getAllSubCategories">    --->
+                        <cfloop array="#variables.getAllSubCategories#" item="item">
+                            <cfset variables.encryptedSubCategoryId = encrypt("#item.subCategoryId#",application.key,"AES","Base64")>
+                            <cfset variables.encodedSubCategoryId = encodeForURL(variables.encryptedSubCategoryId)>
                           <li>
-                            <a class="dropdown-item" href = "userSubCategory.cfm?subCategoryId=#variables.getAllSubCategories.fldSubCategory_Id#&subCategoryName=#variables.getAllSubCategories.fldSubCategoryName#" >
-                              #variables.getAllSubCategories.fldSubCategoryName#
+                            <a class="dropdown-item" href = "userSubCategory.cfm?subCategoryId=#encodedSubCategoryId#" >
+                              #item.subCategoryName#
                             </a>
                           </li>
                         </cfloop>

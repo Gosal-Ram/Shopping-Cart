@@ -1,12 +1,44 @@
 <cfinclude template="header.cfm">
-
-<cfset variables.productId = url.productId>
+<cfset variables.productId = decrypt(url.productId,application.key,"AES","Base64")>
 <cfset variables.getAllProducts = application.shoppingCart.fetchProducts(productId = variables.productId)>
 <cfset variables.getAllProductImages = application.shoppingCart.fetchProductImages(productId = variables.productId)>
+<cfset variables.subCategoryId = variables.getAllProducts.fldSubCategoryId>
+
+<cfset variables.getCategoryId = application.shoppingCart.fetchSubCategories(subCategoryId = variables.subCategoryId)>
+<cfset variables.categoryId = #variables.getCategoryId[1].categoryId#>
+
+<cfset variables.getCategoryName = application.shoppingCart.fetchCategories(variables.categoryId)>
+<cfset variables.categoryName = #variables.getCategoryName[1].categoryName#>
+<cfset variables.getSubCategoryName = application.shoppingCart.fetchSubCategories(categoryId = variables.categoryId)>
+<cfset variables.subCategoryName = #variables.getSubCategoryName[1].subCategoryName#>
+
+
+<cfset variables.encryptedCategoryId = encrypt("#variables.categoryId#",application.key,"AES","Base64")>
+<cfset variables.encodedCategoryId = encodeForURL(variables.encryptedCategoryId)>
+
+<cfset variables.encryptedSubCategoryId = encrypt("#variables.subCategoryId#",application.key,"AES","Base64")>
+<cfset variables.encodedSubCategoryId = encodeForURL(variables.encryptedSubCategoryId)>
+
+<cfdump  var="#variables.categoryName#">
+<cfdump  var="#variables.subCategoryName#">
+
+<cfdump  var="#variables.categoryId#">
+<cfdump  var="#variables.getCategoryId#">
+
+<cfdump  var="#variables.subCategoryId#">
 
 <cfoutput>
 <main>
     <div class="container my-5">
+           <!-- Breadcrumb Navigation -->
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="home.cfm">Home</a></li>
+                <li class="breadcrumb-item"><a  href="userCategory.cfm?categoryId=#variables.encodedCategoryId#"> #variables.categoryName# </a></li>
+                <li class="breadcrumb-item"><a  href="userSubCategory.cfm?subCategoryId=#variables.encodedSubCategoryId#"> #variables.subCategoryName# </a></li>
+                <li class="breadcrumb-item active" aria-current="page"> <!--- #variables.productName# ---> </li>
+            </ol>
+        </nav>
         <div class="row">
             <div class="col-md-6">
                 <div class="d-flex">
@@ -15,7 +47,7 @@
                             <cfloop query="variables.getAllProductImages">
                                 <img src="assets/images/productImages/#variables.getAllProductImages.fldImageFilename#" 
                                 class="img-thumbnail mb-2" 
-                                alt="Product Thumbnail" 
+                                alt="" 
                                 style="height: 65px; width: 90px;"
                                 onmouseover="changeMainImage(this.src)">
                             </cfloop>
@@ -27,7 +59,7 @@
                                 <img src="assets/images/productImages/#variables.getAllProducts.fldImageFilename#" 
                                 id = "mainProductImage"
                                 class="d-block w-100 mainImg" 
-                                alt="Product Image" 
+                                alt="" 
                                 style="height: 400px; object-fit: contain;">
                             </div>
                             <cfloop query="variables.getAllProductImages">

@@ -1,19 +1,26 @@
 <cfinclude template="header.cfm">
-<cfset variables.categoryId = url.categoryId>
+<cfset variables.categoryId = decrypt(url.categoryId,application.key,"AES","Base64")>
 <cfoutput>
 <main>
     <div class="container-fluid my-3 ms-3">
         <cfset variables.getCategoryNames = application.shoppingCart.fetchCategories(variables.categoryId)>
-        <h2>#variables.getCategoryNames.fldCategoryName#</h2>
+        <h2>#variables.getCategoryNames[1].categoryName#</h2> 
+        <!---  <cfdump  var="#variables.getCategoryNames#">  --->
         <cfset variables.getAllSubCategories = application.shoppingCart.fetchSubCategories(variables.categoryId)>
-        <cfloop query="variables.getAllSubCategories">
-            <a class="h4 text-decoration-none" href = "userSubCategory.cfm?subCategoryId=#variables.getAllSubCategories.fldSubCategory_Id#&subCategoryName=#variables.getAllSubCategories.fldSubCategoryName#" >
-            <h4> #variables.getAllSubCategories.fldSubCategoryName#</h4>
+        <cfloop array="#variables.getAllSubCategories#" item="item">
+        <!--- <cfloop query="variables.getAllSubCategories"> --->
+            <cfset variables.encryptedSubCategoryId = encrypt("#item.subCategoryId#",application.key,"AES","Base64")>
+            <cfset variables.encodedSubCategoryId = encodeForURL(variables.encryptedSubCategoryId)>
+            <a class="h4 text-decoration-none" href = "userSubCategory.cfm?subCategoryId=#variables.encodedSubCategoryId#" >
+<!---             <a class="h4 text-decoration-none" href = "userSubCategory.cfm?subCategoryId=#item.subCategoryId#&subCategoryName=#item.subCategoryName#" > --->
+            <h4> #item.subCategoryName#</h4>
             </a>
-            <cfset variables.getAllProducts = application.shoppingCart.fetchProducts(subCategoryId = variables.getAllSubCategories.fldSubCategory_Id)>
+            <cfset variables.getAllProducts = application.shoppingCart.fetchProducts(subCategoryId = #item.subCategoryId#)>
             <div class= "productListingContainer d-flex flex-sm-wrap ms-5 mb-3 ">
                 <cfloop query="variables.getAllProducts">
-                    <a  class = "card m-2 p-2 productCard text-decoration-none" href = "userProduct.cfm?productId=#variables.getAllProducts.fldProduct_Id#">
+                    <cfset variables.encryptedProductId = encrypt("#getAllProducts.fldProduct_Id#",application.key,"AES","Base64")>
+                    <cfset variables.encodedProductId = encodeForURL(variables.encryptedProductId)>
+                    <a  class = "card m-2 p-2 productCard text-decoration-none" href = "userProduct.cfm?productId=#variables.encodedProductId#">
                     <div>
                         <img src="./assets/images/productImages/#variables.getAllProducts.fldImageFilename#" 
                             class="w-100"
