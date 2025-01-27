@@ -68,11 +68,14 @@
               </form>  
             </cfif>
             <cfif structKeyExists(session, "roleId") AND structKeyExists(session, "isLoggedIn")>
+              <cfset variables.getUserCartDetails = application.shoppingCart.addToCart(userId = session.userId)>
+              <cfset variables.userCartCount = variables.getUserCartDetails.cartItemsCount> 
+              <!---               <cfdump  var="#variables.userCartCount#"> --->
               <cfif session.roleId EQ 1 AND session.isLoggedIn EQ true>
                 <!-- ADMIN -->
                 <div class="mx-2">
                   <span class="fw-semibold text-light">Hello #session.firstName#!</span>
-                    <a class="btn text-light" href="">
+                    <a class="btn text-light" href="category.cfm">
                       <img src="./assets/images/user.png" alt="" width="18" height="18" class="">
                       ADMIN
                     </a>
@@ -84,17 +87,16 @@
               <cfelseif session.roleId EQ 2 AND session.isLoggedIn EQ true>
                 <!-- USER LOGGED IN -->
                 <div class="mx-2">
-
                   <button type="button" class="btn btn-primary position-relative">
                     CART
                     <i class="bi bi-cart4"></i>
                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                      8
+                      #variables.userCartCount# 
                       <span class="visually-hidden">unread messages</span>
                     </span>
                   </button>
 
-                    <a class="btn text-light" href="">
+                    <a class="btn text-light" href="home.cfm">
                       <img src="./assets/images/user.png" alt="" width="18" height="18" class="">
                       <span class="fw-semibold text-light">Hello #session.firstName# !</span>
                     </a>
@@ -129,7 +131,6 @@
             <div class="container-fluid">
               <div class="collapse navbar-collapse">
                 <ul class="navbar-nav justify-content-evenly w-100">
-                  <!--- <cfloop query="variables.getAllCategories"> --->
                   <cfloop array="#variables.getAllCategories#" item="item">
                     <cfset variables.encryptedCategoryId = encrypt("#item.categoryId#",application.key,"AES","Base64")>
                     <cfset variables.encodedCategoryId = encodeForURL(variables.encryptedCategoryId)>
@@ -139,7 +140,6 @@
                       </a>
                       <ul class="dropdown-menu">
                         <cfset variables.getAllSubCategories = application.shoppingCart.fetchSubCategories(categoryId ="#item.categoryId#")>
-                        <!---   <cfloop query="variables.getAllSubCategories">    --->
                         <cfloop array="#variables.getAllSubCategories#" item="item">
                             <cfset variables.encryptedSubCategoryId = encrypt("#item.subCategoryId#",application.key,"AES","Base64")>
                             <cfset variables.encodedSubCategoryId = encodeForURL(variables.encryptedSubCategoryId)>
