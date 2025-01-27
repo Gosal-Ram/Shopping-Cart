@@ -3,7 +3,8 @@
     <cfset this.sessionManagement = "true">
     <cfset this.dataSource = "ShoppingCart">
     <cffunction  name="onApplicationStart" returnType = "boolean">
-        <cfset application.shoppingCart = createObject("component","component.shoppingcart")>
+        <cfset application.shoppingCart = createObject("component","component.shoppingcart")>  
+        <cfset application.key = generateSecretKey("AES")>
         <cfreturn true>
     </cffunction>
 

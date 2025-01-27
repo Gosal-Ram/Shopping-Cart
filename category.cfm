@@ -14,21 +14,25 @@
     <cfset variables.queryGetCategories = application.shoppingCart.fetchCategories()>
     <cfoutput>
       <span class="text-success" id ="categoryFunctionResult"></span>        
-      <cfloop query="variables.queryGetCategories">
-      <div class = "d-flex justify-content-between align-items-center" id = "#variables.queryGetCategories.fldCategory_Id#">
-        <div id = "categoryname-#variables.queryGetCategories.fldCategory_Id#">#variables.queryGetCategories.fldCategoryName#</div>
+<!---       <cfloop query="variables.queryGetCategories"> --->
+      <cfloop array="#variables.queryGetCategories#" item="item">
+      <cfset variables.encryptedCategoryId = encrypt("#item.categoryId#",application.key,"AES","Base64")>
+      <cfset variables.encodedCategoryId = encodeForURL(variables.encryptedCategoryId)>
+<!---       <cfdump  var="#variables.decryptedCategoryId#">     --->
+      <div class = "d-flex justify-content-between align-items-center" id = "#item.categoryId#">
+        <div id = "categoryname-#item.categoryId#">#item.categoryName#</div>
         <div>
           <button type="button" 
-                  onclick = "editCategory(#variables.queryGetCategories.fldCategory_Id#)" 
+                  onclick = "editCategory(#item.categoryId#)" 
                   class = "btn btn-outline-info  px-3 my-2" 
                   data-bs-toggle="modal" 
                   data-bs-target="##staticBackdrop">
             <img src="./assets/images/editing.png" alt="" width="18" height="18" class="">
           </button>
-          <button class = "btn btn-outline-info  px-3 my-2" onClick = "deleteCategory(#variables.queryGetCategories.fldCategory_Id#)">
+          <button class = "btn btn-outline-info  px-3 my-2" onClick = "deleteCategory(#item.categoryId#)">
             <img src="./assets/images/trash.png" alt="" width="18" height="18" class="">
           </button>
-          <a class = "btn btn-outline-info  px-3 my-2" href ="subCategory.cfm?categoryId=#variables.queryGetCategories.fldCategory_Id#&categoryName=#variables.queryGetCategories.fldCategoryName#">
+          <a class = "btn btn-outline-info  px-3 my-2" href ="subCategory.cfm?categoryId=#variables.encodedCategoryId#">
             <img src="./assets/images/right-arrow.png" alt="" width="18" height="18" class="">
           </a>
         </div>

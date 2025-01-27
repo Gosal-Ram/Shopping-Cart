@@ -1,7 +1,10 @@
-<cfset variables.subCategoryId = url.subCategoryId>
-<cfset variables.subCategoryName = url.subCategoryName>
-<cfset variables.categoryId = url.categoryId>
+<cfset variables.subCategoryId = decrypt(url.subCategoryId,application.key,"AES","Base64")>
+<!--- <cfset variables.categoryId = url.categoryId> --->
 
+<cfset variables.getCategoryId = application.shoppingCart.fetchSubCategories(subCategoryId = variables.subCategoryId)>
+<cfset variables.categoryId = #variables.getCategoryId[1].categoryId#>
+<cfset variables.getSubCategoryName = application.shoppingCart.fetchSubCategories(categoryId = variables.categoryId)>
+<cfset variables.subCategoryName = #variables.getSubCategoryName[1].subCategoryName#>
 <cfoutput>
   <cfinclude  template="header.cfm">
   <main>
@@ -69,26 +72,28 @@
               <label class="modalLabel mb-2">Category Name</label>
               <select class="form-select mb-2" id = "categorySelect" name = "selectedCategoryId">
                 <cfset variables.queryGetCategories = application.shoppingCart.fetchCategories()>
-                <cfloop query="variables.queryGetCategories">
+                <cfloop array="#variables.queryGetCategories#" item="item">
+                  <!--- <cfloop query="variables.queryGetCategories"> --->
                   <option 
-                    <cfif variables.categoryId EQ #variables.queryGetCategories.fldCategory_Id#>
+                    <cfif variables.categoryId EQ #item.categoryId#>
                       selected
                     </cfif>
-                    value="#variables.queryGetCategories.fldCategory_Id#">
-                    #variables.queryGetCategories.fldCategoryName#
+                    value="#item.categoryId#">
+                    #item.categoryName#
                   </option>
                 </cfloop>
               </select>
               <label class="modalLabel mb-2">Sub Category Name</label>
               <select class="form-select mb-2" id = "selectedSubCategoryId" name = "selectedSubCategoryId"> 
                 <cfset variables.queryGetSubCategories = application.shoppingCart.fetchSubCategories(variables.categoryId)>
-                <cfloop query="variables.queryGetSubCategories">
+                <cfloop array="#variables.queryGetSubCategories#" item="item">
+                <!---  <cfloop query="variables.queryGetSubCategories"> --->
                   <option 
-                    <cfif variables.subCategoryId EQ #variables.queryGetSubCategories.fldSubCategory_Id#>
+                    <cfif variables.subCategoryId EQ #item.subCategoryId#>
                       selected
                     </cfif>
-                    value="#variables.queryGetSubCategories.fldSubCategory_Id#">
-                    #variables.queryGetSubCategories.fldSubCategoryName#
+                    value="#item.subCategoryId#">
+                    #item.subCategoryName#
                   </option>
                 </cfloop>
               </select>

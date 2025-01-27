@@ -154,8 +154,8 @@ function saveProduct(){
             success:function(response){
                 let responseParsed = JSON.parse(response);
                 // console.log(responseParsed.resultMsg);
-                location.reload();
                 document.getElementById("productFunctionResult").innerHTML = responseParsed.resultMsg;
+                // location.reload();
             }
         })
     }
@@ -173,7 +173,7 @@ function saveProduct(){
             processData: false,
             contentType: false,
             success:function(response){
-                console.log(response)
+                // console.log(response)
                 let responseParsed = JSON.parse(response);
                 // console.log(responseParsed)
                 /*                 if (subCategoryId != selectedSubCategoryId){
@@ -186,7 +186,7 @@ function saveProduct(){
                         //price, brand
                         } */
                 document.getElementById("productFunctionResult").innerHTML = responseParsed;
-                location.reload();
+                // location.reload();
             }
     })
     }

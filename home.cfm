@@ -11,8 +11,10 @@
   <h3 class = "m-2 p-1">Random Products</h3>
   <div class= "productListingContainer d-flex flex-sm-wrap ms-5 mb-3 ">
     <cfloop query="variables.getAllProducts">
+      <cfset variables.encryptedProductId = encrypt("#getAllProducts.fldProduct_Id#",application.key,"AES","Base64")>
+      <cfset variables.encodedProductId = encodeForURL(variables.encryptedProductId)>
       <a class = "card m-2 p-2 productCard overflow-hidden text-decoration-none"
-        href = "userProduct.cfm?productId=#getAllProducts.fldProduct_Id#">
+        href = "userProduct.cfm?productId=#variables.encodedProductId#">
         <div>
           <img src="./assets/images/productImages/#getAllProducts.fldImageFilename#" 
             class="w-100"  

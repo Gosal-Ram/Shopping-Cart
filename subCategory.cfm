@@ -1,5 +1,8 @@
-<cfset variables.categoryId = url.categoryId>
-<cfset variables.categoryName = url.categoryName>
+
+<cfset variables.categoryId = decrypt(url.categoryId,application.key,"AES","Base64")>
+<cfset variables.getCategoryName = application.shoppingCart.fetchCategories(variables.categoryId)>
+<cfset variables.categoryName = #variables.getCategoryName[1].categoryName#>
+
 <cfoutput>
   <cfinclude  template="header.cfm">
   <main>
@@ -14,25 +17,30 @@
                 New
         </button>
       </div>
-      <cfset variables.queryGetSubCategories = application.shoppingCart.fetchSubCategories(variables.categoryId)>
+      <cfset variables.getAllSubCategories = application.shoppingCart.fetchSubCategories(variables.categoryId)>
       <span class="text-success" id ="subCategoryFunctionResult"></span>
-      <cfloop query="variables.queryGetSubCategories">
-        <div class = "d-flex justify-content-between align-items-center" id = "#fldSubCategory_Id#">
-          <div id = "subcategoryname-#fldSubCategory_Id#">#fldSubCategoryName#</div>
+      <cfloop array="#variables.getAllSubCategories#" item="item">
+      
+      <cfset variables.encryptedSubCategoryId = encrypt("#item.subCategoryId#",application.key,"AES","Base64")>
+      <cfset variables.encodedSubCategoryId = encodeForURL(variables.encryptedSubCategoryId)>
+        <!--- <cfloop query="variables.queryGetSubCategories"> --->
+        <div class = "d-flex justify-content-between align-items-center" id = "#item.subCategoryId#">
+          <div id = "subcategoryname-#item.subCategoryId#">#item.subCategoryName#</div>
           <div>
             <button type="button" 
-                    onclick = "editSubCategory(#fldSubCategory_Id#)" 
+                    onclick = "editSubCategory(#item.subCategoryId#)" 
                     class = "btn btn-outline-info  px-3 my-2" 
                     data-bs-toggle="modal" 
                     data-bs-target="##staticBackdrop">
               <img src="./assets/images/editing.png" alt="" width="18" height="18" class="">
             </button>
-            <button class = "btn btn-outline-info  px-3 my-2" onClick = "deleteSubCategory(#fldSubCategory_Id#)">
+            <button class = "btn btn-outline-info  px-3 my-2" onClick = "deleteSubCategory(#item.subCategoryId#)">
               <img src="./assets/images/trash.png" alt="" width="18" height="18" class="">
             </button>
             <a class = "btn btn-outline-info  px-3 my-2" 
-            id="subcategory-link-#fldSubCategory_Id#"
-            href ="product.cfm?subCategoryId=#fldSubCategory_Id#&subCategoryName=#fldSubCategoryName#&categoryId=#variables.categoryId#">
+            id="subcategory-link-#item.subCategoryId#"
+            href ="product.cfm?subCategoryId=#encodedSubCategoryId#">
+<!---             href ="product.cfm?subCategoryId=#item.subCategoryId#&categoryId=#variables.categoryId#"> --->
               <img src="./assets/images/right-arrow.png" alt="" width="18" height="18" class="">
             </a>
           </div>
@@ -56,13 +64,14 @@
             <label class="modalLabel mb-2">Category Name</label>
             <select class="form-select mb-2" id = categorySelect>
               <cfset variables.getAllCategories = application.shoppingCart.fetchCategories()>
-                <cfloop query="variables.getAllCategories">
+                <!---<cfloop query="variables.getAllCategories"> --->
+                <cfloop array="#variables.getAllCategories#" item="item">
                   <option 
-                    <cfif variables.categoryId EQ #variables.getAllCategories.fldCategory_Id#>
+                    <cfif variables.categoryId EQ #item.categoryId#>
                       selected
                     </cfif>
-                    value="#variables.getAllCategories.fldCategory_Id#">
-                    #variables.getAllCategories.fldCategoryName#
+                    value="#item.categoryId#">
+                    #item.categoryName#
                   </option>
                 </cfloop>
             </select>
