@@ -5,17 +5,14 @@
     <div class="container-fluid my-3 ms-3">
         <cfset variables.getCategoryNames = application.shoppingCart.fetchCategories(variables.categoryId)>
         <h2>#variables.getCategoryNames[1].categoryName#</h2> 
-        <!---  <cfdump  var="#variables.getCategoryNames#">  --->
         <cfset variables.getAllSubCategories = application.shoppingCart.fetchSubCategories(variables.categoryId)>
-        <cfloop array="#variables.getAllSubCategories#" item="item">
-        <!--- <cfloop query="variables.getAllSubCategories"> --->
-            <cfset variables.encryptedSubCategoryId = encrypt("#item.subCategoryId#",application.key,"AES","Base64")>
+        <cfloop array="#variables.getAllSubCategories#" item="local.item">
+            <cfset variables.encryptedSubCategoryId = encrypt("#local.item.subCategoryId#",application.key,"AES","Base64")>
             <cfset variables.encodedSubCategoryId = encodeForURL(variables.encryptedSubCategoryId)>
             <a class="h4 text-decoration-none" href = "userSubCategory.cfm?subCategoryId=#variables.encodedSubCategoryId#" >
-<!---             <a class="h4 text-decoration-none" href = "userSubCategory.cfm?subCategoryId=#item.subCategoryId#&subCategoryName=#item.subCategoryName#" > --->
-            <h4> #item.subCategoryName#</h4>
+                <h4> #local.item.subCategoryName#</h4>
             </a>
-            <cfset variables.getAllProducts = application.shoppingCart.fetchProducts(subCategoryId = #item.subCategoryId#)>
+            <cfset variables.getAllProducts = application.shoppingCart.fetchProducts(subCategoryId = #local.item.subCategoryId#)>
             <div class= "productListingContainer d-flex flex-sm-wrap ms-5 mb-3 ">
                 <cfloop query="variables.getAllProducts">
                     <cfset variables.encryptedProductId = encrypt("#getAllProducts.fldProduct_Id#",application.key,"AES","Base64")>
@@ -25,7 +22,6 @@
                         <img src="./assets/images/productImages/#variables.getAllProducts.fldImageFilename#" 
                             class="w-100"
                             alt="" 
-                            class=""
                             style="height: 150px; object-fit: contain;">
                         <div class="card-body">
                             <h6 class="card-title" id = "#variables.getAllProducts.fldProduct_Id#">#variables.getAllProducts.fldProductName#</h6>

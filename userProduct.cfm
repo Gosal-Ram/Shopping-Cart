@@ -80,8 +80,13 @@
                         <p class="product-description mt-4">#variables.getAllProducts.fldDescription#</p>
 
                         <div class="mt-4">
+                        <cfif structKeyExists(session,"isLoggedIn") AND session.isloggedIn EQ true>
+                            <cfset variables.logInFlag = 1>
+                        <cfelse>
+                            <cfset variables.logInFlag = 0>
+                        </cfif>
                         <form method = "POST">
-                            <button type = "submit" name = "addToCartBtn" class="btn addToCartBtn me-2">Add to Cart</button>
+                            <button type = "button" onclick = "addToCart(#variables.logInFlag#,#variables.productId#)" name = "addToCartBtn" class="btn addToCartBtn me-2">Add to Cart</button>
                             <button class="btn buyNowtBtn ">Buy Now</button>
                         </form>
                         </div>

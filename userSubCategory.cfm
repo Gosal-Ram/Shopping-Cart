@@ -45,9 +45,9 @@
                 </div>
                 </div>
             </div>
-            <div class= "productListingContainer d-flex flex-sm-wrap ms-5 mb-3 ">
+            <div class= "productListingContainer d-flex flex-sm-wrap ms-5 mb-3" id ="productListingContainer">
                 <cfloop query="variables.getAllProducts">
-                    <cfset variables.encryptedProductId = encrypt("#getAllProducts.fldProduct_Id#",application.key,"AES","Base64")>
+                    <cfset variables.encryptedProductId = encrypt("#variables.getAllProducts.fldProduct_Id#",application.key,"AES","Base64")>
                     <cfset variables.encodedProductId = encodeForURL(variables.encryptedProductId)>
                     <a class = "card m-2 p-2 productCard text-decoration-none" href = "userProduct.cfm?productId=#variables.encodedProductId#">
                         <div>
@@ -67,13 +67,12 @@
                 </cfloop> 
             </div>
             <div class = "viewEditBtnDiv d-flex justify-content-end me-3">
-                <button class = "btn btn-secondary" value = "" id= "viewEditBtn" type = "button" name = "viewEditBtn" onclick = "toggleView()">
-                View More
+                <button class = "btn btn-secondary" value = "4" id= "viewEditBtn" type = "button" name = "viewEditBtn" onclick = "toggleView(#variables.subCategoryId#)">
+                    View More
                 </button>
             </div>
         </div>
         <form>
-
     </main>
 </cfoutput>
 <cfinclude  template="footer.cfm">

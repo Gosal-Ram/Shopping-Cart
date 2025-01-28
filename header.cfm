@@ -26,7 +26,6 @@
             <title>SHOPPING CART</title>
           </cfdefaultcase>
         </cfswitch>
-
         <link rel="stylesheet" href="assets/bootstrap-5.3.3-dist/css/bootstrap.min.css">
         <link rel="stylesheet" href="assets/bootstrap-5.3.3-dist/js/bootstrap.bundle.js">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
@@ -53,12 +52,7 @@
               <!--- SEARCH BAR--->
               <form action="searchResults.cfm" method="get" class="searchInputDiv"> 
                 <div class="input-group my-2 " >  
-                  <input class="form-control border-end-0 border rounded-pill" 
-                        placeholder="Search.." 
-                        type="search" 
-                        value="" 
-                        id="searchInput"
-                        name="s">
+                  <input class="form-control border-end-0 border rounded-pill" placeholder="Search.." type="search" id="searchInput" name="s">
                   <span class="ms-2">
                     <button class="btn btn-outline-secondary bg-white border-start-0 border rounded-pill" type="submit">
                       <i class="fa fa-search"></i>
@@ -68,21 +62,27 @@
               </form>  
             </cfif>
             <cfif structKeyExists(session, "roleId") AND structKeyExists(session, "isLoggedIn")>
-              <cfset variables.getUserCartDetails = application.shoppingCart.addToCart(userId = session.userId)>
-              <cfset variables.userCartCount = variables.getUserCartDetails.cartItemsCount> 
-              <!---               <cfdump  var="#variables.userCartCount#"> --->
               <cfif session.roleId EQ 1 AND session.isLoggedIn EQ true>
                 <!-- ADMIN -->
                 <div class="mx-2">
+                  <button type="button" class="btn btn-primary position-relative">
+                    CART
+                    <i class="bi bi-cart4"></i>
+                    <cfif structKeyExists(session, "cartCount")>
+                      <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        #session.cartCount# 
+                      </span>
+                    </cfif>
+                  </button>
                   <span class="fw-semibold text-light">Hello #session.firstName#!</span>
-                    <a class="btn text-light" href="category.cfm">
-                      <img src="./assets/images/user.png" alt="" width="18" height="18" class="">
-                      ADMIN
-                    </a>
-                    <a class="btn text-light" onClick="logOut()"> 
-                      <img src="./assets/images/exit.png" alt="" width="18" height="18">
-                      Logout
-                    </a>          
+                  <a class="btn text-light" href="category.cfm">
+                    <img src="./assets/images/user.png" alt="" width="18" height="18" class="">
+                    ADMIN
+                  </a>
+                  <a class="btn text-light" onClick="logOut()"> 
+                    <img src="./assets/images/exit.png" alt="" width="18" height="18">
+                    Logout
+                  </a>          
                 </div>
               <cfelseif session.roleId EQ 2 AND session.isLoggedIn EQ true>
                 <!-- USER LOGGED IN -->
@@ -90,35 +90,38 @@
                   <button type="button" class="btn btn-primary position-relative">
                     CART
                     <i class="bi bi-cart4"></i>
-                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                      #variables.userCartCount# 
-                      <span class="visually-hidden">unread messages</span>
-                    </span>
+                    <cfif structKeyExists(session, "cartCount")>
+                      <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        #session.cartCount# 
+                      </span>
+                    </cfif>
                   </button>
-
-                    <a class="btn text-light" href="home.cfm">
-                      <img src="./assets/images/user.png" alt="" width="18" height="18" class="">
-                      <span class="fw-semibold text-light">Hello #session.firstName# !</span>
-                    </a>
-                    
-                    <a class="btn text-light" onClick="logOut()"> 
-                      <img src="./assets/images/exit.png" alt="" width="18" height="18">
-                      Logout
-                    </a>          
+                  <span class="fw-semibold text-light">Hello #session.firstName# !</span>
+                  <a class="btn text-light" href="home.cfm">
+                    <img src="./assets/images/user.png" alt="" width="18" height="18" class="">
+                  </a>
+                  <a class="btn text-light" onClick="logOut()"> 
+                    <img src="./assets/images/exit.png" alt="" width="18" height="18">
+                    Logout
+                  </a>          
                 </div>
               </cfif>
             <cfelse>
-                <div class="mx-2">
-                  <!-- USER NOT LOGGED IN -->
-                    <a class="btn text-light" href="signup.cfm">
-                      <img src="./assets/images/user.png" alt="" width="18" height="18" class="">
-                      <span class="fw-semibold text-light">Hello, <span class="fw-bold text-white">Sign in</span></span>
-                    </a>
-                    <a class="btn text-light" href = "login.cfm"> 
-                      <img src="./assets/images/exit.png" alt="" width="18" height="18">
-                      Login
-                    </a>        
-                </div>
+              <div class="mx-2">
+                <!-- USER NOT LOGGED IN -->
+                <button type="button" class="btn btn-primary position-relative">
+                  CART
+                  <i class="bi bi-cart4"></i>
+                </button>
+                <a class="btn text-light" href="signup.cfm">
+                  <img src="./assets/images/user.png" alt="" width="18" height="18" class="">
+                  <span class="fw-semibold text-light">Hello, <span class="fw-bold text-white">Sign in</span></span>
+                </a>
+                <a class="btn text-light" href = "login.cfm"> 
+                  <img src="./assets/images/exit.png" alt="" width="18" height="18">
+                  Login
+                </a>        
+              </div>
             </cfif> 
         </header>
         <cfif arrayContains(local.nonNavBarPages, cgi.SCRIPT_NAME)>
@@ -126,32 +129,56 @@
         <cfelse>
           <!---  NAV BAR  --->
           <cfset variables.getAllCategories = application.shoppingCart.fetchCategories()>
-          <cfset variables.key = generateSecretKey("AES")>
+          <cfset variables.categoryStruct = structNew()>
+          <!--- Store categories and subcategories in a struct --->
+          <cfloop array="#variables.getAllCategories#" item="local.item">
+              <cfset local.categoryId = local.item.categoryId>
+              <cfset local.encryptedCategoryId = encrypt("#local.categoryId#", application.key, "AES", "Base64")>
+              <cfset local.encodedCategoryId = encodeForURL(local.encryptedCategoryId)>
+              
+              <!--- Fetch and store subcategories --->
+              <cfset local.subCategories = application.shoppingCart.fetchSubCategories(categoryId ="#local.categoryId#")>
+              
+              <cfset variables.categoryStruct[local.categoryId] = {
+                  "categoryName": local.item.categoryName,
+                  "encodedCategoryId": local.encodedCategoryId,
+                  "subCategories": []
+              }>
+
+              <cfloop array="#local.subCategories#" item="local.subItem">
+                  <cfset local.encryptedSubCategoryId = encrypt("#local.subItem.subCategoryId#", application.key, "AES", "Base64")>
+                  <cfset local.encodedSubCategoryId = encodeForURL(local.encryptedSubCategoryId)>
+                  
+                  <!--- Store subcategories in the struct --->
+                  <cfset arrayAppend(variables.categoryStruct[local.categoryId]["subCategories"], {
+                      "subCategoryName": local.subItem.subCategoryName,
+                      "encodedSubCategoryId": local.encodedSubCategoryId
+                  })>
+              </cfloop>
+          </cfloop>
+
+
           <nav class="navbar-expand-lg bg-light">
             <div class="container-fluid">
               <div class="collapse navbar-collapse">
                 <ul class="navbar-nav justify-content-evenly w-100">
-                  <cfloop array="#variables.getAllCategories#" item="item">
-                    <cfset variables.encryptedCategoryId = encrypt("#item.categoryId#",application.key,"AES","Base64")>
-                    <cfset variables.encodedCategoryId = encodeForURL(variables.encryptedCategoryId)>
+                <cfloop collection="#variables.categoryStruct#" item="local.categoryId">
+                    <cfset local.category = variables.categoryStruct[local.categoryId]>
                     <li class="nav-item toggleContainer">
-                      <a class="nav-link" href="userCategory.cfm?categoryId=#variables.encodedCategoryId#" id="#item.categoryId#" role="button">
-                          #item.categoryName#
-                      </a>
-                      <ul class="dropdown-menu">
-                        <cfset variables.getAllSubCategories = application.shoppingCart.fetchSubCategories(categoryId ="#item.categoryId#")>
-                        <cfloop array="#variables.getAllSubCategories#" item="item">
-                            <cfset variables.encryptedSubCategoryId = encrypt("#item.subCategoryId#",application.key,"AES","Base64")>
-                            <cfset variables.encodedSubCategoryId = encodeForURL(variables.encryptedSubCategoryId)>
-                          <li>
-                            <a class="dropdown-item" href = "userSubCategory.cfm?subCategoryId=#encodedSubCategoryId#" >
-                              #item.subCategoryName#
-                            </a>
-                          </li>
-                        </cfloop>
-                      </ul>
+                        <a class="nav-link" href="userCategory.cfm?categoryId=#local.category.encodedCategoryId#" id="#local.categoryId#" role="button">
+                            #local.category.categoryName#
+                        </a>
+                        <ul class="dropdown-menu">
+                            <cfloop array="#local.category.subCategories#" item="local.subCategory">
+                                <li>
+                                    <a class="dropdown-item" href="userSubCategory.cfm?subCategoryId=#local.subCategory.encodedSubCategoryId#">
+                                        #local.subCategory.subCategoryName#
+                                    </a>
+                                </li>
+                            </cfloop>
+                        </ul>
                     </li>
-                  </cfloop>
+                </cfloop>
                 </ul>
               </div>
             </div>
