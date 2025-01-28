@@ -1,4 +1,30 @@
 // Function to clear error messages
+document.getElementById("categorySelect").onchange = function() {
+    const categoryId = this.value;
+    // console.log(categoryId);
+    $.ajax({
+        type: "POST",
+        url: "component/shoppingcart.cfc",
+        data: {
+            method :"fetchSubCategories",
+            categoryId: categoryId
+        },
+        success: function(response) {
+            const responseParsed = JSON.parse(response);
+            console.log(responseParsed)
+            document.getElementById("selectedSubCategoryId").innerHTML = "";
+            for(let i=0; i<responseParsed.length; i++) {
+                const subCategoryId = responseParsed[i].subCategoryId;
+                const subCategoryName = responseParsed[i].subCategoryName;
+                const optionElement = document.createElement("option");
+                optionElement.value = subCategoryId;
+                optionElement.textContent = subCategoryName;
+                document.getElementById("selectedSubCategoryId").appendChild(optionElement);
+            }
+        }
+    });
+}
+
 function clearErrorMessages(){
     const errorFields = [
         "productNameError",
@@ -103,31 +129,6 @@ function openAddProductModal(){
     document.querySelector(".modal-title").textContent = "Add Product";
     document.getElementById("productAddForm").reset();
     document.getElementById("modalSubmitBtn").value = "";
-    document.getElementById("categorySelect").onchange = function() {
-		const categoryId = this.value;
-        // console.log(categoryId);
-        $.ajax({
-            type: "POST",
-            url: "component/shoppingcart.cfc",
-            data: {
-                method :"fetchSubCategories",
-                categoryId: categoryId
-            },
-            success: function(response) {
-                const responseParsed = JSON.parse(response);
-                // console.log(responseParsed)
-                document.getElementById("selectedSubCategoryId").innerHTML = "";
-                for(let i=0; i<responseParsed.DATA.length; i++) {
-                    const subCategoryId = responseParsed.DATA[i][1];
-                    const subCategoryName = responseParsed.DATA[i][0];
-                    const optionElement = document.createElement("option");
-                    optionElement.value = subCategoryId;
-                    optionElement.textContent = subCategoryName;
-                    document.getElementById("selectedSubCategoryId").appendChild(optionElement);
-                }
-            }
-        });
-	}
 }
 
 function saveProduct(){
@@ -196,6 +197,7 @@ function editProductOpenModal(fldProduct_Id){
     clearErrorMessages();
     document.getElementById("productAddForm").reset();
     document.querySelector(".modal-title").textContent = "Edit Product";
+
     
     $.ajax({
         type:"POST",
@@ -204,14 +206,14 @@ function editProductOpenModal(fldProduct_Id){
               method : "fetchProducts"
         },
         success:function(response){
-            // alert(response)
             let responseParsed = JSON.parse(response);
+            // console.log(responseParsed)
             // autopopulate Product details
             document.getElementById("productName").value =responseParsed.DATA[0][0];
-            document.getElementById("productDescription").value = responseParsed.DATA[0][3];
-            document.getElementById("brandSelect").value = responseParsed.DATA[0][2];;
-            document.getElementById("productPrice").value = responseParsed.DATA[0][4];
-            document.getElementById("productTax").value = responseParsed.DATA[0][5];
+            document.getElementById("productDescription").value = responseParsed.DATA[0][4];
+            document.getElementById("brandSelect").value = responseParsed.DATA[0][3];;
+            document.getElementById("productPrice").value = responseParsed.DATA[0][5];
+            document.getElementById("productTax").value = responseParsed.DATA[0][6];
         }
     })
     document.getElementById("modalSubmitBtn").value = fldProduct_Id;

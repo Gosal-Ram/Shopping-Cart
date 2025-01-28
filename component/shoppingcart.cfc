@@ -163,6 +163,7 @@
         <cfargument name="searchInput" type="string" required="false">
         <cfargument name="random" type="string" required="false">
         <cfargument name="productId" type="string" required="false">
+        <cfargument name="viewToggle" type="string" required="false">
 
         <cfquery name="local.queryGetProducts" datasource="ShoppingCart">
             SELECT 
@@ -221,6 +222,12 @@
                 ORDER BY RAND()
                 LIMIT 8
             </cfif>
+
+            
+            <cfif structKeyExists(arguments, "viewToggle") AND Len(trim(arguments.viewToggle)) GT 0>
+                LIMIT 4 OFFSET <cfqueryparam value="#arguments.viewToggle#" cfsqltype="INTEGER">
+            </cfif>
+
         </cfquery> 
         <cfreturn local.queryGetProducts>
     </cffunction>
@@ -634,7 +641,7 @@
                 strict="true"
                 result="local.productUploadedImages"
                 allowedextensions=".png,.jpg,.jpeg,">
-<!---             <cfdump  var="#local.productUploadedImages#"> --->
+            <!---             <cfdump  var="#local.productUploadedImages#"> --->
             <cfquery name="local.queryEditProduct" datasource="ShoppingCart">
                 UPDATE 
                     tblproduct
@@ -828,5 +835,68 @@
         
         <cfreturn local.signUpResult>
     </cffunction>
+
+    <cffunction  name="addToCart" access = "public" returnType = "struct">
+        <cfargument name="productId" type="integer" required="false">
+        <cfargument name="userId" type="string" required="false">
+        
+        <cfset local.addToCartResult = { "resultMsg" = "","cartItemsCount" = ""}>
+        <!---  EXISTING PRODUCT CHECK  --->
+        <cfif structKeyExists(arguments, "productId") AND Len(trim(arguments.productId)) GT 0 AND arguments.productId NEQ 0>
+            <cfquery name ="local.queryAddToCartProductCheck" datasource="ShoppingCart">
+                SELECT 
+                    fldQuantity
+                FROM 
+                    tblcart 
+                WHERE
+                    fldProductId = <cfqueryparam value = "#arguments.productId#" cfsqltype = "integer">
+                    AND fldUserId = <cfqueryparam value = "#session.userId#" cfsqltype = "integer">     
+            </cfquery>
+
+            <cfif local.queryAddToCartProductCheck.recordcount GT 0>
+                <cfset local.quantity = local.queryAddToCartProductCheck.fldQuantity + 1>
+                <!--- PRODUCT UPDATE    --->
+                <cfquery name ="local.queryUpdateCart" datasource = "ShoppingCart">
+                    UPDATE
+                        tblcart
+                    SET
+                        fldQuantity = <cfqueryparam value = "#local.quantity#"  cfsqltype = "integer">
+                    WHERE 
+                        fldProductId = <cfqueryparam value = "#arguments.productId#" cfsqltype = "integer">
+                        AND fldUserId = <cfqueryparam value = "#session.userId#" cfsqltype="integer"> 
+                </cfquery>
+                <cfset local.addToCartResult["resultMsg"] = "Cart Updated">
+            <cfelse>
+                <!--- PRODUCT ADD    --->
+                <cfquery name ="local.queryAddToCart" datasource = "ShoppingCart">
+                    INSERT INTO 
+                        tblcart(fldUserId,
+                                fldProductId,
+                                fldQuantity
+                            )
+                    VALUES(
+                        <cfqueryparam value = "#session.userId#" cfsqltype = "integer">,
+                        <cfqueryparam value = "#arguments.productId#" cfsqltype = "integer">,
+                        <cfqueryparam value = "1" cfsqltype = "integer">
+                    )
+                </cfquery>
+                <cfset local.addToCartResult["resultMsg"] = "Product added to the Cart">
+            </cfif>
+        </cfif>
+
+        <cfif structKeyExists(arguments, "userId") AND Len(trim(arguments.userId)) GT 0 AND arguments.userId NEQ 0>
+            <cfquery name ="local.queryAddToCartProductCheck" datasource="ShoppingCart">
+                SELECT 
+                    fldProductId
+                FROM 
+                    tblcart 
+                WHERE
+                    fldUserId = <cfqueryparam value = "#arguments.userId#" cfsqltype = "integer">     
+            </cfquery>
+            <cfset local.addToCartResult["cartItemsCount"] = local.queryAddToCartProductCheck.recordCount>
+        </cfif>
+        <cfreturn local.addToCartResult>
+    </cffunction> 
+
 
 </cfcomponent>

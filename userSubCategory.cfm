@@ -1,10 +1,8 @@
 <cfinclude  template="header.cfm">
 <cfset variables.subCategoryId = decrypt(url.subCategoryId,application.key,"AES","Base64")>
-<!--- <cfset variables.subCategoryName = url.subCategoryName> --->
 <cfset variables.getCategoryId = application.shoppingCart.fetchSubCategories(subCategoryId = variables.subCategoryId)>
 <cfset variables.categoryId = #variables.getCategoryId[1].categoryId#>
-<cfset variables.getSubCategoryName = application.shoppingCart.fetchSubCategories(categoryId = variables.categoryId)>
-<cfset variables.subCategoryName = #variables.getSubCategoryName[1].subCategoryName#>
+<cfset variables.subCategoryName = #variables.getCategoryId[1].subCategoryName#>
 <cfset variables.getAllProducts = application.shoppingCart.fetchProducts(subCategoryId = variables.subCategoryId)>
 
 <cfif structKeyExists(form, "sortASC")>
@@ -31,13 +29,11 @@
             <div class = "d-flex justify-content-between align-items-center">
                 <div>
                     <h3 class="ms-3">#variables.subCategoryName#</h3>
-<!---                     <input type ="hidden" name ="subcategoryId" value = "#url.subCategoryId#">
-                    <input type ="hidden" name ="subcategoryName" value = "# url.subCategoryName#"> --->
                     <button class = "btn" name ="sortASC"  type = "submit"><span class = "min ASC">Price low to High</span></button>
                     <button class = "btn" name ="sortDESC" type = "submit"><span class = "max DESC ms-4">Price High to low</span></button>
                 </div>
                 <div class="dropdown">
-                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <button class="btn btn-secondary dropdown-toggle me-3" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                     Filter
                 </button>
                 <div class="dropdown-menu">
@@ -54,21 +50,26 @@
                     <cfset variables.encryptedProductId = encrypt("#getAllProducts.fldProduct_Id#",application.key,"AES","Base64")>
                     <cfset variables.encodedProductId = encodeForURL(variables.encryptedProductId)>
                     <a class = "card m-2 p-2 productCard text-decoration-none" href = "userProduct.cfm?productId=#variables.encodedProductId#">
-                    <div>
-                        <img src="./assets/images/productImages/#variables.getAllProducts.fldImageFilename#" 
-                            class="w-100"  
-                            alt="" 
-                            class=""
-                            style="height: 150px; object-fit: contain;">
-                        <div class="card-body">
-                            <h6 class="card-title" id = "#variables.getAllProducts.fldProduct_Id#">#variables.getAllProducts.fldProductName#</h6>
-                            <div class="card-text text-muted">  #variables.getAllProducts.fldBrandName#</div>
-                            <div class="card-text text-dark fw-semibold"><i class="fa-solid fa-indian-rupee-sign me-1"></i>#variables.getAllProducts.fldPrice#</div>
-                            <div class="card-text productDescription">#variables.getAllProducts.fldDescription#</div>
+                        <div>
+                            <img src="./assets/images/productImages/#variables.getAllProducts.fldImageFilename#" 
+                                class="w-100"  
+                                alt="" 
+                                class=""
+                                style="height: 150px; object-fit: contain;">
+                            <div class="card-body">
+                                <h6 class="card-title" id = "#variables.getAllProducts.fldProduct_Id#">#variables.getAllProducts.fldProductName#</h6>
+                                <div class="card-text text-muted">  #variables.getAllProducts.fldBrandName#</div>
+                                <div class="card-text text-dark fw-semibold"><i class="fa-solid fa-indian-rupee-sign me-1"></i>#variables.getAllProducts.fldPrice#</div>
+                                <div class="card-text productDescription">#variables.getAllProducts.fldDescription#</div>
+                            </div>
                         </div>
-                    </div>
                     </a>
                 </cfloop> 
+            </div>
+            <div class = "viewEditBtnDiv d-flex justify-content-end me-3">
+                <button class = "btn btn-secondary" value = "" id= "viewEditBtn" type = "button" name = "viewEditBtn" onclick = "toggleView()">
+                View More
+                </button>
             </div>
         </div>
         <form>

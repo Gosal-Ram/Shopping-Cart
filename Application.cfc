@@ -23,10 +23,10 @@
             <cfreturn true> 
         </cfif>  
 
-        <cfif structKeyExists(session, "userId") OR arrayContains(userAllowedPages, requestPage) >
+        <cfif structKeyExists(session, "userId") OR arrayContains(local.userAllowedPages, arguments.requestPage) >
             <cfreturn true> 
         <cfelse>
-            <cflocation  url = "/login.cfm">
+            <cflocation  url = "/login.cfm">  
             <cfreturn true> 
         </cfif>
     </cffunction>
