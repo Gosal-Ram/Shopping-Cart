@@ -1,33 +1,18 @@
-function clearErrorMessages(){
-    const errorFields = [
-        "categoryNameError"
-    ];
-
-    errorFields.forEach(fieldId => {
-        const errorElement = document.getElementById(fieldId);
-        if (errorElement) {
-            errorElement.textContent = "";
-        }
-    });
-}
-
 function openAddCategoryModal(){
-    clearErrorMessages();
+    document.getElementById( "categoryNameError").textContent = "";
     let categoryName = $("#categoryName");
     categoryName.removeClass("border-danger")
     document.querySelector(".modal-title").textContent = "Add Category";
     document.getElementById("categoryAddForm").reset();
-    document.getElementById("modalSubmitBtn").value = "";
+    document.getElementById("modalSubmitBtn").value = ""; // to differntiate add AND edit
 }
 
 function saveCategory(){
     let isModalValid = modalValidate();
     if(!isModalValid){
-        return false;  // client side validation failed case
+        return false;  
     }
-
-    const categoryName = document.getElementById("categoryName").value
-    // console.log(categoryName)
+    const categoryName = document.getElementById("categoryName").value;
     if (document.getElementById("modalSubmitBtn").value.length==0){
         $.ajax({
             type:"POST",
@@ -36,9 +21,7 @@ function saveCategory(){
                 method : "addCategory"
             },
             success:function(response){
-                // alert(response)
                 let responseParsed = JSON.parse(response);
-                // console.log(responseParsed)
                 let categoryId = responseParsed.categoryId;
                 document.getElementById("categoryFunctionResult").innerHTML = responseParsed.resultMsg;
                 let categoryEachDiv = 
@@ -59,7 +42,7 @@ function saveCategory(){
                         <img src="./assets/images/right-arrow.png" alt="" width="18" height="18" class="">
                         </a>
                     </div>
-                </div>`
+                </div>`;
                 $("#mainDiv").append(categoryEachDiv);
                 // location.reload();
             }
@@ -86,19 +69,17 @@ function saveCategory(){
 }
 
 function editCategory(fldCategory_Id){
-    clearErrorMessages();
+    document.getElementById( "categoryNameError").textContent = "";
     let categoryName = $("#categoryName");
     categoryName.removeClass("border-danger");
     document.querySelector(".modal-title").textContent = "Edit Category";
-    // autopopulate category name
-    document.getElementById("categoryName").value = document.getElementById(fldCategory_Id).childNodes[1].textContent;
+    document.getElementById("categoryName").value = document.getElementById(fldCategory_Id).childNodes[1].textContent;// autopopulate category name
     document.getElementById("modalSubmitBtn").value = fldCategory_Id;
-    
 }
 
 function modalValidate(){
     let isValid = true;
-    // const namePattern = /^[a-zA-Z\s- ]+$/
+    const namePattern = /^[A-Za-z ]+$/;
     let categoryName = $("#categoryName");
     
     if (categoryName.val().trim().length===0) {
@@ -106,11 +87,10 @@ function modalValidate(){
         categoryName.addClass("border-danger");
         isValid = false;
     }
-    /* if (!namePattern.test(categoryName)) {
+    if (!namePattern.test((categoryName.val().trim()))) {
         document.getElementById("categoryNameError").textContent = "Category Name should only contain letters";
         isValid = false;
-    } */
-
+    } 
     return isValid;
 }
 

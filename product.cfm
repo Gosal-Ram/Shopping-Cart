@@ -1,18 +1,15 @@
-<cfset variables.subCategoryId = url.subCategoryId>
-<cfset variables.subCategoryName = url.subCategoryName>
-<cfset variables.categoryId = url.categoryId>
-
+<cfset variables.subCategoryId = decrypt(url.subCategoryId,application.key,"AES","Base64")>
+<cfset variables.getCategoryId = application.shoppingCart.fetchSubCategories(subCategoryId = variables.subCategoryId)>
+<cfset variables.categoryId = #variables.getCategoryId[1].categoryId#>
+<cfset variables.getSubCategoryName = application.shoppingCart.fetchSubCategories(categoryId = variables.categoryId)>
+<cfset variables.subCategoryName = #variables.getSubCategoryName[1].subCategoryName#>
 <cfoutput>
   <cfinclude  template="header.cfm">
   <main>
     <div class="container flex-column mx-auto my-5 p-5 w-50 justify-content-center bg-light shadow-lg" id ="mainDiv">
       <div class = "d-flex justify-content-between align-items-center mb-3" >
         <h3>#variables.subCategoryName#</h3>
-        <button type="button"
-          onclick = "openAddProductModal()"
-          class = "btn btn-secondary rounded" 
-          data-bs-toggle="modal" 
-          data-bs-target="##staticBackdrop">
+        <button type="button" onclick = "openAddProductModal()" class = "btn btn-secondary rounded" data-bs-toggle="modal" data-bs-target="##staticBackdrop">
           New
         </button>
       </div>
@@ -27,12 +24,7 @@
                 <div class="h6 text-muted">#variables.queryGetAllProducts.fldBrandName#</div>
                 <div class="h6 text-bold"> #variables.queryGetAllProducts.fldPrice#</div>
               </div>
-              <button type="button" 
-                onclick = "openImgCarousal(#variables.queryGetAllProducts.fldProduct_Id#)"
-                class="border-0" 
-                data-bs-toggle="modal" 
-                data-bs-target="##imgModal"
-              >
+              <button type="button" onclick = "openImgCarousal(#variables.queryGetAllProducts.fldProduct_Id#)"class="border-0"  data-bs-toggle="modal" data-bs-target="##imgModal">
                 <img src="./assets/images/productImages/#variables.queryGetAllProducts.fldImageFileName#" alt="" width="85" height="" class="">
               </button>
             </div>
@@ -53,7 +45,6 @@
       </cfloop>
     </div>
   </main>
-  <footer></footer>
 
 
   <!-- Save product Modal -->
@@ -69,26 +60,26 @@
               <label class="modalLabel mb-2">Category Name</label>
               <select class="form-select mb-2" id = "categorySelect" name = "selectedCategoryId">
                 <cfset variables.queryGetCategories = application.shoppingCart.fetchCategories()>
-                <cfloop query="variables.queryGetCategories">
+                <cfloop array="#variables.queryGetCategories#" item="local.item">
                   <option 
-                    <cfif variables.categoryId EQ #variables.queryGetCategories.fldCategory_Id#>
+                    <cfif variables.categoryId EQ #local.item.categoryId#>
                       selected
                     </cfif>
-                    value="#variables.queryGetCategories.fldCategory_Id#">
-                    #variables.queryGetCategories.fldCategoryName#
+                    value="#local.item.categoryId#">
+                    #local.item.categoryName#
                   </option>
                 </cfloop>
               </select>
               <label class="modalLabel mb-2">Sub Category Name</label>
               <select class="form-select mb-2" id = "selectedSubCategoryId" name = "selectedSubCategoryId"> 
                 <cfset variables.queryGetSubCategories = application.shoppingCart.fetchSubCategories(variables.categoryId)>
-                <cfloop query="variables.queryGetSubCategories">
+                <cfloop array="#variables.queryGetSubCategories#" item="local.item">
                   <option 
-                    <cfif variables.subCategoryId EQ #variables.queryGetSubCategories.fldSubCategory_Id#>
+                    <cfif variables.subCategoryId EQ #local.item.subCategoryId#>
                       selected
                     </cfif>
-                    value="#variables.queryGetSubCategories.fldSubCategory_Id#">
-                    #variables.queryGetSubCategories.fldSubCategoryName#
+                    value="#local.item.subCategoryId#">
+                    #local.item.subCategoryName#
                   </option>
                 </cfloop>
               </select>
@@ -121,31 +112,27 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button onClick = "saveProduct()" 
-                    type="button" 
-                    name = "modalSubmitBtn" 
-                    class="btn btn-primary" 
-                    id = "modalSubmitBtn" 
-                    value = "">
-                    Add
+            <button onClick = "saveProduct()" type="button" name = "modalSubmitBtn" class="btn btn-primary" id = "modalSubmitBtn">
+              Add
             </button>
           </div>
         </div>
       </div>
     </div>
   </form>
+
+
   <!-- Carousal modal -->
   <div class="modal fade" id="imgModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+          <h5 class="modal-title" id="staticBackdropLabel">Set Thumbnail</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <div id="carouselExampleIndicators" class="carousel slide">
-            <div class="carousel-inner" id = "carousalDiv">
-              <!--- dynamically populating images here--->
+            <div class="carousel-inner" id = "carousalDiv"> <!--- dynamically populating images here--->
             </div>
             <button class="carousel-control-prev" type="button" data-bs-target="##carouselExampleIndicators" data-bs-slide="prev">
               <span class="carousel-control-prev-icon" aria-hidden="true"></span>
