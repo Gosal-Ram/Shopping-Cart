@@ -23,6 +23,7 @@ function loginValidate(){
     };
 
     const userNameValue = userName.val().trim();
+
     if (userNameValue === 0) {
         setError(userName, userNameError, "Enter phone number or email id");
     } else if (phoneRegex.test(userNameValue) === false && emailRegex.test(userNameValue) === false) {
@@ -30,12 +31,15 @@ function loginValidate(){
     } else {
         clearError(userName, userNameError);
     }
+
     const passwordValue = pwd.val().trim();
+
     if (passwordValue == 0) {
         setError(pwd, pwdError, "Enter your password");
     } else {
         clearError(pwd, pwdError);
     }
+    
     return isValid;
 }
 

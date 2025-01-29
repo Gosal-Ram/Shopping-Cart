@@ -1,3 +1,10 @@
+<cfset local.adminWebPages = ["/category.cfm","/subCategory.cfm","/product.cfm","/login.cfm","/signup.cfm"]>
+<cfif arrayContains(local.adminWebPages, cgi.SCRIPT_NAME)>
+      <footer style="text-align: center; padding: 10px; background: #f1f1f1; position: fixed; width: 100%;" class = "text-dark">
+          © 2024 Admin Panel | All Rights Reserved
+      </footer>
+
+<cfelse>
       <footer> 
         <div class="f-top d-flex">
           <div class="f-top-left d-flex pe-5">
@@ -91,6 +98,7 @@
           </div>
         </div>
       </footer>
+</cfif>
 
       <cfswitch expression="#cgi.SCRIPT_NAME#">
         <cfcase value="/login.cfm">
@@ -129,5 +137,4 @@
       <script src="assets/js/common.js"></script>
     </body>
 </html>
-<!---       <cfdump  var="#cgi#"> --->
 

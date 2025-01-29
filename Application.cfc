@@ -2,6 +2,7 @@
     <cfset this.name = "shoppingCart">
     <cfset this.sessionManagement = "true">
     <cfset this.dataSource = "ShoppingCart">
+
     <cffunction  name="onApplicationStart" returnType = "boolean">
         <cfset application.shoppingCart = createObject("component","component.shoppingcart")>  
         <cfset application.key = generateSecretKey("AES")>
@@ -22,12 +23,10 @@
             <cfset onApplicationStart()>  
             <cfreturn true> 
         </cfif>  
-
         <cfif structKeyExists(session, "userId") OR arrayContains(local.userAllowedPages, arguments.requestPage) >
             <cfreturn true> 
         <cfelse>
             <cflocation  url = "/login.cfm">  
-            <cfreturn true> 
         </cfif>
     </cffunction>
 
@@ -42,7 +41,6 @@
         </cfoutput>
         <cfreturn true  >
     </cffunction>
-
 
     <cffunction name="onError">
         <cfargument name="Exception" required=true>
@@ -64,20 +62,16 @@
         </cfif>
     </cffunction>
 
-<!--- 
-    <cffunction name="onRequest" returnType="void">
-    <cfargument name="targetPage" type="String" required=true/>
-    ...
-    <cfinclude template="#Arguments.targetPage#">
-    ...
-    </cffunction>
+    <!--- 
+        <cffunction name="onRequest" returnType="void">
+            <cfargument name="targetPage" type="String" required=true/>
+            
+            <cfinclude template="#Arguments.targetPage#">
+        </cffunction>
 
-    <cffunction name="onRequestEnd" returnType="void">
-    <cfargument type="String" name="targetPage" required=true/>
-    ...
-    </cffunction>  --->
-
-
-
-
+        <cffunction name="onRequestEnd" returnType="void">
+            <cfargument type="String" name="targetPage" required=true/>
+        
+        </cffunction>  
+    --->
 </cfcomponent>
