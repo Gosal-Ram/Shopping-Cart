@@ -46,6 +46,16 @@
     background-color: #f3960b;
 }
 
+.proceedBtn{
+    background-color:#f1ce42;
+    border :none;
+}
+
+.proceedBtn:hover{
+    background-color:#FFCE12;
+    border:none;
+}
+
 .homeImgContainer{
     width: 70%;
 }

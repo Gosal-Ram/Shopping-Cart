@@ -18,10 +18,11 @@ function addToCart(logInFlag, productId){
             success:function(response){
                 let responseParsed = JSON.parse(response);
                 console.log(responseParsed);
+                location.reload();
             }
         });
     } 
     else{
-        location.href="logIn.cfm/productId=productId" ;
+        location.href="login.cfm?productId="+productId ;
     }
 }

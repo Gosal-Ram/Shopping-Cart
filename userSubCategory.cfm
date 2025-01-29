@@ -3,7 +3,8 @@
 <cfset variables.getCategoryId = application.shoppingCart.fetchSubCategories(subCategoryId = variables.subCategoryId)>
 <cfset variables.categoryId = #variables.getCategoryId[1].categoryId#>
 <cfset variables.subCategoryName = #variables.getCategoryId[1].subCategoryName#>
-<cfset variables.getAllProducts = application.shoppingCart.fetchProducts(subCategoryId = variables.subCategoryId)>
+<cfset variables.getAllProducts = application.shoppingCart.fetchProducts(subCategoryId = variables.subCategoryId,
+                                                                        limit = 4)>
 
 <cfif structKeyExists(form, "sortASC")>
     <cfset variables.sortFlag = 1>

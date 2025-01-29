@@ -94,16 +94,6 @@
                 </div>
             </div>
         </cfloop>
-    
-        <cfif structKeyExists(form, "addToCartBtn")>
-            <cfif NOT structKeyExists(session, "isLoggedIn") OR session.isloggedIn EQ false>
-                <cflocation  url="login.cfm">
-            </cfif>
-            <cfset variables.userProductCartResult = application.shoppingCart.addToCart( productId = variables.productId)>
-            <span>
-                #variables.userProductCartResult.resultMsg#
-            </span>
-        </cfif> 
     </main>
 </cfoutput>
 

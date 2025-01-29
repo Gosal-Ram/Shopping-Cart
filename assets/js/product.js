@@ -55,7 +55,7 @@ function modalValidate(){
     let isValid = true;
     
     let productName = $("#productName");
-    const namePattern = /^[A-Za-z0-9 ]+$/;
+    const namePattern = /^[A-Za-z0-9 &-]+$/;
     if (productName.val().trim().length === 0) {
         document.getElementById("productNameError").textContent = "Enter product name.";
         productName.addClass("border-danger");
