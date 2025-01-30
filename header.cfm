@@ -65,15 +65,17 @@
               <cfif session.roleId EQ 1 AND session.isLoggedIn EQ true>
                 <!-- ADMIN -->
                 <div class="mx-2">
-                  <button type="button" class="btn btn-primary position-relative">
-                    CART
-                    <i class="bi bi-cart4"></i>
-                    <cfif structKeyExists(session, "cartCount")>
-                      <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                        #session.cartCount# 
-                      </span>
-                    </cfif>
-                  </button>
+                  <a href = "cart.cfm">
+                    <button type="button" class="btn btn-primary position-relative">
+                      CART
+                      <i class="bi bi-cart4"></i>
+                      <cfif structKeyExists(session, "cartCount") AND session.cartCount GT 0>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                          #session.cartCount# 
+                        </span>
+                      </cfif>
+                    </button>
+                  </a>
                   <span class="fw-semibold text-light">Hello #session.firstName#!</span>
                   <a class="btn text-light" href="category.cfm">
                     <img src="./assets/images/user.png" alt="" width="18" height="18" class="">
@@ -87,15 +89,17 @@
               <cfelseif session.roleId EQ 2 AND session.isLoggedIn EQ true>
                 <!-- USER LOGGED IN -->
                 <div class="mx-2">
-                  <button type="button" class="btn btn-primary position-relative">
-                    CART
-                    <i class="bi bi-cart4"></i>
-                    <cfif structKeyExists(session, "cartCount")>
-                      <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                        #session.cartCount# 
-                      </span>
-                    </cfif>
-                  </button>
+                  <a href = "cart.cfm">
+                    <button type="button" class="btn btn-primary position-relative">
+                      CART
+                      <i class="bi bi-cart4"></i>
+                      <cfif structKeyExists(session, "cartCount") AND session.cartCount GT 0>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                          #session.cartCount# 
+                        </span>
+                      </cfif>
+                    </button>
+                  </a>
                   <span class="fw-semibold text-light">Hello #session.firstName# !</span>
                   <a class="btn text-light" href="home.cfm">
                     <img src="./assets/images/user.png" alt="" width="18" height="18" class="">
@@ -109,10 +113,12 @@
             <cfelse>
               <div class="mx-2">
                 <!-- USER NOT LOGGED IN -->
-                <button type="button" class="btn btn-primary position-relative">
-                  CART
-                  <i class="bi bi-cart4"></i>
-                </button>
+                <a href = "cart.cfm">
+                  <button type="button" class="btn btn-primary position-relative">
+                    CART
+                    <i class="bi bi-cart4"></i>
+                  </button>
+                </a>
                 <a class="btn text-light" href="signup.cfm">
                   <img src="./assets/images/user.png" alt="" width="18" height="18" class="">
                   <span class="fw-semibold text-light">Hello, <span class="fw-bold text-white">Sign in</span></span>
@@ -130,13 +136,11 @@
           <!---  NAV BAR  --->
           <cfset variables.getAllCategories = application.shoppingCart.fetchCategories()>
           <cfset variables.categoryStruct = structNew()>
-          <!--- Store categories and subcategories in a struct --->
           <cfloop array="#variables.getAllCategories#" item="local.item">
               <cfset local.categoryId = local.item.categoryId>
               <cfset local.encryptedCategoryId = encrypt("#local.categoryId#", application.key, "AES", "Base64")>
               <cfset local.encodedCategoryId = encodeForURL(local.encryptedCategoryId)>
               
-              <!--- Fetch and store subcategories --->
               <cfset local.subCategories = application.shoppingCart.fetchSubCategories(categoryId ="#local.categoryId#")>
               
               <cfset variables.categoryStruct[local.categoryId] = {
@@ -149,10 +153,9 @@
                   <cfset local.encryptedSubCategoryId = encrypt("#local.subItem.subCategoryId#", application.key, "AES", "Base64")>
                   <cfset local.encodedSubCategoryId = encodeForURL(local.encryptedSubCategoryId)>
                   
-                  <!--- Store subcategories in the struct --->
                   <cfset arrayAppend(variables.categoryStruct[local.categoryId]["subCategories"], {
-                      "subCategoryName": local.subItem.subCategoryName,
-                      "encodedSubCategoryId": local.encodedSubCategoryId
+                    "subCategoryName": local.subItem.subCategoryName,
+                    "encodedSubCategoryId": local.encodedSubCategoryId
                   })>
               </cfloop>
           </cfloop>

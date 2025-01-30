@@ -3,6 +3,7 @@
     <cffunction  name="logIn" access = "public" returnType="string" >
         <cfargument name ="userInput" type="string" required ="true">
         <cfargument name ="password" type="string" required = "true">
+        <cfargument name ="productId" type="string" required = "false">
 
         <cfset local.loginResult = "">
         <cfquery name ="local.queryUserLogin">
@@ -33,11 +34,15 @@
                 <cfset session.lastName = local.queryUserLogin.fldLastName>
                 <cfset session.userId = local.queryUserLogin.fldUser_Id>
                 <cfset session.roleId = local.queryUserLogin.fldRoleId>
+                <cfif structKeyExists(arguments, "productId")>
+                    <cfset local.CartResult = addToCart(arguments.productId)>
+                    <!---<cfset local.loginResult &= local.CartResult.resultMsg > --->
+                </cfif>
                 <cfset session.cartCount = getUserCartCount()>
                 <cfif local.queryUserLogin.fldRoleId EQ 1>
                     <cflocation url = "category.cfm" addToken="no">
                 <cfelse>
-                    <cflocation url = "home.cfm" addToken="no">  
+                    <cflocation url = "home.cfm" addToken="no">   
                 </cfif>
             <cfelse>
                 <cfset local.loginResult = "Invalid password">
@@ -133,7 +138,7 @@
         <cfargument name="random" type="string" required="false">
         <cfargument name="productId" type="string" required="false">
         <cfargument name="offset" type="string" required="false">
-        <cfargument name="limit" type="numeric" default="4">
+        <cfargument name="limit" type="numeric" required="false">
 
         <cfquery name="local.queryGetProducts">
             SELECT 
@@ -198,7 +203,7 @@
                  LIMIT <cfqueryparam value="#arguments.limit#" cfsqltype="INTEGER"> 
                 OFFSET <cfqueryparam value="#arguments.offset#" cfsqltype="INTEGER">     --->
                 LIMIT #arguments.limit# OFFSET #arguments.offset#
-            <cfelseif  structKeyExists(arguments, "subCategoryId") AND  len(trim(arguments.subCategoryId)) GT 0 AND arguments.subCategoryId NEQ 0>
+            <cfelseif  structKeyExists(arguments, "limit") AND  len(trim(arguments.limit)) GT 0 AND arguments.limit NEQ 0>
                 LIMIT  #arguments.limit#
             </cfif>
 
@@ -764,7 +769,7 @@
     <cffunction  name="addToCart" access = "remote" returnType = "struct" returnFormat = "JSON">
         <cfargument name="productId" type="integer" required="false">
         
-        <cfset local.addToCartResult = { "resultMsg" = "","cartItemsCount" = ""}>
+        <cfset local.addToCartResult = { "resultMsg" = ""}>
         <cfif structKeyExists(arguments, "productId") AND Len(trim(arguments.productId)) GT 0 AND arguments.productId NEQ 0>
             <!---  EXISTING PRODUCT CHECK  --->
             <cfquery name ="local.queryAddToCartNewProductCheck">
@@ -823,5 +828,62 @@
                 fldUserId = <cfqueryparam value = "#session.userId#" cfsqltype = "integer">     
         </cfquery>
         <cfreturn local.querygetCartCount.recordCount>
+    </cffunction>
+
+    <cffunction  name="fetchCart" access = "public" returnType = "array">
+        <cfset local.fetchCartResultMsg = "">
+
+        <cfquery name ="local.queryFetchCartDetails">
+            SELECT 
+                c.fldCart_Id,
+                c.fldProductId,
+                c.fldQuantity,
+                p.fldProductName,
+                p.fldBrandId,
+                p.fldPrice,
+                p.fldTax,
+                b.fldBrandName,
+                pi.fldImageFilename
+            FROM 
+                tblcart c
+                INNER JOIN tblproduct p ON c.fldProductId = p.fldProduct_Id
+                INNER JOIN tblproductimages pi ON c.fldProductId = pi.fldProductId 
+                INNER JOIN tblbrands b ON p.fldBrandId = b.fldBrand_Id
+            WHERE
+                c.fldUserId = <cfqueryparam value = "#session.userId#" cfsqltype = "integer">     
+                AND pi.fldDefaultImage = 1
+        </cfquery>
+        <cfset local.fetchCartResultMsg = "cart Details fetched successfully">
+        <cfset local.cartDetailsArray = []>
+
+        <cfloop query="local.queryFetchCartDetails">
+            <cfset local.cart = {
+                "cartId" = local.queryFetchCartDetails.fldCart_Id,
+                "productId" = local.queryFetchCartDetails.fldProductId,
+                "quantity" = local.queryFetchCartDetails.fldQuantity,
+                "productName" = local.queryFetchCartDetails.fldProductName,
+                "price" = local.queryFetchCartDetails.fldPrice,
+                "tax" = local.queryFetchCartDetails.fldTax,
+                "brandName" = local.queryFetchCartDetails.fldBrandName,
+                "defaultImg" = local.queryFetchCartDetails.fldImageFilename
+            }>
+            <cfset arrayAppend(local.cartDetailsArray, local.cart)>
+        </cfloop>
+        <!---         <cfset arrayAppend(local.cartDetailsArray, local.fetchCartResultMsg)> --->
+
+        <cfreturn local.cartDetailsArray>
+    </cffunction>
+
+    <cffunction  name="deleteCartItem" access="remote" returnType = "boolean" >
+        <cfargument  name="cartId" type="integer" required ="true">
+
+        <cfquery name = "local.queryDeleteCartItem" >
+            DELETE FROM 
+                tblCart
+            WHERE 
+                fldCart_Id = <cfqueryparam value = "#arguments.cartId#" cfsqltype="integer">
+        </cfquery>
+        <cfset session.cartCount = getUserCartCount()>
+        <cfreturn true>
     </cffunction>
 </cfcomponent>
