@@ -7,28 +7,54 @@ function removeProduct(cartId){
                 method : "deleteCartItem"
             },
             success:function(){
-            document.getElementById(cartId).remove();
-            // location.reload();
+                document.getElementById(cartId).remove();
+                location.reload();
             }
         })
     }
 }
 
 function increaseCount(cartId,quantityCount){
-    // alert("inc");
-    console.log(cartId,quantityCount);
-    document.getElementById("quantityCount").innerHTML + 1 ;
-    console.log(document.getElementById("quantityCount").innerHTML);
+    let quantityElement = document.getElementById(`quantityCount_${cartId}`);
+    let prevCount = parseInt(quantityElement.innerHTML); 
+    let quantity = prevCount + 1 ;
+    $.ajax({
+        type:"POST",
+        url: "component/shoppingcart.cfc",
+        data:{cartId: cartId,
+            quantity : quantity,
+            method : "editCart"
+        },
+        success:function(response){
+            let responseParsed = JSON.parse(response);
+            console.log(responseParsed);
+            location.reload();
+        }
+    })
 
 }
 
 function decreaseCount(cartId,quantityCount){
-    // alert("dec");
-    console.log(cartId,quantityCount);
-    let count = document.getElementById("quantityCount").innerHTML;
-    if(count ==1){
-        removeProduct(cartId);
+    let quantityElement = document.getElementById(`quantityCount_${cartId}`);
+    let prevCount = parseInt(quantityElement.innerHTML); 
+    if(prevCount > 1){
+        let quantity = prevCount - 1;
+        console.log(quantity);
+        $.ajax({
+            type:"POST",
+            url: "component/shoppingcart.cfc",
+            data:{cartId: cartId,
+                quantity : quantity,
+                method : "editCart"
+            },
+            success:function(response){
+                let responseParsed = JSON.parse(response);
+                console.log(responseParsed);
+                location.reload();
+            }
+        })
     }
-    console.log(document.getElementById("quantityCount").innerHTML);
 
 }
+
+

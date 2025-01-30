@@ -69,16 +69,18 @@
                     <button type="button" class="btn btn-primary position-relative">
                       CART
                       <i class="bi bi-cart4"></i>
-                      <cfif structKeyExists(session, "cartCount") AND session.cartCount GT 0>
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                          #session.cartCount# 
-                        </span>
-                      </cfif>
+                      <!--- <cfif structKeyExists(session, "cartCount") AND session.cartCount GT 0>
+                          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            #session.cartCount# 
+                          </span>
+                      </cfif> --->
                     </button>
                   </a>
                   <span class="fw-semibold text-light">Hello #session.firstName#!</span>
-                  <a class="btn text-light" href="category.cfm">
+                  <a class="btn text-light" href="profile.cfm">
                     <img src="./assets/images/user.png" alt="" width="18" height="18" class="">
+                  </a>
+                  <a class="btn text-light" href="category.cfm">
                     ADMIN
                   </a>
                   <a class="btn text-light" onClick="logOut()"> 
@@ -100,9 +102,9 @@
                       </cfif>
                     </button>
                   </a>
-                  <span class="fw-semibold text-light">Hello #session.firstName# !</span>
-                  <a class="btn text-light" href="home.cfm">
+                  <a class="btn text-light" href="profile.cfm">
                     <img src="./assets/images/user.png" alt="" width="18" height="18" class="">
+                    <span class="fw-semibold text-light">#session.firstName#</span>
                   </a>
                   <a class="btn text-light" onClick="logOut()"> 
                     <img src="./assets/images/exit.png" alt="" width="18" height="18">
@@ -168,13 +170,13 @@
                 <cfloop collection="#variables.categoryStruct#" item="local.categoryId">
                     <cfset local.category = variables.categoryStruct[local.categoryId]>
                     <li class="nav-item toggleContainer">
-                        <a class="nav-link" href="userCategory.cfm?categoryId=#local.category.encodedCategoryId#" id="#local.categoryId#" role="button">
+                        <a class="nav-link linkTxt" href="userCategory.cfm?categoryId=#local.category.encodedCategoryId#" id="#local.categoryId#" role="button">
                             #local.category.categoryName#
                         </a>
                         <ul class="dropdown-menu">
                             <cfloop array="#local.category.subCategories#" item="local.subCategory">
                                 <li>
-                                    <a class="dropdown-item" href="userSubCategory.cfm?subCategoryId=#local.subCategory.encodedSubCategoryId#">
+                                    <a class="dropdown-item linkTxt" href="userSubCategory.cfm?subCategoryId=#local.subCategory.encodedSubCategoryId#">
                                         #local.subCategory.subCategoryName#
                                     </a>
                                 </li>

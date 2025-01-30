@@ -886,4 +886,23 @@
         <cfset session.cartCount = getUserCartCount()>
         <cfreturn true>
     </cffunction>
+
+    <cffunction  name="editCart" access = "remote" returnType ="struct" returnFormat = "JSON">
+        <cfargument  name="cartId" type="integer" required ="true">
+        <cfargument  name="quantity" type="integer" required ="true">
+
+        <cfset local.editCartResult = {"resultMsg" = ""}>
+        <cfif structKeyExists(arguments, "quantity") AND arguments.quantity GT 0>
+            <cfquery name = "local.queryEditCartItem">
+                UPDATE 
+                    tblCart
+                SET 
+                    fldQuantity = <cfqueryparam value = "#arguments.quantity#" cfsqltype="integer">
+                WHERE
+                    fldCart_Id = <cfqueryparam value = "#arguments.cartId#" cfsqltype="integer">
+            </cfquery>
+            <cfset local.editCartResult["resultMsg"] = "Cart Updated">
+        </cfif>
+        <cfreturn local.editCartResult>
+    </cffunction>
 </cfcomponent>
