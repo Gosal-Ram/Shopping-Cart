@@ -92,7 +92,7 @@
                                 <i class="fa-solid fa-indian-rupee-sign me-1"></i>
                                 #numberFormat(variables.totalTax, ".00")#
                             </strong>
-                         </p>
+                            </p>
                         <hr>
                         <h4 class="d-flex justify-content-between text-dark">
                             <span>Total:</span> 
