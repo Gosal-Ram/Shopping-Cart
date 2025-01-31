@@ -1,7 +1,9 @@
 function changeMainImage(src) {
     const activeItem = document.querySelector(".carousel-item.active img");
+    // let imageElement = document.getElementById("productThumbnailImg");
     if (activeItem) {
         activeItem.src = src;
+        // imageElement.classList.add("border-primary");        
     }
 }
 function addToCart(logInFlag, productId){

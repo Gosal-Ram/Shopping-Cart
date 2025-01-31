@@ -15,6 +15,7 @@
         <cfset local.userAllowedPages = ["/login.cfm", 
                                         "/signup.cfm", 
                                         "/home.cfm",
+                                        "/cart.cfm",
                                         "/userCategory.cfm", 
                                         "/userSubCategory.cfm", 
                                         "/searchResults.cfm",

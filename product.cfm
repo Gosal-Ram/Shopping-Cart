@@ -9,23 +9,36 @@
     <div class="container flex-column mx-auto my-5 p-5 w-50 justify-content-center bg-light shadow-lg" id ="mainDiv">
       <div class = "d-flex justify-content-between align-items-center mb-3" >
         <h3>#variables.subCategoryName#</h3>
-        <button type="button" onclick = "openAddProductModal()" class = "btn btn-secondary rounded" data-bs-toggle="modal" data-bs-target="##staticBackdrop">
+        <button type="button" 
+          onclick = "openAddProductModal()" 
+          class = "btn btn-secondary rounded" 
+          data-bs-toggle="modal" 
+          data-bs-target="##staticBackdrop">
           New
         </button>
       </div>
       <cfset variables.queryGetAllProducts = application.shoppingCart.fetchProducts(variables.subCategoryId)>
       <span class="text-success" id ="productFunctionResult"></span>
       <cfloop query="variables.queryGetAllProducts">
-        <div class = "d-flex justify-content-between align-items-center w-100 col-6" id = "#variables.queryGetAllProducts.fldProduct_Id#">
+        <div class = "d-flex justify-content-between align-items-center w-100 col-6" 
+              id = "#variables.queryGetAllProducts.fldProduct_Id#">
           <div class="col-6">
-            <div id = "productname-#variables.queryGetAllProducts.fldProduct_Id#" class="h5 text-bold">#variables.queryGetAllProducts.fldProductName#</div>
+            <div id = "productname-#variables.queryGetAllProducts.fldProduct_Id#" 
+              class="h5 text-bold">#variables.queryGetAllProducts.fldProductName#
+            </div>
             <div class = "d-flex justify-content-between align-items-center">
               <div class="text-secondary">
                 <div class="h6 text-muted">#variables.queryGetAllProducts.fldBrandName#</div>
                 <div class="h6 text-bold"> #variables.queryGetAllProducts.fldPrice#</div>
               </div>
-              <button type="button" onclick = "openImgCarousal(#variables.queryGetAllProducts.fldProduct_Id#)"class="border-0"  data-bs-toggle="modal" data-bs-target="##imgModal">
-                <img src="./assets/images/productImages/#variables.queryGetAllProducts.fldImageFileName#" alt="" width="85" height="" class="">
+              <button type="button" 
+                onclick = "openImgCarousal(#variables.queryGetAllProducts.fldProduct_Id#)"
+                class="border-0"  
+                data-bs-toggle="modal" 
+                data-bs-target="##imgModal">
+                <img src="./assets/images/productImages/#variables.queryGetAllProducts.fldImageFileName#" 
+                  alt="" 
+                  width="85">
               </button>
             </div>
           </div>
@@ -37,7 +50,8 @@
               data-bs-target="##staticBackdrop">
               <img src="./assets/images/editing.png" alt="" width="18" height="18" class="">
             </button>
-            <button class = "btn btn-outline-info  px-3 my-2" onClick = "deleteProduct(#variables.queryGetAllProducts.fldProduct_Id#)">
+            <button class = "btn btn-outline-info  px-3 my-2" 
+              onClick = "deleteProduct(#variables.queryGetAllProducts.fldProduct_Id#)">
               <img src="./assets/images/trash.png" alt="" width="18" height="18" class="">
             </button>
           </div>

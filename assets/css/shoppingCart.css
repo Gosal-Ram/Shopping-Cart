@@ -11,11 +11,19 @@
 }
 
 .searchInputDiv{
-    width: 45%;
+    width: 45%; 
 }
 
 .toggleContainer:hover .dropdown-menu {
     display: block;
+}
+
+.linkTxt{
+    font-weight: 600;
+}
+
+.linkTxt:hover{
+    color: #0D6EFD;
 }
 
 .productCard{
@@ -58,6 +66,13 @@
 
 .homeImgContainer{
     width: 70%;
+}
+
+.emptyCartImg{
+    max-width: 300px;
+}
+.cartProductImg , .homeCartImg, .productImg{
+    object-fit: contain;
 }
 
 /* footer */

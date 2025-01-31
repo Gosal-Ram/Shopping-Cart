@@ -17,19 +17,29 @@
                 <cfloop query="variables.getAllProducts">
                     <cfset variables.encryptedProductId = encrypt("#getAllProducts.fldProduct_Id#",application.key,"AES","Base64")>
                     <cfset variables.encodedProductId = encodeForURL(variables.encryptedProductId)>
-                    <a  class = "card m-2 p-2 productCard text-decoration-none" href = "userProduct.cfm?productId=#variables.encodedProductId#">
-                    <div>
-                        <img src="./assets/images/productImages/#variables.getAllProducts.fldImageFilename#" 
-                            class="w-100"
-                            alt="" 
-                            style="height: 150px; object-fit: contain;">
-                        <div class="card-body">
-                            <h6 class="card-title" id = "#variables.getAllProducts.fldProduct_Id#">#variables.getAllProducts.fldProductName#</h6>
-                            <div class="card-text text-muted">  #variables.getAllProducts.fldBrandName#</div>
-                            <div class="card-text text-dark fw-semibold"><i class="fa-solid fa-indian-rupee-sign me-1"></i>#variables.getAllProducts.fldPrice#</div>
-                            <div class="card-text productDescription">#variables.getAllProducts.fldDescription#</div>
+                    <a class ="card m-2 p-2 productCard text-decoration-none" 
+                        href = "userProduct.cfm?productId=#variables.encodedProductId#">
+                        <div>
+                            <img src="./assets/images/productImages/#variables.getAllProducts.fldImageFilename#" 
+                                class="w-100 productImg"
+                                alt="" 
+                                height ="150">
+                            <div class="card-body">
+                                <h6 class="card-title" id = "#variables.getAllProducts.fldProduct_Id#">
+                                    #variables.getAllProducts.fldProductName#
+                                </h6>
+                                <div class="card-text text-muted">  
+                                    #variables.getAllProducts.fldBrandName#
+                                </div>
+                                <div class="card-text text-dark fw-semibold">
+                                    <i class="fa-solid fa-indian-rupee-sign me-1"></i>
+                                    #variables.getAllProducts.fldPrice#
+                                </div>
+                                <div class="card-text productDescription">
+                                    #variables.getAllProducts.fldDescription#
+                                </div>
+                            </div>
                         </div>
-                    </div>
                     </a>
                 </cfloop> 
             </div>

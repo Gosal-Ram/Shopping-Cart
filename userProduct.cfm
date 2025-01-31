@@ -23,9 +23,15 @@
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="home.cfm">Home</a></li>
-                        <li class="breadcrumb-item"><a  href="userCategory.cfm?categoryId=#variables.encodedCategoryId#"> #variables.categoryName# </a></li>
-                        <li class="breadcrumb-item"><a  href="userSubCategory.cfm?subCategoryId=#variables.encodedSubCategoryId#"> #variables.subCategoryName# </a></li>
-                        <li class="breadcrumb-item active" aria-current="page"> #variables.getAllProducts.fldProductName# </li>
+                        <li class="breadcrumb-item">
+                            <a href="userCategory.cfm?categoryId=#variables.encodedCategoryId#"> #variables.categoryName#</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a href="userSubCategory.cfm?subCategoryId=#variables.encodedSubCategoryId#">#variables.subCategoryName#</a>
+                        </li>
+                        <li class="breadcrumb-item active" aria-current="page"> 
+                            #variables.getAllProducts.fldProductName# 
+                        </li>
                     </ol>
                 </nav>
                 <div class="row">
@@ -36,28 +42,30 @@
                                     <cfloop query="variables.getAllProductImages">
                                         <img src="assets/images/productImages/#variables.getAllProductImages.fldImageFilename#" 
                                         class="img-thumbnail mb-2" 
-                                        alt="" 
-                                        style="height: 65px; width: 90px;"
+                                        alt = "" 
+                                        height ="65"
+                                        width = "90"
+                                        id = "productThumbnailImg"
                                         onmouseover="changeMainImage(this.src)">
                                     </cfloop>
                                 </div>
                             </div>
-                            <div id="productCarousel" class="carousel slide" data-bs-ride="carousel" style="width: 100%;">
+                            <div id="productCarousel" class="carousel slide w-100" data-bs-ride="carousel">
                                 <div class="carousel-inner">
                                     <div class="carousel-item active">
                                         <img src="assets/images/productImages/#variables.getAllProducts.fldImageFilename#" 
                                         id = "mainProductImage"
-                                        class="d-block w-100 mainImg" 
+                                        class="d-block w-100 productImg" 
                                         alt="" 
-                                        style="height: 400px; object-fit: contain;">
+                                        height="350">
                                     </div>
                                     <cfloop query="variables.getAllProductImages">
-                                    <div class="carousel-item">
-                                        <img src="assets/images/productImages/#variables.getAllProductImages.fldImageFilename#" 
-                                        class="d-block w-100" 
-                                        alt="Product Image" 
-                                        style="height: 400px; object-fit: contain;">
-                                    </div>
+                                        <div class="carousel-item">
+                                            <img src="assets/images/productImages/#variables.getAllProductImages.fldImageFilename#" 
+                                            class="d-block w-100 productImg" 
+                                            alt="Product Image"
+                                            height="350">
+                                        </div>
                                     </cfloop>
                                 </div>
                                 <button class="carousel-control-prev" type="button" data-bs-target="##productCarousel" data-bs-slide="prev">
@@ -75,9 +83,18 @@
                     <div class="col-md-6">
                         <h2 class="product-title">#variables.getAllProducts.fldProductName#</h2>
                         <p class="text-muted">Brand: #variables.getAllProducts.fldBrandName#</p>
-                        <h3 class="text-dark"><i class="fa-solid fa-indian-rupee-sign me-1"></i>#variables.getAllProducts.fldPrice#</h3>
-                        <p class="text-success">Tax : <i class="fa-solid fa-indian-rupee-sign me-1"></i>#variables.getAllProducts.fldTax#</p>
-                        <p class="product-description mt-4">#variables.getAllProducts.fldDescription#</p>
+                        <h3 class="text-dark">
+                            <i class="fa-solid fa-indian-rupee-sign me-1"></i>
+                            #variables.getAllProducts.fldPrice#
+                        </h3>
+                        <p class="text-success">
+                            Tax : 
+                            <i class="fa-solid fa-indian-rupee-sign me-1"></i>
+                            #variables.getAllProducts.fldTax#
+                        </p>
+                        <p class="product-description mt-4">
+                            #variables.getAllProducts.fldDescription#   
+                        </p>
 
                         <div class="mt-4">
                         <cfif structKeyExists(session,"isLoggedIn") AND session.isloggedIn EQ true>
@@ -86,7 +103,12 @@
                             <cfset variables.logInFlag = 0>
                         </cfif>
                         <form method = "POST">
-                            <button type = "button" onclick = "addToCart(#variables.logInFlag#,#variables.productId#)" name = "addToCartBtn" class="btn addToCartBtn me-2">Add to Cart</button>
+                            <button type = "button" 
+                            onclick ="addToCart(#variables.logInFlag#,#variables.productId#)" 
+                            name = "addToCartBtn" 
+                            class="btn addToCartBtn me-2">
+                                Add to Cart
+                            </button>
                             <button class="btn buyNowtBtn ">Buy Now</button>
                         </form>
                         </div>
