@@ -16,6 +16,11 @@
 <cfset variables.encryptedSubCategoryId = encrypt("#variables.subCategoryId#",application.key,"AES","Base64")>
 <cfset variables.encodedSubCategoryId = encodeForURL(variables.encryptedSubCategoryId)>
 
+<cfset variables.encryptedProductId = encrypt("#variables.productId#",application.key,"AES","Base64")>
+<cfset variables.encodedProductId = encodeForURL(variables.encryptedProductId)>
+
+<cfset variables.logInFlag = 0>
+
 <cfoutput>
     <main>
         <cfloop query="variables.getAllProducts">
@@ -99,17 +104,20 @@
                         <div class="mt-4">
                         <cfif structKeyExists(session,"isLoggedIn") AND session.isloggedIn EQ true>
                             <cfset variables.logInFlag = 1>
-                        <cfelse>
-                            <cfset variables.logInFlag = 0>
                         </cfif>
                         <form method = "POST">
                             <button type = "button" 
-                            onclick ="addToCart(#variables.logInFlag#,#variables.productId#)" 
+                            onclick ="addToCartAndBuy(#variables.logInFlag#,#variables.productId#,0,'#variables.encodedProductId#')" 
                             name = "addToCartBtn" 
                             class="btn addToCartBtn me-2">
                                 Add to Cart
                             </button>
-                            <button class="btn buyNowtBtn ">Buy Now</button>
+                            <!--- <a class="btn buyNowtBtn" href ="order.cfm?productId=#variables.encodedProductId#">Buy Now</a> --->
+                            <button class="btn buyNowtBtn"
+                                 type = "button" 
+                                 onClick = "addToCartAndBuy(#variables.logInFlag#,#variables.productId#,1,'#variables.encodedProductId#')">
+                                Buy Now
+                            </button>
                         </form>
                         </div>
                     </div>

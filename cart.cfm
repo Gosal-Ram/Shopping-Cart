@@ -10,7 +10,6 @@
     </div>
 <cfelse>
     <cfset variables.getCartDetails = application.shoppingCart.fetchCart()>
-    <!---  <cfdump  var="#variables.getCartDetails#">  --->
     <cfoutput>
     <main>
         <div class="container my-3">
@@ -18,52 +17,52 @@
             <div class="row">
                 <div class="col-md-8">
                     <cfloop array="#variables.getCartDetails#" index="local.item">
-                    <div class="card mb-3 p-3 d-flex flex-row align-items-center" id = "#local.item.cartId#">
-                        <img src="assets/images/productImages/#local.item.defaultImg#" alt="#local.item.productName#"
-                            class="img-fluid me-3 cartProductImg" 
-                            width = "100"
-                            height = "100">
-                        <div class="flex-grow-1">
-                            <h5 class="mb-1">#local.item.productName#</h5>
-                            <p class="text-muted">Brand: #local.item.brandName#</p>
-                            <div class="d-flex align-items-center">
-                                <button type = "button"
-                                    id = "btnDecrease_#local.item.cartId#"
-                                    onClick = "decreaseCount(#local.item.cartId# , #local.item.quantity#)"
-                                    class="btn btn-outline-primary btn-sm me-2 btn-quantity"
-                                    <cfif local.item.quantity EQ 1>
-                                        disabled
-                                    </cfif>>-
-                                </button>
-                                <span class="mx-2" id="quantityCount_#local.item.cartId#">#local.item.quantity#</span>
+                        <div class="card mb-3 p-3 d-flex flex-row align-items-center" id = "#local.item.cartId#">
+                            <img src="assets/images/productImages/#local.item.defaultImg#" alt="#local.item.productName#"
+                                class="img-fluid me-3 cartProductImg" 
+                                width = "100"
+                                height = "100">
+                            <div class="flex-grow-1">
+                                <h5 class="mb-1">#local.item.productName#</h5>
+                                <p class="text-muted">Brand: #local.item.brandName#</p>
+                                <div class="d-flex align-items-center">
+                                    <button type = "button"
+                                        id = "btnDecrease_#local.item.cartId#"
+                                        onClick = "decreaseCount(#local.item.cartId# , #local.item.quantity#)"
+                                        class="btn btn-outline-primary btn-sm me-2 btn-quantity"
+                                        <cfif local.item.quantity EQ 1>
+                                            disabled
+                                        </cfif>>-
+                                    </button>
+                                    <span class="mx-2" id="quantityCount_#local.item.cartId#">#local.item.quantity#</span>
+                                    <button type = "button" 
+                                        onClick = "increaseCount(#local.item.cartId# , #local.item.quantity#)" 
+                                        class="btn btn-outline-primary btn-sm btn-remove">+
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <h4>
+                                    <i class="fa-solid fa-indian-rupee-sign me-1"></i>
+                                    #numberFormat((local.item.quantity*local.item.price) + (local.item.quantity*local.item.tax), ".00")#
+                                </h4>
+                                <p class="mb-0">
+                                    Tax: 
+                                    <i class="fa-solid fa-indian-rupee-sign me-1"></i>
+                                    #numberFormat(local.item.quantity*local.item.tax, ".00")#
+                                </p>
+                                <p class="text-muted mb-0">
+                                    Price: 
+                                    <i class="fa-solid fa-indian-rupee-sign me-1"></i>
+                                    #numberFormat(local.item.quantity*local.item.price, ".00")#    
+                                </p>
                                 <button type = "button" 
-                                    onClick = "increaseCount(#local.item.cartId# , #local.item.quantity#)" 
-                                    class="btn btn-outline-primary btn-sm btn-remove">+
+                                    class="btn btn-secondary btn-sm mt-2" 
+                                    onClick = "removeProduct(#local.item.cartId#)">
+                                    Remove
                                 </button>
                             </div>
                         </div>
-                        <div class="text-end">
-                            <h4>
-                                <i class="fa-solid fa-indian-rupee-sign me-1"></i>
-                                #numberFormat((local.item.quantity*local.item.price) + (local.item.quantity*local.item.tax), ".00")#
-                            </h4>
-                            <p class="mb-0">
-                                Tax: 
-                                <i class="fa-solid fa-indian-rupee-sign me-1"></i>
-                                #numberFormat(local.item.quantity*local.item.tax, ".00")#
-                            </p>
-                            <p class="text-muted mb-0">
-                                Price: 
-                                <i class="fa-solid fa-indian-rupee-sign me-1"></i>
-                                #numberFormat(local.item.quantity*local.item.price, ".00")#    
-                            </p>
-                            <button type = "button" 
-                                class="btn btn-secondary btn-sm mt-2" 
-                                onClick = "removeProduct(#local.item.cartId#)">
-                                Remove
-                            </button>
-                        </div>
-                    </div>
                     </cfloop>
                 </div> 
                 <div class="col-md-4">
@@ -101,9 +100,10 @@
                                 #numberFormat(variables.totalPrice, ".00")#
                             </strong>
                         </h4>
-                        <button class="btn btn-success w-100 mt-3 proceedBtn text-dark fw-semibold rounded-pill">
+                        <a class="btn btn-success w-100 mt-3 proceedBtn text-dark fw-semibold rounded-pill"
+                            href = "order.cfm">
                             Proceed to Checkout
-                        </button>
+                        </a>
                     </div>
                 </div>
             </div>

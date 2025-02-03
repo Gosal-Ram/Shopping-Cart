@@ -95,8 +95,8 @@
                     <button type="button" class="btn btn-primary position-relative">
                       CART
                       <i class="bi bi-cart4"></i>
-                      <cfif structKeyExists(session, "cartCount") AND session.cartCount GT 0>
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                      <cfif structKeyExists(session, "cartCount")>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id = "cartCount">
                           #session.cartCount# 
                         </span>
                       </cfif>

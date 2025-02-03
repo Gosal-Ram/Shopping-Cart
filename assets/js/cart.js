@@ -1,5 +1,5 @@
 function removeProduct(cartId){
-    if(confirm("Confirm delete cart item")){
+    if(confirm("Confirm remove cart item")){
         $.ajax({
             type:"POST",
             url: "component/shoppingcart.cfc",

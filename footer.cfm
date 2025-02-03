@@ -111,6 +111,10 @@
           <script src="assets/js/profile.js"></script>
         </cfcase>
 
+        <cfcase value="/order.cfm">
+          <script src="assets/js/order.js"></script>
+        </cfcase>
+
         <cfcase value="/signup.cfm">
           <script src="assets/js/signup.js"></script>
         </cfcase>

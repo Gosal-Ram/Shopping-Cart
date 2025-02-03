@@ -138,7 +138,7 @@
 
                         <div class="mb-3">
                             <label class="form-label">Phone</label>
-                            <input type="text" class="form-control" id="receiverPhone" name="receiverPhone">
+                            <input type="number" class="form-control" id="receiverPhone" maxlength="10" name="receiverPhone">
                             <span id="receiverPhoneError" class="text-danger"></span>
                         </div>
 
@@ -178,7 +178,7 @@
                             <span id="pincodeError" class="text-danger"></span>
                         </div>
 
-                        <button type="button" name = "userAddressSubmitBtn" onClick = "addNewAddress()" class="btn btn-primary w-100">Save Changes</button>
+                        <button type="button" name = "userAddressSubmitBtn" onClick = "saveNewAddress()" class="btn btn-primary w-100">Save Changes</button>
                     </form>
                 </div>
             </div>

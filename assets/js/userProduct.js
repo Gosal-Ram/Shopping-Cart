@@ -6,10 +6,9 @@ function changeMainImage(src) {
         // imageElement.classList.add("border-primary");        
     }
 }
-function addToCart(logInFlag, productId){
-    const isLoggedIn = logInFlag;
+function addToCartAndBuy(logInFlag, productId, buyNowFlag,encodedProductId){
 
-    if(isLoggedIn){
+    if(logInFlag){
         $.ajax({
             type:"POST",
             url: "component/shoppingcart.cfc",
@@ -19,12 +18,26 @@ function addToCart(logInFlag, productId){
             },
             success:function(response){
                 let responseParsed = JSON.parse(response);
-                console.log(responseParsed);
-                location.reload();
+                if(responseParsed.resultMsg =="Product added to the Cart"){
+                    let cartCountPrev = Number(document.getElementById("cartCount").innerHTML);
+                    let cartCount = cartCountPrev +1;
+                    document.getElementById("cartCount").innerHTML = cartCount;
+                }
+
+                if(buyNowFlag){
+                    location.href = `order.cfm?productId=${encodedProductId}`;
+                }
+                
             }
         });
     } 
     else{
-        location.href="login.cfm?productId="+productId ;
+        console.log(encodedProductId);
+        if(buyNowFlag){
+            location.href =`login.cfm?productId=${encodedProductId}&buyNow=1`;
+        }else{
+            location.href =`login.cfm?productId=${encodedProductId}`;
+        }
     }
 }
+
