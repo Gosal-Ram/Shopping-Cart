@@ -5,7 +5,7 @@ function logOut(){
             url: "component/shoppingcart.cfc",
             data:{ method:"logOut"},
             success:function(){
-              location.reload();
+              location.href= "home.cfm";
             }
         })
     }

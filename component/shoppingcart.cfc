@@ -32,6 +32,8 @@
                 <cfset session.isLoggedIn = true>
                 <cfset session.firstName = local.queryUserLogin.fldFirstName>
                 <cfset session.lastName = local.queryUserLogin.fldLastName>
+                <cfset session.email = local.queryUserLogin.fldEmail>
+                <cfset session.phone = local.queryUserLogin.fldPhone>
                 <cfset session.userId = local.queryUserLogin.fldUser_Id>
                 <cfset session.roleId = local.queryUserLogin.fldRoleId>
                 <cfif structKeyExists(arguments, "productId")>
@@ -904,5 +906,113 @@
             <cfset local.editCartResult["resultMsg"] = "Cart Updated">
         </cfif>
         <cfreturn local.editCartResult>
+    </cffunction>
+
+    <cffunction  name="updateUserInfo" access = "public" returnType = "struct">
+        <cfargument name="firstName" type="string" required="yes">
+        <cfargument name="lastName" type="string" required="yes">
+        <cfargument name="emailId" type="string" required="yes">
+        <cfargument name="phone" type="string" required="yes">
+
+        <cfset local.updateUserInfoResult = {"resultMsg" = ""}>
+
+        <cfif len(trim(arguments.firstName)) EQ 0>
+            <cfset local.updateUserInfoResult["resultMsg"] = "First Name is required.">
+        </cfif>
+
+        <cfif len(trim(arguments.lastName)) EQ 0>
+            <cfset local.updateUserInfoResult["resultMsg"] = "Last Name is required.">
+        </cfif>
+
+        <cfif isValid("email", arguments.emailId) EQ  0>
+            <cfset local.updateUserInfoResult["resultMsg"] = "Enter a valid Email ID.">
+        </cfif> 
+
+        <cfif NOT isNumeric(arguments.phone) OR len(trim(arguments.phone)) NEQ 10 >
+            <cfset local.updateUserInfoResult["resultMsg"] = "Enter a valid 10-digit phone number.">
+        </cfif>
+
+        <cfquery name ="local.queryUserUniqueCheck">
+            SELECT 
+                fldEmail,
+                fldPhone
+            FROM 
+                tblUser 
+            WHERE(
+                fldEmail = <cfqueryparam value = "#arguments.emailId#" cfsqltype="VARCHAR"> 
+                OR fldPhone = <cfqueryparam value = "#arguments.phone#" cfsqltype="VARCHAR">)
+                AND fldEmail !=<cfqueryparam value = "#session.email#" cfsqltype="VARCHAR">
+                AND fldPhone != <cfqueryparam value = "#session.phone#" cfsqltype="VARCHAR">
+                AND fldActive = <cfqueryparam value="1" cfsqltype="INTEGER">       
+        </cfquery>
+
+        <cfif local.queryUserUniqueCheck.recordcount GT 0>
+            <cfset local.updateUserInfoResult["resultMsg"] = "User mail or phone already exists">
+        </cfif>
+
+        <cfif len(trim(local.updateUserInfoResult["resultMsg"])) GT 0>
+            <cfreturn local.updateUserInfoResult>
+        <cfelse>
+            <cfquery name = "local.queryUpdateUserInfo">
+                UPDATE 
+                    tbluser
+                SET
+                    fldFirstName = <cfqueryparam value = "#arguments.firstName#" cfsqltype = "VARCHAR">,
+                    fldLastName = <cfqueryparam value = "#arguments.lastName#" cfsqltype = "VARCHAR">,
+                    fldEmail = <cfqueryparam value = "#arguments.emailId#" cfsqltype = "VARCHAR">,
+                    fldPhone = <cfqueryparam value = "#arguments.phone#" cfsqltype = "VARCHAR">
+                WHERE
+                    fldUser_Id = <cfqueryparam value = "#session.userId#" cfsqltype = "integer">
+            </cfquery>
+            <cfset session.firstName = arguments.firstName>
+            <cfset session.lastName = arguments.lastName>
+            <cfset session.email = arguments.emailId>
+            <cfset session.phone = arguments.phone>
+            <cfset local.updateUserInfoResult["resultMsg"] = "User details Updated">
+            <!---<cflocation  url="profile.cfm"> --->
+        </cfif>
+        <cfreturn local.updateUserInfoResult>
+    </cffunction>
+
+    <cffunction  name="fetchAddresses" access = "public" returnType = "array">
+        <cfquery name="local.queryGetAddresses">
+            SELECT 
+                fldAddress_Id,
+                fldFirstName,
+                fldlLastName,
+                fldAddressLine1,
+                fldAddressLine2,
+                fldCity,
+                fldState,
+                fldPincode,
+                fldPhone
+            FROM 
+                tbladdress
+            WHERE 
+                fldActive = 1
+                AND fldUserId = <cfqueryparam value="#session.userId#" cfsqltype="integer">
+        </cfquery>
+
+        <cfset local.addressesArray = []>
+
+        <cfloop query="local.queryGetAddresses">
+            <cfset local.address = {
+                "addressId" = local.queryGetAddresses.fldAddress_Id,
+                "firstName" = local.queryGetAddresses.fldFirstName,
+                "lastName" = local.queryGetAddresses.fldlLastName,
+                "addLine1" = local.queryGetAddresses.fldAddressLine1,
+                "addLine2" = local.queryGetAddresses.fldAddressLine2,
+                "city" = local.queryGetAddresses.fldCity,
+                "state" = local.queryGetAddresses.fldState,
+                "pincode" = local.queryGetAddresses.fldPincode,
+                "phone" = local.queryGetAddresses.fldPhone
+            }>
+            <cfset arrayAppend(local.addressesArray, local.address)>
+        </cfloop>
+
+        <cfreturn local.addressesArray>
+    </cffunction>
+
+    <cffunction  name="addNewAddress" access = "remote" returnType = "struct" returnFormat ="JSON">
     </cffunction>
 </cfcomponent>
