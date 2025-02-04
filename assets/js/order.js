@@ -181,7 +181,64 @@ function removeProduct(productId){
     }
 }
 
-function placeOrder(productId,productQuantity){    
+function cardValidate() {
+    let cardNumber = $("#cardNumber");
+    let cvv = $("#cvv");
+    let cardNumberError = document.getElementById("cardNumberError");
+    let cvvError = document.getElementById("cvvError");
+
+    cardNumberError.textContent = "";
+    cvvError.textContent = "";
+    cardNumber.removeClass("border-danger");
+    cvv.removeClass("border-danger");
+
+    let isValid = true;
+    const cardRegex = /^[0-9]{16}$/;
+    const cvvRegex = /^[0-9]{3}$/;
+
+    const setError = (element, errorElement, message) => {
+        errorElement.textContent = message;
+        element.addClass("border-danger");
+        isValid = false;
+    };
+
+    const clearError = (element, errorElement) => {
+        errorElement.textContent = "";
+        element.removeClass("border-danger");
+    };
+
+    const cardNumberValue = cardNumber.val().trim();
+    if (cardNumberValue === "") {
+        setError(cardNumber, cardNumberError, "Enter your card number");
+        alert("Enter your card number");
+    } else if (!cardRegex.test(cardNumberValue)) {
+        setError(cardNumber, cardNumberError, "Card number must be exactly 16 digits");
+        alert("Card number must be exactly 16 digits");
+    } else {
+        clearError(cardNumber, cardNumberError);
+    }
+
+    const cvvValue = cvv.val().trim();
+    if (cvvValue === "") {
+        setError(cvv, cvvError, "Enter your CVV");
+        alert("Enter CVV");
+
+    } else if (!cvvRegex.test(cvvValue)) {
+        setError(cvv, cvvError, "CVV must be exactly 3 digits");
+        alert("CVV must be exactly 3 digits");
+
+    } else {
+        clearError(cvv, cvvError);
+    }
+
+    return isValid;
+}
+
+function placeOrder(productId,productQuantity){ 
+    let isValidCard = cardValidate();
+    if(!isValidCard){
+        return false;  
+    }
     let cardNumber = document.getElementById("cardNumber").value;
     let cvv = document.getElementById("cvv").value;
     let selectedAddress = document.querySelector('input[name="selectedAddress"]:checked').value;

@@ -188,10 +188,14 @@
                                 <div>
                                     <label class="form-label">Enter Card Number</label>
                                     <input type="text" name="cardNumber" id="cardNumber" class="form-control" maxlength = "16" placeholder="XXXX XXXX XXXX XXXX">
+                                    <span class="text-danger " id="cardNumberError"></span>
+
                                 </div>
                                 <div class = "ms-3">
                                     <label class="form-label">Enter CVV</label>
                                     <input type="text" name="cvv" id="cvv" class="form-control" maxlength = "3"  placeholder="XXX">
+                                    <span class="text-danger " id="cvvError"></span>
+
                                 </div>
                             </div>
                         </div>

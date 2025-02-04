@@ -1143,7 +1143,7 @@
                         AND fldProductId = <cfqueryparam value = "#arguments.productId#" cfsqltype = "VARCHAR">
                 </cfquery>
                 <cfset session.cartCount = getUserCartCount()>
-
+                <cfset local.placeOrderResult["resultMsg"]&= "and cart updated succesfully">
             <cfelse>
                 <!--- Cart Checkout --->
                 <!--- order items tbl populate via cart --->
@@ -1174,10 +1174,27 @@
                         fldUserId = <cfqueryparam value = "#session.userId#" cfsqltype = "INTEGER">
                 </cfquery>
                 <cfset session.cartCount = getUserCartCount()>
+                <cfset local.placeOrderResult["resultMsg"]&= "and cart updated succesfully">
             </cfif>
+            <cfmail to ="#session.email#" from="gosalram554@gmail.com" subject="Your Order Confirmation - #local.orderId#">
+                Dear Customer,
+
+                Your order #local.orderId# has been successfully placed.  
+                Here are the details:
+
+                - **Delivery Address:** #arguments.selectedAddress#  
+                - **Total Price:** Rs #arguments.totalPrice# 
+                - **Items Ordered:** #arguments.productQuantity#  
+
+                Best regards,  
+                ShoppingCart
+            </cfmail>
+
         <cfelse>
-            <cfset local.placeOrderResult["resultMsg"] = "ERROR">
+            <cfset local.placeOrderResult["resultMsg"] = "Invalid Card">
         </cfif>
+        
+                    
         <cfreturn local.placeOrderResult>
     </cffunction>
 </cfcomponent>
