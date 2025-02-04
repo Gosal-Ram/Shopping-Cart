@@ -40,10 +40,12 @@
                 <cfif structKeyExists(arguments, "productId")>
                     <cfset local.CartResult = addToCart(arguments.productId)>
                     <cfif structKeyExists(arguments, "buyNow")>
+                        <cfset local.encodedCartId = local.CartResult.cartId>
                         <cfset local.encryptedProductId = encrypt("#arguments.productId#",application.key,"AES","Base64")>
                         <cfset local.encodedProductId = encodeForURL(local.encryptedProductId)>
-                        <cflocation  url="order.cfm?productId=#local.encodedProductId#">
+                        <cflocation  url="order.cfm?productId=#local.encodedProductId#&cartId=#local.encodedCartId#">
                     </cfif>
+                    <cflocation  url="cart.cfm"> 
                     <!---<cfset local.loginResult &= local.CartResult.resultMsg > --->
                 </cfif>
                 <cfset session.cartCount = getUserCartCount()>
@@ -115,11 +117,11 @@
             FROM 
                 tblSubCategory
             WHERE 
-                fldActive = 1 AND
+                fldActive = 1 
             <cfif structKeyExists(arguments, "subCategoryId") AND Len(trim(arguments.subCategoryId)) GT 0 AND arguments.subCategoryId NEQ 0>
-                fldSubCategory_Id = <cfqueryparam value = "#arguments.subCategoryId#" cfsqltype = "VARCHAR">
-            <cfelse>
-                fldCategoryId = <cfqueryparam value="#arguments.categoryId#" cfsqltype="INTEGER">
+                AND fldSubCategory_Id = <cfqueryparam value = "#arguments.subCategoryId#" cfsqltype = "INTEGER">
+            <cfelseif structKeyExists(arguments, "categoryId") AND Len(trim(arguments.categoryId)) GT 0 AND arguments.categoryId NEQ 0>
+                AND fldCategoryId = <cfqueryparam value="#arguments.categoryId#" cfsqltype="INTEGER">
             </cfif>
         </cfquery>
 
@@ -207,10 +209,8 @@
             </cfif>
  
             <cfif structKeyExists(arguments, "offset") AND Len(trim(arguments.offset)) GT 0>
-              <!---
-                 LIMIT <cfqueryparam value="#arguments.limit#" cfsqltype="INTEGER"> 
-                OFFSET <cfqueryparam value="#arguments.offset#" cfsqltype="INTEGER">     --->
-                LIMIT <cfqueryparam value="#arguments.limit#" cfsqltype="INTEGER"> OFFSET #arguments.offset#
+                LIMIT <cfqueryparam value="#arguments.limit#" cfsqltype="INTEGER"> 
+                OFFSET <cfqueryparam value="#arguments.offset#" cfsqltype="INTEGER">
             <cfelseif  structKeyExists(arguments, "limit") AND  len(trim(arguments.limit)) GT 0 AND arguments.limit NEQ 0>
                 LIMIT  #arguments.limit#
             </cfif>

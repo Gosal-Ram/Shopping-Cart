@@ -28,7 +28,7 @@
       </cfoutput>
     </cfif>
     <div class="text-center">
-      Didn't have a account 
+      Didn't have a account ? 
       <a href="/signup.cfm" class="text-decoration-none ">
         Register here
       </a>

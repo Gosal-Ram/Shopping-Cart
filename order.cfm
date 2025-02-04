@@ -24,7 +24,7 @@
                             DELIVERY ADDRESS
                         </button>
                         </h2>
-                        <div id="flush-collapseOne" class="accordion-collapse collapse" data-bs-parent="##accordionFlushExample">
+                        <div id="flush-collapseOne" class="accordion-collapse collapse show" data-bs-parent="##accordionFlushExample">
                             <div class="accordion-body">
                                 <cfloop array="#variables.queryGetAddresses#" item="local.item">
                                     <div class="d-flex justify-content-between align-items-center" id="#local.item.addressId#">
@@ -65,7 +65,7 @@
                             ORDER SUMMARY
                         </button>
                         </h2>
-                        <div id="flush-collapseTwo" class="accordion-collapse collapse show" data-bs-parent="##accordionFlushExample">
+                        <div id="flush-collapseTwo" class="accordion-collapse collapse" data-bs-parent="##accordionFlushExample">
                             <div class="accordion-body">                   
                                 <cfif structKeyExists(url, "productId")>
                                     <!---  Buy Now   --->
@@ -189,13 +189,11 @@
                                     <label class="form-label">Enter Card Number</label>
                                     <input type="text" name="cardNumber" id="cardNumber" class="form-control" maxlength = "16" placeholder="XXXX XXXX XXXX XXXX">
                                     <span class="text-danger " id="cardNumberError"></span>
-
                                 </div>
                                 <div class = "ms-3">
                                     <label class="form-label">Enter CVV</label>
                                     <input type="text" name="cvv" id="cvv" class="form-control" maxlength = "3"  placeholder="XXX">
                                     <span class="text-danger " id="cvvError"></span>
-
                                 </div>
                             </div>
                         </div>
@@ -274,7 +272,7 @@
 
                             <div class="mb-3">
                                 <label class="form-label">Phone</label>
-                                <input type="number" class="form-control" id="receiverPhone" maxlength="10" name="receiverPhone">
+                                <input type="text" class="form-control" id="receiverPhone" maxlength="10" name="receiverPhone">
                                 <span id="receiverPhoneError" class="text-danger"></span>
                             </div>
 
@@ -310,7 +308,7 @@
 
                             <div class="mb-3">
                                 <label class="form-label">Pincode</label>
-                                <input type="number" maxlength="6" class="form-control" id="receiverPin" name="receiverPin">
+                                <input type="text" maxlength="6" class="form-control" id="receiverPin" name="receiverPin">
                                 <span id="pincodeError" class="text-danger"></span>
                             </div>
 
