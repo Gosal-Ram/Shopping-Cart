@@ -1,7 +1,12 @@
 <cfinclude  template="header.cfm">
+<cfset variables.productId = 0>
+<cfset variables.productQuantity = 0>
 <cfif structKeyExists(url, "productId")>
     <cfset variables.productId = decrypt(url.productId,application.key,"AES","Base64")>
-    <cfset variables.getAllProducts = application.shoppingCart.fetchProducts(productId = variables.productId)> 
+    <!--- To encrypt and decrypt  cartid   --->
+    <cfset variables.cartId = url.cartId>
+    <cfset variables.getAllProducts = application.shoppingCart.fetchProducts(productId = variables.productId)>
+    <cfset variables.productQuantity = 1>
 </cfif>
 <cfset variables.getCartDetails = application.shoppingCart.fetchCart()>
 <cfset variables.queryGetAddresses = application.shoppingCart.fetchAddresses()>
@@ -76,15 +81,17 @@
                                                 <p class="text-muted">Brand: #variables.getAllProducts.fldBrandName#</p>
                                                 <div class="d-flex align-items-center">
                                                     <button type="button"
-                                                        id="btnDecrease"
-                                                        onClick="decreaseCount(#variables.getAllProducts.fldProduct_Id#, 1)"
+                                                        id = "btnDecrease_#variables.cartId#"
+                                                        onClick="decreaseCount(#variables.cartId#,#variables.productQuantity#)"
                                                         class="btn btn-outline-primary btn-sm me-2 btn-quantity"
-                                                        disabled>-</button>
-                                                    <span class="mx-2" id="quantityCount_#variables.getAllProducts.fldProduct_Id#">
-                                                        1
+                                                        <cfif #variables.productQuantity# EQ 1>
+                                                            disabled
+                                                        </cfif>>-</button>
+                                                    <span class="mx-2" id="quantityCount_#variables.cartId#">
+                                                        #variables.productQuantity#
                                                     </span>
                                                     <button type="button" 
-                                                        onClick="increaseCount(#variables.getAllProducts.fldProduct_Id#, 1)" 
+                                                        onClick="increaseCount(#variables.cartId#, #variables.productQuantity#)" 
                                                         class="btn btn-outline-primary btn-sm btn-remove">+
                                                     </button>
                                                 </div>
@@ -231,21 +238,13 @@
                             </strong>
                         </h4>
                         <button class="btn btn-success w-100 mt-3 proceedBtn text-dark fw-semibold rounded-pill"
-                            onClick= "placeOrder()">
+                            onClick= "placeOrder(#variables.productId#,#variables.productQuantity#)">
                             PLACE YOUR ORDER
                         </button>
                     </div>
                 </div>
             </div>
         </div>
-
-
-
-
-
-
-
-
 
         <!--- Add Address Modal --->
         <div class="modal fade" id="addAddressModal" tabindex="-1">
@@ -317,10 +316,6 @@
                 </div>
             </div>
         </div>
-
-
-
-
 
     </main>
 </cfoutput>

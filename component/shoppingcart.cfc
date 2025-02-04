@@ -777,12 +777,12 @@
     <cffunction  name="addToCart" access = "remote" returnType = "struct" returnFormat = "JSON">
         <cfargument name="productId" type="integer" required="false">
         
-        <cfset local.addToCartResult = { "resultMsg" = ""}>
+        <cfset local.addToCartResult = { "resultMsg" = "","cartId" = ""}>
         <cfif structKeyExists(arguments, "productId") AND Len(trim(arguments.productId)) GT 0 AND arguments.productId NEQ 0>
             <!---  EXISTING PRODUCT CHECK  --->
             <cfquery name ="local.queryAddToCartNewProductCheck">
                 SELECT 
-                    fldQuantity
+                    fldQuantity,fldCart_Id
                 FROM 
                     tblcart 
                 WHERE
@@ -793,8 +793,9 @@
             <cfif local.queryAddToCartNewProductCheck.recordcount GT 0>
 
                 <cfset local.updatedQuantity = local.queryAddToCartNewProductCheck.fldQuantity + 1>
+                <cfset local.addToCartResult["cartId"] = local.queryAddToCartNewProductCheck.fldCart_Id>
                 <!--- PRODUCT UPDATE    --->
-                <cfquery name ="local.queryUpdateCart" datasource = "ShoppingCart">
+                <cfquery name ="local.queryUpdateCart">
                     UPDATE
                         tblcart
                     SET
@@ -807,7 +808,7 @@
 
             <cfelse>
                 <!--- NEW PRODUCT ADD    --->
-                <cfquery name ="local.queryAddToCart" datasource = "ShoppingCart">
+                <cfquery name ="local.queryAddToCart" result = "local.resultqueryAddToCart">
                     INSERT INTO 
                         tblcart(fldUserId,
                                 fldProductId,
@@ -820,6 +821,7 @@
                     )
                 </cfquery>
                 <cfset local.addToCartResult["resultMsg"] = "Product added to the Cart">
+                <cfset local.addToCartResult["cartId"] = local.resultqueryAddToCart.generated_Key>
             </cfif>
         </cfif>
         <cfset session.cartCount = getUserCartCount() >
@@ -1083,6 +1085,8 @@
         <cfargument  name="selectedAddress" type="string" required ="true">
         <cfargument  name="totalPrice" type="string" required ="true">
         <cfargument  name="totalTax" type="string" required ="true">
+        <cfargument  name="productId" type="string" required ="true">
+        <cfargument  name="productQuantity" type="string" required ="true">
 
         <cfset local.cardNumber = "1111111111111111">
         <cfset local.cvv = "111">
@@ -1109,6 +1113,68 @@
                     now())
             </cfquery>
             <cfset local.placeOrderResult["resultMsg"] = "Order placed SuccessFully">
+
+            <cfif arguments.productId NEQ 0 AND arguments.productQuantity NEQ 0>
+                <!---  Buy Now  --->
+                <cfset local.getProductDetails = application.shoppingCart.fetchProducts(productId = arguments.productId)>
+                <!---      Add orderitems to order tbl 1 --->
+                <cfquery name = "local.queryAddOrderItemsDetails" >
+                    INSERT INTO 
+                        tblorderitems(
+                            fldOrderId,
+                            fldProductId,
+                            fldQuantity,
+                            fldUnitPrice,
+                            fldUnitTax)
+                    VALUES(
+                        <cfqueryparam value = "#local.orderId#" cfsqltype = "VARCHAR">,
+                        <cfqueryparam value = "#arguments.productId#" cfsqltype = "VARCHAR">,
+                        <cfqueryparam value = "#arguments.productQuantity#" cfsqltype = "VARCHAR">,
+                        <cfqueryparam value = "#local.getProductDetails.fldPrice#" cfsqltype = "VARCHAR">,
+                        <cfqueryparam value = "#local.getProductDetails.fldTax#" cfsqltype = "VARCHAR">
+                    )
+                </cfquery>
+                <!--- remove items from cart tbl  2 --->
+                <cfquery name = "local.queryRemoveCartItems">
+                    DELETE FROM  
+                        tblCart
+                    WHERE
+                        fldUserId = <cfqueryparam value = "#session.userId#" cfsqltype = "INTEGER">
+                        AND fldProductId = <cfqueryparam value = "#arguments.productId#" cfsqltype = "VARCHAR">
+                </cfquery>
+                <cfset session.cartCount = getUserCartCount()>
+
+            <cfelse>
+                <!--- Cart Checkout --->
+                <!--- order items tbl populate via cart --->
+                <cfset local.getCartItems = fetchCart()>
+                <cfloop array="#local.getCartItems#" index="local.item">
+                    <cfquery name = "local.queryAddOrderItemsDetails" >
+                        INSERT INTO 
+                            tblorderitems(
+                                fldOrderId,
+                                fldProductId,
+                                fldQuantity,
+                                fldUnitPrice,
+                                fldUnitTax)
+                        VALUES(
+                            <cfqueryparam value = "#local.orderId#" cfsqltype = "VARCHAR">,
+                            <cfqueryparam value = "#local.item.productId#" cfsqltype = "VARCHAR">,
+                            <cfqueryparam value = "#local.item.quantity#" cfsqltype = "VARCHAR">,
+                            <cfqueryparam value = "#local.item.price#" cfsqltype = "VARCHAR">,
+                            <cfqueryparam value = "#local.item.tax#" cfsqltype = "VARCHAR">
+                        )
+                    </cfquery>
+                </cfloop>
+                <!--- remove items from cart tbl  --->
+                <cfquery name = "local.queryRemoveCartItems">
+                    DELETE FROM  
+                        tblCart
+                    WHERE
+                        fldUserId = <cfqueryparam value = "#session.userId#" cfsqltype = "INTEGER">
+                </cfquery>
+                <cfset session.cartCount = getUserCartCount()>
+            </cfif>
         <cfelse>
             <cfset local.placeOrderResult["resultMsg"] = "ERROR">
         </cfif>

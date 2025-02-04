@@ -181,6 +181,43 @@ function removeProduct(productId){
     }
 }
 
+function placeOrder(productId,productQuantity){    
+    let cardNumber = document.getElementById("cardNumber").value;
+    let cvv = document.getElementById("cvv").value;
+    let selectedAddress = document.querySelector('input[name="selectedAddress"]:checked').value;
+    let totalPrice = document.getElementById("totalPrice").innerHTML;
+    let totalTax = document.getElementById("totalTax").innerHTML;
+    // console.log(cardNumber);
+    // console.log(cvv);
+    // console.log(selectedAddress);
+    // console.log(totalPrice);
+    // console.log(totalTax);
+    $.ajax({
+        type:"POST",
+        url: "component/shoppingcart.cfc",
+        data:{cardNumber: cardNumber,
+            cvv: cvv,
+            selectedAddress:selectedAddress,
+            totalPrice:totalPrice,
+            totalTax:totalTax,
+            productId:productId,
+            productQuantity:productQuantity,
+            method : "placeOrder"
+        },
+        success:function(response){
+            let responseParsed = JSON.parse(response);
+            alert(responseParsed.resultMsg);
+            /* if(responseParsed.resultMsg =="Order placed SuccessFully"){
+                // header cart icon update
+                let cartCountPrev = Number(document.getElementById("cartCount").innerHTML);
+                let cartCount = cartCountPrev +1;
+                document.getElementById("cartCount").innerHTML = cartCount;
+            } */
+        //    location.reload();
+        }
+    })
+}
+
 function increaseCount(cartId,quantityCount){
     let quantityElement = document.getElementById(`quantityCount_${cartId}`);
     let prevCount = parseInt(quantityElement.innerHTML); 
@@ -222,33 +259,5 @@ function decreaseCount(cartId,quantityCount){
         })
     }
 
-}
-
-function placeOrder(){    
-    let cardNumber = document.getElementById("cardNumber").value;
-    let cvv = document.getElementById("cvv").value;
-    let selectedAddress = document.querySelector('input[name="selectedAddress"]:checked').value;
-    let totalPrice = document.getElementById("totalPrice").innerHTML;
-    let totalTax = document.getElementById("totalTax").innerHTML;
-    console.log(cardNumber);
-    console.log(cvv);
-    console.log(selectedAddress);
-    console.log(totalPrice);
-    console.log(totalTax);
-    $.ajax({
-        type:"POST",
-        url: "component/shoppingcart.cfc",
-        data:{cardNumber: cardNumber,
-            cvv: cvv,
-            selectedAddress:selectedAddress,
-            totalPrice:totalPrice,
-            totalTax:totalTax,
-            method : "placeOrder"
-        },
-        success:function(response){
-            let responseParsed = JSON.parse(response);
-            console.log(responseParsed.resultMsg);
-        }
-    })
 }
 

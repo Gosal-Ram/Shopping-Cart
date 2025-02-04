@@ -19,13 +19,15 @@ function addToCartAndBuy(logInFlag, productId, buyNowFlag,encodedProductId){
             success:function(response){
                 let responseParsed = JSON.parse(response);
                 if(responseParsed.resultMsg =="Product added to the Cart"){
+                    // header cart icon update
                     let cartCountPrev = Number(document.getElementById("cartCount").innerHTML);
                     let cartCount = cartCountPrev +1;
                     document.getElementById("cartCount").innerHTML = cartCount;
                 }
 
                 if(buyNowFlag){
-                    location.href = `order.cfm?productId=${encodedProductId}`;
+                    let encodedCartId = responseParsed.cartId;
+                    location.href = `order.cfm?productId=${encodedProductId}&cartId=${encodedCartId}`;
                 }
                 
             }
