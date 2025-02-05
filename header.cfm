@@ -95,8 +95,8 @@
                     <button type="button" class="btn btn-primary position-relative">
                       CART
                       <i class="bi bi-cart4"></i>
-                      <cfif structKeyExists(session, "cartCount") AND session.cartCount GT 0>
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                      <cfif structKeyExists(session, "cartCount")>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id = "cartCount">
                           #session.cartCount# 
                         </span>
                       </cfif>
@@ -137,53 +137,42 @@
         <cfelse>
           <!---  NAV BAR  --->
           <cfset variables.getAllCategories = application.shoppingCart.fetchCategories()>
-          <cfset variables.categoryStruct = structNew()>
-          <cfloop array="#variables.getAllCategories#" item="local.item">
-              <cfset local.categoryId = local.item.categoryId>
-              <cfset local.encryptedCategoryId = encrypt("#local.categoryId#", application.key, "AES", "Base64")>
-              <cfset local.encodedCategoryId = encodeForURL(local.encryptedCategoryId)>
-              
-              <cfset local.subCategories = application.shoppingCart.fetchSubCategories(categoryId ="#local.categoryId#")>
-              
-              <cfset variables.categoryStruct[local.categoryId] = {
-                  "categoryName": local.item.categoryName,
-                  "encodedCategoryId": local.encodedCategoryId,
-                  "subCategories": []
-              }>
-
-              <cfloop array="#local.subCategories#" item="local.subItem">
-                  <cfset local.encryptedSubCategoryId = encrypt("#local.subItem.subCategoryId#", application.key, "AES", "Base64")>
-                  <cfset local.encodedSubCategoryId = encodeForURL(local.encryptedSubCategoryId)>
-                  
-                  <cfset arrayAppend(variables.categoryStruct[local.categoryId]["subCategories"], {
-                    "subCategoryName": local.subItem.subCategoryName,
-                    "encodedSubCategoryId": local.encodedSubCategoryId
-                  })>
-              </cfloop>
+          <cfset variables.getAllSubCategories = application.shoppingCart.fetchSubCategories()>
+          <cfset variables.subCategoryStruct = structNew()>
+          <cfloop array="#variables.getAllSubCategories#" item="local.subItem">
+              <cfset variables.categoryId = local.subItem.categoryId>
+              <cfif NOT structKeyExists(variables.subCategoryStruct, variables.categoryId)>
+                  <cfset variables.subCategoryStruct[variables.categoryId] = []>
+              </cfif>
+              <cfset arrayAppend(variables.subCategoryStruct[variables.categoryId], local.subItem)>
           </cfloop>
-
-
+          <!---<cfdump  var="#variables.subCategoryStruct#"> --->
           <nav class="navbar-expand-lg bg-light">
             <div class="container-fluid">
               <div class="collapse navbar-collapse">
                 <ul class="navbar-nav justify-content-evenly w-100">
-                <cfloop collection="#variables.categoryStruct#" item="local.categoryId">
-                    <cfset local.category = variables.categoryStruct[local.categoryId]>
+                  <cfloop array="#variables.getAllCategories#" item="item">
+                    <cfset variables.encryptedCategoryId = encrypt("#item.categoryId#",application.key,"AES","Base64")>
+                    <cfset variables.encodedCategoryId = encodeForURL(variables.encryptedCategoryId)>
                     <li class="nav-item toggleContainer">
-                        <a class="nav-link linkTxt" href="userCategory.cfm?categoryId=#local.category.encodedCategoryId#" id="#local.categoryId#" role="button">
-                            #local.category.categoryName#
-                        </a>
-                        <ul class="dropdown-menu">
-                            <cfloop array="#local.category.subCategories#" item="local.subCategory">
+                      <a class="nav-link linkTxt" href="userCategory.cfm?categoryId=#variables.encodedCategoryId#" id="#item.categoryId#" role="button">
+                          #item.categoryName#
+                      </a>
+                      <ul class="dropdown-menu">
+                        <cfif structKeyExists(variables.subCategoryStruct, item.categoryId)>
+                            <cfloop array="#variables.subCategoryStruct[item.categoryId]#" item="subItem">
+                                <cfset variables.encryptedSubCategoryId = encrypt("#subItem.subCategoryId#", application.key, "AES", "Base64")>
+                                <cfset variables.encodedSubCategoryId = encodeForURL(variables.encryptedSubCategoryId)>
                                 <li>
-                                    <a class="dropdown-item linkTxt" href="userSubCategory.cfm?subCategoryId=#local.subCategory.encodedSubCategoryId#">
-                                        #local.subCategory.subCategoryName#
-                                    </a>
+                                  <a class="dropdown-item linkTxt" href="userSubCategory.cfm?subCategoryId=#variables.encodedSubCategoryId#">
+                                      #subItem.subCategoryName#
+                                  </a>
                                 </li>
                             </cfloop>
-                        </ul>
+                        </cfif>
+                      </ul>
                     </li>
-                </cfloop>
+                  </cfloop>
                 </ul>
               </div>
             </div>

@@ -1,7 +1,11 @@
       <cfset local.adminWebPages = ["/category.cfm","/subCategory.cfm","/product.cfm","/login.cfm","/signup.cfm"]>
       <cfif arrayContains(local.adminWebPages, cgi.SCRIPT_NAME)>
         <footer class = "text-dark bg-white p-3 text-center w-100 position-sticky">
+          <cfif cgi.SCRIPT_NAME EQ "/login.cfm" OR cgi.SCRIPT_NAME EQ "/signup.cfm">
+            &copy; 2025 ShoppingCart | All Rights Reserved
+          <cfelse>
             &copy; 2025 Admin Panel | All Rights Reserved
+          </cfif>
         </footer>
       <cfelse>
         <footer> 
@@ -109,6 +113,10 @@
 
         <cfcase value="/profile.cfm">
           <script src="assets/js/profile.js"></script>
+        </cfcase>
+
+        <cfcase value="/order.cfm">
+          <script src="assets/js/order.js"></script>
         </cfcase>
 
         <cfcase value="/signup.cfm">

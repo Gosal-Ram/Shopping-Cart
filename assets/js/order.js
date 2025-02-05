@@ -1,72 +1,3 @@
-function userProfileValidate() {
-    let firstName = $("#userFirstName");
-    let lastName = $("#userLastName");
-    let emailId = $("#userEmail");
-    let phone = $("#userPhone");
-
-    let firstNameError = document.getElementById("firstNameError");
-    let lastNameError = document.getElementById("lastNameError");
-    let emailIdError = document.getElementById("emailIdError");
-    let phoneError = document.getElementById("phoneError");
-
-    const nameRegex = /^[A-Za-z ]{2,}( [A-Za-z ]{1,})?$/;
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    const phoneRegex = /^[0-9]{10}$/;
-
-    let isValid = true;
-    let setError = (element, errorElement, message) => {
-        errorElement.textContent = message;
-        element.addClass("border-danger");
-        isValid = false;
-    };
-    let resetError = (element, errorElement) => {
-        errorElement.textContent = "";
-        element.removeClass("border-danger");
-    };
-
-    let firstNameValue = firstName.val().trim();
-    if (firstNameValue === "") {
-        setError(firstName, firstNameError, "First name must be atleast 2 characters.");
-    } else if (!nameRegex.test(firstNameValue)) {
-        setError(firstName, firstNameError, "Enter a valid first Name ");
-    } else {
-        resetError(firstName, firstNameError);
-    }
-
-    let lastNameValue = lastName.val().trim();
-    if (lastNameValue === "") {
-        setError(lastName, lastNameError, "Last name must be atleast 2 characters.");
-    } else if (!nameRegex.test(lastNameValue)) {
-        setError(lastName, lastNameError, "Enter a valid last Name ");
-    } else {
-        resetError(lastName, lastNameError);
-    }
-
-    let emailIdValue = emailId.val().trim();
-    console.log(emailIdValue);
-    if (emailIdValue == "") {
-        setError(emailId, emailIdError, "Email is required.");
-    } else if (!emailRegex.test(emailIdValue)) {
-        setError(emailId, emailIdError, "Enter a valid email address.");
-    } else {
-        resetError(emailId, emailIdError);
-    }
-
-    let phoneValue = phone.val().trim();
-    if (phoneValue === "") {
-        setError(phone, phoneError, "Phone number is required.");
-    } else if (!phoneRegex.test(phoneValue)) {
-        setError(phone, phoneError, "Enter a valid 10-digit phone number.");
-    } else {
-        resetError(phone, phoneError);
-    }
-
-    if (!isValid) {
-        event.preventDefault();
-
-    }
-}
-
 function addressValidate(){
     let firstName = $("#receiverFirstName");
     let lastName = $("#receiverLastName");
@@ -182,18 +113,6 @@ function addressValidate(){
     return isValid;
 }
 
-function updateUserInfoModal(){
-    document.getElementById("firstNameError").textContent = "";
-    document.getElementById("lastNameError").textContent = "";
-    document.getElementById("emailIdError").textContent = "";
-    document.getElementById("phoneError").textContent = "";
-    
-    $("#userFirstName").removeClass("border-danger");
-    $("#userLastName").removeClass("border-danger");
-    $("#userEmail").removeClass("border-danger");
-    $("#userPhone").removeClass("border-danger");
-}
-
 function saveNewAddress() {
     let isaddressModalValid = addressValidate();
     if(!isaddressModalValid){
@@ -231,21 +150,6 @@ function saveNewAddress() {
     })
 }
 
-function deleteAddress(addressId){
-    if(confirm("Confirm delete")){
-        $.ajax({
-            type:"POST",
-            url: "component/shoppingcart.cfc",
-            data:{addressId: addressId,
-                  method:"deleteAddress"
-            },
-            success:function(){
-            document.getElementById(addressId).remove();
-            }
-        })
-    }
-}
-
 function openAddAddressModal(){
     document.getElementById("receiverFirstNameError").textContent = "";
     document.getElementById("receiverLastNameError").textContent = "";
@@ -269,5 +173,148 @@ function openAddAddressModal(){
     $("#receiverPin").removeClass("border-danger");
     
     document.getElementById("userAddressAddForm").reset();
+}
+
+function removeProduct(productId){
+    if(confirm("Confirm remove item")){
+        document.getElementById(productId).remove();
+    }
+}
+
+function cardValidate() {
+    let cardNumber = $("#cardNumber");
+    let cvv = $("#cvv");
+    let cardNumberError = document.getElementById("cardNumberError");
+    let cvvError = document.getElementById("cvvError");
+
+    cardNumberError.textContent = "";
+    cvvError.textContent = "";
+    cardNumber.removeClass("border-danger");
+    cvv.removeClass("border-danger");
+
+    let isValid = true;
+    const cardRegex = /^[0-9]{16}$/;
+    const cvvRegex = /^[0-9]{3}$/;
+
+    const setError = (element, errorElement, message) => {
+        errorElement.textContent = message;
+        element.addClass("border-danger");
+        isValid = false;
+    };
+
+    const clearError = (element, errorElement) => {
+        errorElement.textContent = "";
+        element.removeClass("border-danger");
+    };
+
+    const cardNumberValue = cardNumber.val().trim();
+    if (cardNumberValue === "") {
+        setError(cardNumber, cardNumberError, "Enter your card number");
+        alert("Enter your card number");
+    } else if (!cardRegex.test(cardNumberValue)) {
+        setError(cardNumber, cardNumberError, "Card number must be exactly 16 digits");
+        alert("Card number must be exactly 16 digits");
+    } else {
+        clearError(cardNumber, cardNumberError);
+    }
+
+    const cvvValue = cvv.val().trim();
+    if (cvvValue === "") {
+        setError(cvv, cvvError, "Enter your CVV");
+        alert("Enter CVV");
+
+    } else if (!cvvRegex.test(cvvValue)) {
+        setError(cvv, cvvError, "CVV must be exactly 3 digits");
+        alert("CVV must be exactly 3 digits");
+
+    } else {
+        clearError(cvv, cvvError);
+    }
+
+    return isValid;
+}
+
+function placeOrder(productId,productQuantity){ 
+    let isValidCard = cardValidate();
+    if(!isValidCard){
+        return false;  
+    }
+    let cardNumber = document.getElementById("cardNumber").value;
+    let cvv = document.getElementById("cvv").value;
+    let selectedAddress = document.querySelector('input[name="selectedAddress"]:checked').value;
+    let totalPrice = document.getElementById("totalPrice").innerHTML;
+    let totalTax = document.getElementById("totalTax").innerHTML;
+    // console.log(cardNumber);
+    // console.log(cvv);
+    // console.log(selectedAddress);
+    // console.log(totalPrice);
+    // console.log(totalTax);
+    $.ajax({
+        type:"POST",
+        url: "component/shoppingcart.cfc",
+        data:{cardNumber: cardNumber,
+            cvv: cvv,
+            selectedAddress:selectedAddress,
+            totalPrice:totalPrice,
+            totalTax:totalTax,
+            productId:productId,
+            productQuantity:productQuantity,
+            method : "placeOrder"
+        },
+        success:function(response){
+            let responseParsed = JSON.parse(response);
+            alert(responseParsed.resultMsg);
+            /* if(responseParsed.resultMsg =="Order placed SuccessFully"){
+                // header cart icon update
+                let cartCountPrev = Number(document.getElementById("cartCount").innerHTML);
+                let cartCount = cartCountPrev +1;
+                document.getElementById("cartCount").innerHTML = cartCount;
+            } */
+        //    location.reload();
+        }
+    })
+}
+
+function increaseCount(cartId,quantityCount){
+    let quantityElement = document.getElementById(`quantityCount_${cartId}`);
+    let prevCount = parseInt(quantityElement.innerHTML); 
+    let quantity = prevCount + 1 ;
+    $.ajax({
+        type:"POST",
+        url: "component/shoppingcart.cfc",
+        data:{cartId: cartId,
+            quantity : quantity,
+            method : "editCart"
+        },
+        success:function(response){
+            let responseParsed = JSON.parse(response);
+            console.log(responseParsed);
+            location.reload();
+        }
+    })
+
+}
+
+function decreaseCount(cartId,quantityCount){
+    let quantityElement = document.getElementById(`quantityCount_${cartId}`);
+    let prevCount = parseInt(quantityElement.innerHTML); 
+    if(prevCount > 1){
+        let quantity = prevCount - 1;
+        console.log(quantity);
+        $.ajax({
+            type:"POST",
+            url: "component/shoppingcart.cfc",
+            data:{cartId: cartId,
+                quantity : quantity,
+                method : "editCart"
+            },
+            success:function(response){
+                let responseParsed = JSON.parse(response);
+                console.log(responseParsed);
+                location.reload();
+            }
+        })
+    }
+
 }
 

@@ -49,5 +49,5 @@
 
 </cfoutput>
 
-<cfinclude  template="footer.cfm">
+<cfinclude  template="footer.cfm">  
 
