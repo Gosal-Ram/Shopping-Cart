@@ -24,6 +24,9 @@
 
 <cfoutput>
     <main>
+    <cfif variables.getAllProducts.recordCount EQ 0>
+        <h3 class= "m-2 p-3">No products found</h3>
+    <cfelse>
         <form method ="post"> 
         <div class="container-fluid my-3">
             <div class = "d-flex justify-content-between align-items-center">
@@ -73,7 +76,9 @@
                             </div>
                         </div>
                     </a>
-                </cfloop> 
+                </cfloop>
+                
+                
             </div>
             <div class = "viewEditBtnDiv d-flex justify-content-end me-3">
                 <button class = "btn btn-secondary" 
@@ -87,6 +92,7 @@
             </div>
         </div>
         <form>
+    </cfif>
     </main>
 </cfoutput>
 <cfinclude  template="footer.cfm">

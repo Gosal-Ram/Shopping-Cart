@@ -41,8 +41,10 @@
                     <cfset local.CartResult = addToCart(arguments.productId)>
                     <cfif structKeyExists(arguments, "buyNow")>
                         <cfset local.encodedCartId = local.CartResult.cartId>
+                        <cfset local.quantityCount = local.CartResult.quantity>
                         <cfset local.encryptedProductId = encrypt("#arguments.productId#",application.key,"AES","Base64")>
                         <cfset local.encodedProductId = encodeForURL(local.encryptedProductId)>
+                        <!--- <cflocation  url="order.cfm?productId=#local.encodedProductId#&cartId=#local.encodedCartId#&quantityCount=#local.quantityCount#">--->
                         <cflocation  url="order.cfm?productId=#local.encodedProductId#&cartId=#local.encodedCartId#">
                     </cfif>
                     <cflocation  url="cart.cfm"> 
@@ -777,7 +779,7 @@
     <cffunction  name="addToCart" access = "remote" returnType = "struct" returnFormat = "JSON">
         <cfargument name="productId" type="integer" required="false">
         
-        <cfset local.addToCartResult = { "resultMsg" = "","cartId" = ""}>
+        <cfset local.addToCartResult = { "resultMsg" = "","cartId" = "", "quantity" = ""}>
         <cfif structKeyExists(arguments, "productId") AND Len(trim(arguments.productId)) GT 0 AND arguments.productId NEQ 0>
             <!---  EXISTING PRODUCT CHECK  --->
             <cfquery name ="local.queryAddToCartNewProductCheck">
@@ -805,6 +807,7 @@
                         AND fldUserId = <cfqueryparam value = "#session.userId#" cfsqltype="integer"> 
                 </cfquery>
                 <cfset local.addToCartResult["resultMsg"] = "Cart Updated">
+                <cfset local.addToCartResult["quantity"] = local.updatedQuantity>
 
             <cfelse>
                 <!--- NEW PRODUCT ADD    --->
@@ -822,6 +825,7 @@
                 </cfquery>
                 <cfset local.addToCartResult["resultMsg"] = "Product added to the Cart">
                 <cfset local.addToCartResult["cartId"] = local.resultqueryAddToCart.generated_Key>
+                <cfset local.addToCartResult["quantity"] = 1>
             </cfif>
         </cfif>
         <cfset session.cartCount = getUserCartCount() >
@@ -841,6 +845,8 @@
     </cffunction>
 
     <cffunction  name="fetchCart" access = "public" returnType = "array">
+        <cfargument  name="cartId" type="integer" required ="false">
+
         <cfset local.fetchCartResultMsg = "">
 
         <cfquery name ="local.queryFetchCartDetails">
@@ -862,6 +868,9 @@
             WHERE
                 c.fldUserId = <cfqueryparam value = "#session.userId#" cfsqltype = "integer">     
                 AND pi.fldDefaultImage = 1
+            <cfif structKeyExists(arguments, "cartId")>
+                AND c.fldCart_Id = <cfqueryparam value = "#arguments.cartId#" cfsqltype="integer">
+            </cfif>
         </cfquery>
         <cfset local.fetchCartResultMsg = "cart Details fetched successfully">
         <cfset local.cartDetailsArray = []>
@@ -885,13 +894,18 @@
     </cffunction>
 
     <cffunction  name="deleteCartItem" access="remote" returnType = "boolean" >
-        <cfargument  name="cartId" type="integer" required ="true">
+        <cfargument  name="cartId" type="integer" required ="false">
+        <cfargument  name="productId" type="integer" required ="false">
 
         <cfquery name = "local.queryDeleteCartItem" >
             DELETE FROM 
                 tblCart
             WHERE 
+            <cfif structKeyExists(arguments, "cartId")>
                 fldCart_Id = <cfqueryparam value = "#arguments.cartId#" cfsqltype="integer">
+            <cfelseif structKeyExists(arguments, "productId")>
+                fldProductId = <cfqueryparam value = "#arguments.productId#" cfsqltype="integer">
+            </cfif>
         </cfquery>
         <cfset session.cartCount = getUserCartCount()>
         <cfreturn true>

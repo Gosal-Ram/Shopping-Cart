@@ -27,6 +27,8 @@ function addToCartAndBuy(logInFlag, productId, buyNowFlag,encodedProductId){
 
                 if(buyNowFlag){
                     let encodedCartId = responseParsed.cartId;
+                    let quantityCount = responseParsed.quantity;
+                    // location.href = `order.cfm?productId=${encodedProductId}&cartId=${encodedCartId}&quantityCount=${quantityCount}`;
                     location.href = `order.cfm?productId=${encodedProductId}&cartId=${encodedCartId}`;
                 }
                 

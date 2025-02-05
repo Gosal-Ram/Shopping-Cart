@@ -11,7 +11,7 @@
 
     <cffunction  name="onRequestStart" returnType="boolean"> 
         <cfargument name="requestPage" type="String" required=true> 
-
+    
         <cfset local.userAllowedPages = ["/login.cfm", 
                                         "/signup.cfm", 
                                         "/home.cfm",
@@ -19,7 +19,8 @@
                                         "/userCategory.cfm", 
                                         "/userSubCategory.cfm", 
                                         "/searchResults.cfm",
-                                        "/userProduct.cfm"]>
+                                        "/userProduct.cfm",
+                                        "/component/shoppingcart.cfc"]>
         <cfif structKeyExists(url,"reload") AND url.reload EQ 1>
             <cfset onApplicationStart()>  
             <cfreturn true> 
