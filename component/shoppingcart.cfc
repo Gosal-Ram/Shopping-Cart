@@ -1203,6 +1203,77 @@
         <cfreturn local.placeOrderResult>
     </cffunction>
 
-    <cffunction  name="fetchOrderHistory" access= "public" returnType = "">
+    <cffunction  name="fetchOrderHistory" access= "remote" returnType = "array" returnFormat ="JSON" >        
+        <cfargument  name="orderId" type="string" required ="false">
+        <cfargument  name="searchTerm" type="string" required ="false">
+
+        <cfquery name="local.queryGetOrders">
+            SELECT 
+                o.fldOrder_Id,
+                o.fldTotalPrice,
+                o.fldTotalTax,
+                o.fldOrderDate,
+                GROUP_CONCAT(oi.fldQuantity) AS fldQuantity,
+                GROUP_CONCAT(oi.fldUnitPrice) AS fldUnitPrice,
+                GROUP_CONCAT(oi.fldUnitTax) AS fldUnitTax ,
+                a.fldFirstName,
+                a.fldLastName,
+                a.fldAddressLine1,
+                a.fldAddressLine2,
+                a.fldCity,
+                a.fldState,
+                a.fldPincode,
+                a.fldPhone,
+                GROUP_CONCAT(p.fldProductName) AS fldProductName,
+                GROUP_CONCAT(pi.fldImageFileName) AS fldImageFileName
+
+            FROM 
+                tblorder o
+                INNER JOIN tblorderitems oi ON o.fldOrder_Id = oi.fldOrderId
+                INNER JOIN tbladdress a ON a.fldAddress_Id = o.fldAddressId 
+                INNER JOIN tblproduct p ON oi.fldProductId = p.fldProduct_Id
+                INNER JOIN tblbrands b ON b.fldBrand_Id  = p.fldBrandId 
+                INNER JOIN tblproductimages pi ON pi.fldProductId  = p.fldProduct_Id 
+                    AND pi.fldDefaultImage = 1 AND pi.fldActive = 1
+            WHERE 
+                o.fldUserId = <cfqueryparam value="#session.userId#" cfsqltype="integer">
+                <cfif structKeyExists(arguments, "orderId")>
+                    AND o.fldOrder_Id = <cfqueryparam value="#arguments.orderId#" cfsqltype="VARCHAR">
+                </cfif>
+                <cfif structKeyExists(arguments, "searchTerm")>
+                    AND o.fldOrder_Id LIKE <cfqueryparam value="%#arguments.searchTerm#%" cfsqltype="VARCHAR">
+                </cfif>
+			GROUP BY
+				o.fldOrder_Id
+        </cfquery>
+
+        <cfset local.ordersArray = []>
+
+        <cfloop query="local.queryGetOrders">
+            <cfset local.order = {
+                "orderId" = local.queryGetOrders.fldOrder_Id,
+                "totalPrice" = local.queryGetOrders.fldTotalPrice,
+                "totalTax" = local.queryGetOrders.fldTotalTax,
+                "orderDate" = local.queryGetOrders.fldOrderDate.toString(),
+                "quantities" = ListToArray(local.queryGetOrders.fldQuantity),
+                "unitPrices" = ListToArray(local.queryGetOrders.fldUnitPrice),
+                "unitTaxes" = ListToArray(local.queryGetOrders.fldUnitTax),
+                "firstName" = local.queryGetOrders.fldFirstName,
+                "lastName" = local.queryGetOrders.fldLastName,
+                "addressLine1" = local.queryGetOrders.fldAddressLine1,
+                "addressLine2" = local.queryGetOrders.fldAddressLine2,
+                "city" = local.queryGetOrders.fldCity,
+                "state" = local.queryGetOrders.fldState,
+                "pincode" = local.queryGetOrders.fldPincode,
+                "phone" = local.queryGetOrders.fldPhone,
+                "productNames" = ListToArray(local.queryGetOrders.fldProductName),
+                "productImages" = ListToArray(local.queryGetOrders.fldImageFileName)
+            }>
+
+            <cfset arrayAppend(local.ordersArray, local.order)>
+        </cfloop>
+         <cfreturn local.ordersArray> 
     </cffunction>
+
+    
 </cfcomponent>

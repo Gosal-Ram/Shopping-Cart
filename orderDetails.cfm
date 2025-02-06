@@ -1,4 +1,7 @@
 <cfinclude  template="header.cfm">
+<cfset variables.queryGetAllOrders = application.shoppingCart.fetchOrderHistory()>
+<!--- <cfdump  var="#variables.queryGetAllOrders#"> --->
+
 <cfoutput>
 <main>
     <div class="container my-3">
