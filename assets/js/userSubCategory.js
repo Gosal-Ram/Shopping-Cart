@@ -3,7 +3,6 @@ let limit = 4;
 function toggleView(subCategoryId){
     console.log(subCategoryId);
     offset += 4;
-    // let offset =  document.getElementById("viewEditBtn").value;    
     $.ajax({
         type:"POST",
         url: "component/shoppingcart.cfc",
@@ -16,9 +15,8 @@ function toggleView(subCategoryId){
         success:function(response){
             let responseParsed = JSON.parse(response);
             console.log(responseParsed);
-            const columns = responseParsed.COLUMNS;
-            const data = responseParsed.DATA;    
-            let productListingContainer = document.getElementById("productListingContainer");
+            const columns = responseParsed.COLUMNS; //arr
+            const data = responseParsed.DATA;    //arr
 
             data.forEach(product => {
               let productHTML = `

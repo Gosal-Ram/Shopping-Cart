@@ -1,7 +1,7 @@
 <cfinclude template="header.cfm">
 <cfif NOT structKeyExists(session, "cartCount") OR session.cartCount EQ 0>
     <div class="container text-center my-5">
-        <img src="assets/images/empty-cart.svg" alt="Empty Cart" class="img-fluid emptyCartImg">
+        <img src="assets/images/empty-cart.svg" alt="" class="img-fluid emptyCartImg">
         <h3 class="mt-4 text-muted">Your cart is empty!</h3>
         <p class="text-muted">Looks like you haven't added anything to your cart yet.</p>
         <a href="home.cfm" class="btn btn-primary mt-3">
@@ -16,6 +16,7 @@
             <h2 class="mb-4">Cart</h2>
             <div class="row">
                 <div class="col-md-8">
+
                     <cfloop array="#variables.getCartDetails#" index="local.item">
                         <div class="card mb-3 p-3 d-flex flex-row align-items-center" id = "#local.item.cartId#">
                             <img src="assets/images/productImages/#local.item.defaultImg#" alt="#local.item.productName#"
@@ -27,16 +28,18 @@
                                 <p class="text-muted">Brand: #local.item.brandName#</p>
                                 <div class="d-flex align-items-center">
                                     <button type = "button"
-                                        id = "btnDecrease_#local.item.cartId#"
-                                        onClick = "decreaseCount(#local.item.cartId# , #local.item.quantity#)"
+                                        id = "btnDecrease"
+                                        onClick = "decreaseCount(#local.item.cartId#)"
                                         class="btn btn-outline-primary btn-sm me-2 btn-quantity"
                                         <cfif local.item.quantity EQ 1>
                                             disabled
                                         </cfif>>-
                                     </button>
+
                                     <span class="mx-2" id="quantityCount_#local.item.cartId#">#local.item.quantity#</span>
+
                                     <button type = "button" 
-                                        onClick = "increaseCount(#local.item.cartId# , #local.item.quantity#)" 
+                                        onClick = "increaseCount(#local.item.cartId#)" 
                                         class="btn btn-outline-primary btn-sm btn-remove">+
                                     </button>
                                 </div>
@@ -44,17 +47,22 @@
                             <div class="text-end">
                                 <h4>
                                     <i class="fa-solid fa-indian-rupee-sign me-1"></i>
-                                    #numberFormat((local.item.quantity*local.item.price) + (local.item.quantity*local.item.tax), ".00")#
+                                    <cfset variables.productPrice = (local.item.quantity*local.item.price) + (local.item.quantity*local.item.tax)>
+                                    <span id ="productPrice" value = "#variables.productPrice#">
+                                        #lsCurrencyFormat(variables.productPrice, "none", "en_IN")#
+                                    </span>
                                 </h4>
                                 <p class="mb-0">
                                     Tax: 
                                     <i class="fa-solid fa-indian-rupee-sign me-1"></i>
-                                    #numberFormat(local.item.quantity*local.item.tax, ".00")#
+                                    <cfset variables.productTax = local.item.quantity*local.item.tax>
+                                    <span id="productTax">#lsCurrencyFormat(variables.productTax, "none", "en_IN")#</span>
                                 </p>
                                 <p class="text-muted mb-0">
                                     Price: 
                                     <i class="fa-solid fa-indian-rupee-sign me-1"></i>
-                                    #numberFormat(local.item.quantity*local.item.price, ".00")#    
+                                    <cfset variables.productActualPrice = local.item.quantity*local.item.price>
+                                    <span id ="productActualPrice">#lsCurrencyFormat(variables.productActualPrice, "none", "en_IN")#</span>
                                 </p>
                                 <button type = "button" 
                                     class="btn btn-secondary btn-sm mt-2" 
@@ -80,24 +88,32 @@
                         </cfloop>
                         <p class="d-flex justify-content-between">
                             <span>Subtotal:</span> 
-                            <strong id="actualPrice">
+                            <strong>
                                 <i class="fa-solid fa-indian-rupee-sign me-1"></i>
-                                #numberFormat(variables.actualPrice, ".00")#
+                                <span id="totalActualPrice" value = "#variables.actualPrice#">
+                                    #lsCurrencyFormat(variables.actualPrice, "none", "en_IN")#
+                                </span> 
+
                             </strong>
                         </p>
                         <p class="d-flex justify-content-between">
                             <span>Tax:</span>
-                            <strong id="totalTax">
+                            <strong>
                                 <i class="fa-solid fa-indian-rupee-sign me-1"></i>
-                                #numberFormat(variables.totalTax, ".00")#
+                            <span id="totalTax">
+                                #lsCurrencyFormat(variables.totalTax, "none", "en_IN")#
+                            </span>
+
                             </strong>
                             </p>
                         <hr>
                         <h4 class="d-flex justify-content-between text-dark">
                             <span>Total:</span> 
-                            <strong id="variables.totalPrice">
+                            <strong>
                                 <i class="fa-solid fa-indian-rupee-sign me-1"></i>
-                                #numberFormat(variables.totalPrice, ".00")#
+                                 <span id="totalPrice">
+                                    #lsCurrencyFormat(variables.totalPrice, "none", "en_IN")#
+                                 </span> 
                             </strong>
                         </h4>
                         <a class="btn btn-success w-100 mt-3 proceedBtn text-dark fw-semibold rounded-pill"

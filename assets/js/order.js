@@ -107,8 +107,6 @@ function addressValidate(){
     } else {
         resetError(pincode, pincodeError);
     }
-    
-    ;
 
     return isValid;
 }
@@ -175,9 +173,35 @@ function openAddAddressModal(){
     document.getElementById("userAddressAddForm").reset();
 }
 
-function removeProduct(productId){
+function removeProduct(cartId){
+    if(confirm("Confirm remove cart item")){
+        $.ajax({
+            type:"POST",
+            url: "component/shoppingcart.cfc",
+            data:{cartId: cartId,
+                method : "deleteCartItem"
+            },
+            success:function(){
+                document.getElementById(cartId).remove();
+                location.reload();
+            }
+        })
+    }
+}
+
+function removeProductBuyNow(productId){
     if(confirm("Confirm remove item")){
-        document.getElementById(productId).remove();
+        $.ajax({
+            type:"POST",
+            url: "component/shoppingcart.cfc",
+            data:{productId: productId,
+                method : "deleteCartItem"
+            },
+            success:function(){
+                document.getElementById(productId).remove();
+                location.reload();
+            }
+        })
     }
 }
 
@@ -275,7 +299,7 @@ function placeOrder(productId,productQuantity){
     })
 }
 
-function increaseCount(cartId,quantityCount){
+function increaseCount(cartId){
     let quantityElement = document.getElementById(`quantityCount_${cartId}`);
     let prevCount = parseInt(quantityElement.innerHTML); 
     let quantity = prevCount + 1 ;
@@ -289,13 +313,16 @@ function increaseCount(cartId,quantityCount){
         success:function(response){
             let responseParsed = JSON.parse(response);
             console.log(responseParsed);
+            quantityElement.innerHTML = quantity;
             location.reload();
+            // $("#flush-collapseOne").removeClass("show");
+            // $("#flush-collapseTwo").addClass("show");
         }
     })
 
 }
 
-function decreaseCount(cartId,quantityCount){
+function decreaseCount(cartId){
     let quantityElement = document.getElementById(`quantityCount_${cartId}`);
     let prevCount = parseInt(quantityElement.innerHTML); 
     if(prevCount > 1){
@@ -311,6 +338,7 @@ function decreaseCount(cartId,quantityCount){
             success:function(response){
                 let responseParsed = JSON.parse(response);
                 console.log(responseParsed);
+                quantityElement.innerHTML = quantity;
                 location.reload();
             }
         })
