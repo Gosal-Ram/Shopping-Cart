@@ -16,7 +16,6 @@
             <h2 class="mb-4">Cart</h2>
             <div class="row">
                 <div class="col-md-8">
-
                     <cfloop array="#variables.getCartDetails#" index="local.item">
                         <div class="card mb-3 p-3 d-flex flex-row align-items-center" id = "#local.item.cartId#">
                             <img src="assets/images/productImages/#local.item.defaultImg#" alt="#local.item.productName#"
@@ -36,7 +35,9 @@
                                         </cfif>>-
                                     </button>
 
-                                    <span class="mx-2" id="quantityCount_#local.item.cartId#">#local.item.quantity#</span>
+                                    <span class="mx-2" id="quantityCount_#local.item.cartId#">
+                                        #local.item.quantity#
+                                    </span>
 
                                     <button type = "button" 
                                         onClick = "increaseCount(#local.item.cartId#)" 
@@ -47,22 +48,30 @@
                             <div class="text-end">
                                 <h4>
                                     <i class="fa-solid fa-indian-rupee-sign me-1"></i>
-                                    <cfset variables.productPrice = (local.item.quantity*local.item.price) + (local.item.quantity*local.item.tax)>
+                                    <cfset variables.productPrice = (local.item.quantity*local.item.price) + 
+                                                                    (local.item.quantity*local.item.tax)>
                                     <span id ="productPrice" value = "#variables.productPrice#">
-                                        #lsCurrencyFormat(variables.productPrice, "none", "en_IN")#
+                                        #variables.productPrice#
+                                        <!---#lsCurrencyFormat(variables.productPrice, "none", "en_IN")# --->
                                     </span>
                                 </h4>
                                 <p class="mb-0">
                                     Tax: 
                                     <i class="fa-solid fa-indian-rupee-sign me-1"></i>
                                     <cfset variables.productTax = local.item.quantity*local.item.tax>
-                                    <span id="productTax">#lsCurrencyFormat(variables.productTax, "none", "en_IN")#</span>
+                                    <span id="productTax">
+                                        <!---#lsCurrencyFormat(variables.productTax, "none", "en_IN")# --->
+                                        #variables.productTax#
+                                    </span>
                                 </p>
                                 <p class="text-muted mb-0">
                                     Price: 
                                     <i class="fa-solid fa-indian-rupee-sign me-1"></i>
                                     <cfset variables.productActualPrice = local.item.quantity*local.item.price>
-                                    <span id ="productActualPrice">#lsCurrencyFormat(variables.productActualPrice, "none", "en_IN")#</span>
+                                    <span id ="productActualPrice">
+                                        <!---#lsCurrencyFormat(variables.productActualPrice, "none", "en_IN")# --->
+                                        #variables.productActualPrice#
+                                    </span>
                                 </p>
                                 <button type = "button" 
                                     class="btn btn-secondary btn-sm mt-2" 
@@ -79,6 +88,7 @@
                         <cfset variables.totalTax = 0>
                         <cfset variables.totalPrice = 0>
                         <cfset variables.actualPrice = 0>
+                        
                         <cfloop array="#variables.getCartDetails#" index="local.item">
                             <cfset variables.totalTax = variables.totalTax + (local.item.quantity*local.item.tax)>
                             <cfset variables.actualPrice = variables.actualPrice + (local.item.quantity*local.item.price)>
@@ -86,24 +96,25 @@
                                 (local.item.quantity*local.item.price) + 
                                 (local.item.quantity*local.item.tax)>
                         </cfloop>
+
                         <p class="d-flex justify-content-between">
                             <span>Subtotal:</span> 
                             <strong>
                                 <i class="fa-solid fa-indian-rupee-sign me-1"></i>
                                 <span id="totalActualPrice" value = "#variables.actualPrice#">
-                                    #lsCurrencyFormat(variables.actualPrice, "none", "en_IN")#
+                                    <!---#lsCurrencyFormat(variables.actualPrice, "none", "en_IN")# --->
+                                    #variables.actualPrice#
                                 </span> 
-
                             </strong>
                         </p>
                         <p class="d-flex justify-content-between">
                             <span>Tax:</span>
                             <strong>
                                 <i class="fa-solid fa-indian-rupee-sign me-1"></i>
-                            <span id="totalTax">
-                                #lsCurrencyFormat(variables.totalTax, "none", "en_IN")#
-                            </span>
-
+                                <span id="totalTax">
+                                    <!---#lsCurrencyFormat(variables.totalTax, "none", "en_IN")# --->
+                                    #variables.totalTax#
+                                </span>
                             </strong>
                             </p>
                         <hr>
@@ -112,7 +123,8 @@
                             <strong>
                                 <i class="fa-solid fa-indian-rupee-sign me-1"></i>
                                  <span id="totalPrice">
-                                    #lsCurrencyFormat(variables.totalPrice, "none", "en_IN")#
+                                    <!---#lsCurrencyFormat(variables.totalPrice, "none", "en_IN")# --->
+                                    #variables.totalPrice#
                                  </span> 
                             </strong>
                         </h4>

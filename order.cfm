@@ -2,27 +2,27 @@
 <cfif NOT structKeyExists(session, "cartCount") OR session.cartCount EQ 0>
     <cflocation  url="cart.cfm">
 <cfelse>
+    <!--- declaring 0 for not to interfere with buyNow with cart checkout--->
     <cfset variables.productId = 0>
     <cfset variables.productQuantity = 0> 
-
     <cfif structKeyExists(url, "productId")>
-        <cfset variables.productId = decrypt(url.productId,application.key,"AES","Base64")>
-        <!--- To encrypt and decrypt  cartid   --->
-        <cfset variables.cartId = url.cartId>
+        <!--- Buy Now Product  --->
+        <cfset variables.productId = decrypt(url.productId, application.key, "AES", "Base64")>
+        <cfset variables.cartId = decrypt(url.cartId, application.key, "AES", "Base64")>
         <cfset variables.getCartDetails = application.shoppingCart.fetchCart(cartId = variables.cartId)>
         <cfset variables.productQuantity = 1>
     <cfelse>
+        <!---Cart Checkout--->
         <cfset variables.getCartDetails = application.shoppingCart.fetchCart()>
     </cfif>
-
     <cfset variables.queryGetAddresses = application.shoppingCart.fetchAddresses()>
     <cfoutput>
-        <main>
-            <div class="container my-3">
-                <h2 class="mb-4">Checkout</h2>
-                <div class="row">
-                    <div class="col-md-8">
-                        <div class="accordion accordion-flush" id="accordionFlushExample">
+    <main>
+        <div class="container my-3">
+            <h2 class="mb-4">Checkout</h2>
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="accordion accordion-flush" id="accordionFlushExample">
                         <div class="accordion-item">
                             <h2 class="accordion-header">
                             <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="##flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
@@ -102,17 +102,18 @@
                                             <div class="text-end">
                                                 <h4>
                                                     <i class="fa-solid fa-indian-rupee-sign me-1"></i>
-                                                    #lsCurrencyFormat((local.item.quantity*local.item.price + local.item.quantity*local.item.tax), "none", "en_IN")#
+                                                    <!---#lsCurrencyFormat((local.item.quantity*local.item.price + local.item.quantity*local.item.tax), "none", "en_IN")# --->
+                                                    #(local.item.quantity*local.item.price + local.item.quantity*local.item.tax)#
                                                 </h4>
                                                 <p class="mb-0">
                                                     Tax: 
                                                     <i class="fa-solid fa-indian-rupee-sign me-1"></i>
-                                                    #lsCurrencyFormat(local.item.quantity*local.item.tax, "none", "en_IN")#
+                                                    #(local.item.quantity*local.item.tax)#
                                                 </p>
                                                 <p class="text-muted mb-0">
                                                     Price: 
                                                     <i class="fa-solid fa-indian-rupee-sign me-1"></i>
-                                                    #lsCurrencyFormat(local.item.quantity*local.item.price, "none", "en_IN")#    
+                                                    #(local.item.quantity*local.item.price)#    
                                                 </p>
                                                 <button type = "button" 
                                                     class="btn btn-secondary btn-sm mt-2" 
@@ -132,153 +133,139 @@
                             </button>
                             </h2>
                             <div id="flush-collapseThree" class="accordion-collapse collapse" data-bs-parent="##accordionFlushExample">
-                            <div class="accordion-body">
-                                <div class = "d-flex">
-                                    <div>
-                                        <label class="form-label">Enter Card Number</label>
-                                        <input type="text" name="cardNumber" id="cardNumber" class="form-control" maxlength = "16" placeholder="XXXX XXXX XXXX XXXX">
-                                        <span class="text-danger " id="cardNumberError"></span>
-                                    </div>
-                                    <div class = "ms-3">
-                                        <label class="form-label">Enter CVV</label>
-                                        <input type="text" name="cvv" id="cvv" class="form-control" maxlength = "3"  placeholder="XXX">
-                                        <span class="text-danger " id="cvvError"></span>
+                                <div class="accordion-body">
+                                    <div class = "d-flex">
+                                        <div>
+                                            <label class="form-label">Enter Card Number</label>
+                                            <input type="text" name="cardNumber" id="cardNumber" class="form-control" maxlength = "16" placeholder="XXXX XXXX XXXX XXXX">
+                                            <span class="text-danger " id="cardNumberError"></span>
+                                        </div>
+                                        <div class = "ms-3">
+                                            <label class="form-label">Enter CVV</label>
+                                            <input type="text" name="cvv" id="cvv" class="form-control" maxlength = "3"  placeholder="XXX">
+                                            <span class="text-danger " id="cvvError"></span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            </div>
                         </div>
-                        </div>
-                    </div> 
-                    <div class="col-md-4">
-                        <div class="card p-3">
-                            <h4 class="mb-3">Order Summary</h4>
-
-                            <cfset variables.totalTax = 0>
-                            <cfset variables.totalPrice = 0>
-                            <cfset variables.actualPrice = 0>
-                            
-                            <cfloop array="#variables.getCartDetails#" index="local.item">
-                                <cfset variables.totalTax = variables.totalTax + (local.item.quantity*local.item.tax)>
-                                <cfset variables.actualPrice = variables.actualPrice + (local.item.quantity*local.item.price)>
-                                <cfset variables.totalPrice = variables.totalPrice + 
-                                    (local.item.quantity*local.item.price) + 
-                                    (local.item.quantity*local.item.tax)>
-                            </cfloop>
-                             
-                            <p class="d-flex justify-content-between">
-                                <span>Subtotal:</span> 
-                                <strong id="actualPrice">
-                                    <i class="fa-solid fa-indian-rupee-sign me-1"></i>
-                                    #lsCurrencyFormat(variables.actualPrice, "none", "en_IN")# 
-                                </strong>
+                    </div>
+                </div> 
+                <div class="col-md-4">
+                    <div class="card p-3">
+                        <h4 class="mb-3">Order Summary</h4>
+                        <cfset variables.totalTax = 0>
+                        <cfset variables.totalPrice = 0>
+                        <cfset variables.actualPrice = 0>
+                        <cfloop array="#variables.getCartDetails#" index="local.item">
+                            <cfset variables.totalTax = variables.totalTax + (local.item.quantity*local.item.tax)>
+                            <cfset variables.actualPrice = variables.actualPrice + (local.item.quantity*local.item.price)>
+                            <cfset variables.totalPrice = variables.totalPrice + 
+                                (local.item.quantity*local.item.price) + 
+                                (local.item.quantity*local.item.tax)>
+                        </cfloop>
+                        <p class="d-flex justify-content-between">
+                            <span>Subtotal:</span> 
+                            <strong id="actualPrice">
+                                <i class="fa-solid fa-indian-rupee-sign me-1"></i>
+                                <!---#lsCurrencyFormat(variables.actualPrice, "none", "en_IN")#  --->
+                                #variables.actualPrice# 
+                            </strong>
+                        </p>
+                        <p class="d-flex justify-content-between">
+                            <span>Tax:</span>
+                            <strong id="">
+                                <i class="fa-solid fa-indian-rupee-sign me-1"></i>
+                                <span id = "totalTax"> 
+                                    #variables.totalTax#
+                                </span> 
+                            </strong>
                             </p>
-                            <p class="d-flex justify-content-between">
-                                <span>Tax:</span>
-                                <strong id="">
-                                    <i class="fa-solid fa-indian-rupee-sign me-1"></i>
-                                    <span id = "totalTax"> 
-                                        #lsCurrencyFormat(variables.totalTax, "none", "en_IN")#
-                                    </span> 
-                                </strong>
-                                </p>
-                            <hr>
-                            <h4 class="d-flex justify-content-between text-dark">
-                                <span>Total:</span> 
-                                <strong id="">
-                                    <i class="fa-solid fa-indian-rupee-sign me-1"></i>
-                                    <span id = "totalPrice"> 
-                                         #lsCurrencyFormat(variables.totalPrice, "none", "en_IN")#
-                                    </span>
-                                </strong>
-                            </h4>
-                            <button class="btn btn-success w-100 mt-3 proceedBtn text-dark fw-semibold rounded-pill"
-                                onClick= "placeOrder(#variables.productId#,#variables.productQuantity#)">
-                                PLACE YOUR ORDER
+                        <hr>
+                        <h4 class="d-flex justify-content-between text-dark">
+                            <span>Total:</span> 
+                            <strong id="">
+                                <i class="fa-solid fa-indian-rupee-sign me-1"></i>
+                                <span id = "totalPrice"> 
+                                        #variables.totalPrice#
+                                </span>
+                            </strong>
+                        </h4>
+                        <button class="btn btn-success w-100 mt-3 proceedBtn text-dark fw-semibold rounded-pill"
+                            onClick= "placeOrder(#variables.productId#,#variables.productQuantity#)">
+                            PLACE YOUR ORDER
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--- Add Address Modal --->
+        <div class="modal fade" id="addAddressModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add New Address</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id ="userAddressAddForm" method="POST">
+                            <div class="mb-3">
+                                <label class="form-label">First Name</label>
+                                <input type="text" class="form-control" id="receiverFirstName" name="receiverFirstName">
+                                <span id="receiverFirstNameError" class="text-danger"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Last Name</label>
+                                <input type="text" class="form-control" id="receiverLastName" name="receiverLastName">
+                                <span id="receiverLastNameError" class="text-danger"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Phone</label>
+                                <input type="text" class="form-control" id="receiverPhone" maxlength="10" name="receiverPhone">
+                                <span id="receiverPhoneError" class="text-danger"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Email</label>
+                                <input type="text" class="form-control" id="receiverEmail" name="receiverEmail">
+                                <span id="receiverEmailError" class="text-danger"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Address Line 1</label>
+                                <textarea class="form-control" id="newAddressLine1" rows="3"></textarea>
+                                <span id="addressLine1Error" class="text-danger"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Address Line 2</label>
+                                <textarea class="form-control" id="newAddressLine2" rows="3"></textarea>
+                                <span id="addressLine2Error" class="text-danger"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">City</label>
+                                <input type="text" class="form-control" id="receiverCity" name="receiverCity">
+                                <span id="cityError" class="text-danger"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">State</label>
+                                <input type="text" class="form-control" id="receiverState" name="receiverState">
+                                <span id="stateError" class="text-danger"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Pincode</label>
+                                <input type="text" maxlength="6" class="form-control" id="receiverPin" name="receiverPin">
+                                <span id="pincodeError" class="text-danger"></span>
+                            </div>
+                            <button type="button"
+                                name = "userAddressSubmitBtn" 
+                                onClick = "saveNewAddress()" 
+                                class="btn btn-primary w-100">
+                                Save Changes
                             </button>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>
-
-            <!--- Add Address Modal --->
-            <div class="modal fade" id="addAddressModal" tabindex="-1">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Add New Address</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form id ="userAddressAddForm" method="POST">
-                                <div class="mb-3">
-                                    <label class="form-label">First Name</label>
-                                    <input type="text" class="form-control" id="receiverFirstName" name="receiverFirstName">
-                                    <span id="receiverFirstNameError" class="text-danger"></span>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label class="form-label">Last Name</label>
-                                    <input type="text" class="form-control" id="receiverLastName" name="receiverLastName">
-                                    <span id="receiverLastNameError" class="text-danger"></span>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label class="form-label">Phone</label>
-                                    <input type="text" class="form-control" id="receiverPhone" maxlength="10" name="receiverPhone">
-                                    <span id="receiverPhoneError" class="text-danger"></span>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label class="form-label">Email</label>
-                                    <input type="text" class="form-control" id="receiverEmail" name="receiverEmail">
-                                    <span id="receiverEmailError" class="text-danger"></span>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label class="form-label">Address Line 1</label>
-                                    <textarea class="form-control" id="newAddressLine1" rows="3"></textarea>
-                                    <span id="addressLine1Error" class="text-danger"></span>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label class="form-label">Address Line 2</label>
-                                    <textarea class="form-control" id="newAddressLine2" rows="3"></textarea>
-                                    <span id="addressLine2Error" class="text-danger"></span>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label class="form-label">City</label>
-                                    <input type="text" class="form-control" id="receiverCity" name="receiverCity">
-                                    <span id="cityError" class="text-danger"></span>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label class="form-label">State</label>
-                                    <input type="text" class="form-control" id="receiverState" name="receiverState">
-                                    <span id="stateError" class="text-danger"></span>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label class="form-label">Pincode</label>
-                                    <input type="text" maxlength="6" class="form-control" id="receiverPin" name="receiverPin">
-                                    <span id="pincodeError" class="text-danger"></span>
-                                </div>
-
-                                <button type="button" name = "userAddressSubmitBtn" onClick = "saveNewAddress()" class="btn btn-primary w-100">Save Changes</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </main>
+        </div>
+    </main>
     </cfoutput>
-
 </cfif>
 <cfinclude template="footer.cfm">
-
-
-
-
-                    

@@ -1,7 +1,6 @@
 <cfinclude  template="header.cfm">
 <cfif structKeyExists(url, "productId")>
   <cfset variables.productId = decrypt(url.productId,application.key,"AES","Base64")>
-  <!--- <cfdump  var="#variables.productId#"> --->
 </cfif>
 <main>
   <div class="container flex-column mx-auto my-5 p-5 w-50 justify-content-center bg-light shadow">
@@ -15,9 +14,12 @@
     </form>
     <cfif structKeyExists(form,"submitBtn")>   
       <cfif structKeyExists(url, "productId")>
+        <!--- not loggedin user on ordering a product or addiing a product to cart --->
         <cfif structKeyExists(url, "buyNow")>
+          <!--- not loggedin user on ordering a product --->
           <cfset variables.loginResult = application.shoppingCart.logIn(form.userInput,form.password,variables.productId,url.buyNow)>
         <cfelse>
+          <!--- not loggedin user addiing a product to cart --->
           <cfset variables.loginResult = application.shoppingCart.logIn(form.userInput,form.password,variables.productId)>
         </cfif>
       <cfelse>
@@ -36,9 +38,3 @@
   </div>
 </main>      
 <cfinclude  template="footer.cfm">
-      
-
-
-
-
-

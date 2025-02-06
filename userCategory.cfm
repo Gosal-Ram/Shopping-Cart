@@ -4,7 +4,6 @@
 <cfset variables.getAllSubCategories = application.shoppingCart.fetchSubCategories(variables.categoryId)>
 <cfset variables.getAllProducts = application.shoppingCart.fetchProducts()>
 <cfset variables.productStruct = structNew()>
-
 <cfloop query="variables.getAllProducts">
     <cfset variables.subCategoryId = variables.getAllProducts.fldSubCategoryId>
     <cfif NOT structKeyExists(variables.productStruct, variables.subCategoryId)>
@@ -19,7 +18,6 @@
         imageFilename = variables.getAllProducts.fldImageFilename
     })>
 </cfloop>
-
 <cfoutput>
 <main>
     <div class="container-fluid my-3 ms-3">
@@ -31,7 +29,6 @@
             <a class="h4 text-decoration-none" href = "userSubCategory.cfm?subCategoryId=#variables.encodedSubCategoryId#" >
                 <h4> #local.subItem.subCategoryName#</h4>
             </a>
-
             <div class="productListingContainer d-flex flex-sm-wrap ms-5 mb-3">
                 <cfif structKeyExists(variables.productStruct, local.subItem.subCategoryId)>
                     <cfloop array="#variables.productStruct[local.subItem.subCategoryId]#" item="local.productItem">
@@ -59,8 +56,6 @@
         </cfloop>  
     </div>
 </main>
-
 </cfoutput>
-
 <cfinclude  template="footer.cfm">  
 

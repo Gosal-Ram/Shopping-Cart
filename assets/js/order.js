@@ -189,22 +189,6 @@ function removeProduct(cartId){
     }
 }
 
-function removeProductBuyNow(productId){
-    if(confirm("Confirm remove item")){
-        $.ajax({
-            type:"POST",
-            url: "component/shoppingcart.cfc",
-            data:{productId: productId,
-                method : "deleteCartItem"
-            },
-            success:function(){
-                document.getElementById(productId).remove();
-                location.reload();
-            }
-        })
-    }
-}
-
 function cardValidate() {
     let cardNumber = $("#cardNumber");
     let cvv = $("#cvv");
@@ -288,6 +272,7 @@ function placeOrder(productId,productQuantity){
         success:function(response){
             let responseParsed = JSON.parse(response);
             alert(responseParsed.resultMsg);
+            location.href = "orderDetails.cfm";
             /* if(responseParsed.resultMsg =="Order placed SuccessFully"){
                 // header cart icon update
                 let cartCountPrev = Number(document.getElementById("cartCount").innerHTML);

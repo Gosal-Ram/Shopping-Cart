@@ -21,10 +21,12 @@
                                         "/searchResults.cfm",
                                         "/userProduct.cfm",
                                         "/component/shoppingcart.cfc"]>
+
         <cfif structKeyExists(url,"reload") AND url.reload EQ 1>
             <cfset onApplicationStart()>  
             <cfreturn true> 
         </cfif>  
+
         <cfif structKeyExists(session, "userId") OR arrayContains(local.userAllowedPages, arguments.requestPage) >
             <cfreturn true> 
         <cfelse>
@@ -64,8 +66,7 @@
         </cfif>
     </cffunction>
 
-    <!--- 
-        <cffunction name="onRequest" returnType="void">
+    <!--- <cffunction name="onRequest" returnType="void">
             <cfargument name="targetPage" type="String" required=true/>
             
             <cfinclude template="#Arguments.targetPage#">
@@ -74,6 +75,5 @@
         <cffunction name="onRequestEnd" returnType="void">
             <cfargument type="String" name="targetPage" required=true/>
         
-        </cffunction>  
-    --->
+        </cffunction>  --->
 </cfcomponent>
