@@ -8,15 +8,12 @@
             firstName = form.userFirstName,
             lastName = form.userLastName,
             emailId = form.userEmail,
-            phone = form.userPhone
-            )>
+            phone = form.userPhone)>
     </cfif>
-
     <div class="container my-3">
         <div class = "text-center">
             <img src = "assets/images/userprofile.jpg" alt="" height="75" width = "125" class="img-fluid">
         </div>
-
         <h2 class="mb-4 text-center">Hello #session.firstName# #session.lastName# !</h2>
         <div class="card p-4 shadow-sm">
             <div class="d-flex justify-content-between align-items-center">
@@ -34,9 +31,7 @@
                     <span class = "fw-semibold">#variables.editUserDetailsResult.resultMsg#</span>
                 </cfif>
             </cfif>
-
         </div>
-
         <h4 class="mt-4">Saved Addresses</h4>
         <div class="card p-4 shadow-sm">
             <span class="text-success" id ="categoryFunctionResult"></span>        
@@ -68,14 +63,15 @@
                 <hr>
             </cfloop>
             <div>
-                <button type="button" onClick = "openAddAddressModal()" class="btn btn-success mt-3" data-bs-toggle="modal" data-bs-target="##addAddressModal">
+                <button type="button" onClick = "openAddAddressModal()" class="btn btn-outline-success mt-3 fw-semibold" data-bs-toggle="modal" data-bs-target="##addAddressModal">
                     <i class="fa-solid fa-plus me-1"></i> Add Address
                 </button>
+                <a href="orderDetails.cfm" class="btn btn-outline-primary mt-3 ms-3 fw-semibold">
+                    <i class='fas fa-shopping-bag'></i> My Orders
+                </a>
             </div>
         </div>
-        
     </div>
-
     <!--- Edit User Details Modal --->
     <div class="modal fade" id="editUserModal" tabindex="-1">
         <div class="modal-dialog">
@@ -184,7 +180,6 @@
             </div>
         </div>
     </div>
-
 </main>
 </cfoutput>
 <cfinclude  template="footer.cfm">
