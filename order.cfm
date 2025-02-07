@@ -1,6 +1,6 @@
 <cfinclude  template="header.cfm">
 <cfif NOT structKeyExists(session, "cartCount") OR session.cartCount EQ 0>
-    <cflocation  url="cart.cfm">
+    <cflocation  url="cart.cfm" addToken="no">
 <cfelse>
     <!--- declaring 0 for not to interfere with buyNow with cart checkout--->
     <cfset variables.productId = 0>
@@ -29,7 +29,7 @@
                                 DELIVERY ADDRESS
                             </button>
                             </h2>
-                            <div id="flush-collapseOne" class="accordion-collapse collapse show" data-bs-parent="##accordionFlushExample">
+                            <div id="flush-collapseOne" class="accordion-collapse collapse  " data-bs-parent="##accordionFlushExample">
                                 <div class="accordion-body">
                                     <cfloop array="#variables.queryGetAddresses#" item="local.item">
                                         <div class="d-flex justify-content-between align-items-center" id="#local.item.addressId#">
@@ -70,10 +70,10 @@
                                 ORDER SUMMARY
                             </button>
                             </h2>
-                            <div id="flush-collapseTwo" class="accordion-collapse collapse" data-bs-parent="##accordionFlushExample">
+                            <div id="flush-collapseTwo" class="accordion-collapse collapse show " data-bs-parent="##accordionFlushExample">
                                 <div class="accordion-body">      
                                     <cfloop array="#variables.getCartDetails#" index="local.item">
-                                        <div class="card mb-3 p-3 d-flex flex-row align-items-center" id = "#local.item.cartId#">
+                                        <div class="card mb-3 p-3 d-flex flex-row align-items-center" id = "cartId_#local.item.cartId#">
                                             <img src="assets/images/productImages/#local.item.defaultImg#" alt="#local.item.productName#"
                                                 class="img-fluid me-3 cartProductImg" 
                                                 width = "100"
@@ -93,9 +93,13 @@
                                                         </button>
                                                         <span class="mx-2" id="quantityCount_#local.item.cartId#">#local.item.quantity#</span>
                                                         <button type = "button" 
-                                                            onClick = "increaseCount(#local.item.cartId#)" 
+                                                            onClick = "increaseCount(#local.item.cartId#,document)" 
                                                             class="btn btn-outline-primary btn-sm btn-remove">+
                                                         </button>
+                                                    </div> 
+                                                <cfelse>
+                                                    <div class="d-flex align-items-center">
+                                                        Quantity - #local.item.quantity#
                                                     </div> 
                                                 </cfif>
                                             </div>
@@ -103,17 +107,17 @@
                                                 <h4>
                                                     <i class="fa-solid fa-indian-rupee-sign me-1"></i>
                                                     <!---#lsCurrencyFormat((local.item.quantity*local.item.price + local.item.quantity*local.item.tax), "none", "en_IN")# --->
-                                                    #(local.item.quantity*local.item.price + local.item.quantity*local.item.tax)#
+                                                    <span name ="productPrice">#(local.item.quantity*local.item.price + local.item.quantity*local.item.tax)#</span>
                                                 </h4>
                                                 <p class="mb-0">
                                                     Tax: 
                                                     <i class="fa-solid fa-indian-rupee-sign me-1"></i>
-                                                    #(local.item.quantity*local.item.tax)#
+                                                    <span name="productTax">#(local.item.quantity*local.item.tax)#</span>
                                                 </p>
                                                 <p class="text-muted mb-0">
                                                     Price: 
                                                     <i class="fa-solid fa-indian-rupee-sign me-1"></i>
-                                                    #(local.item.quantity*local.item.price)#    
+                                                    <span name ="productActualPrice">#(local.item.quantity*local.item.price)#</span>
                                                 </p>
                                                 <button type = "button" 
                                                     class="btn btn-secondary btn-sm mt-2" 
@@ -163,22 +167,21 @@
                             <cfset variables.totalPrice = variables.totalPrice + 
                                 (local.item.quantity*local.item.price) + 
                                 (local.item.quantity*local.item.tax)>
+                            <cfset variables.productQuantity= local.item.quantity>
                         </cfloop>
                         <p class="d-flex justify-content-between">
                             <span>Subtotal:</span> 
                             <strong id="actualPrice">
                                 <i class="fa-solid fa-indian-rupee-sign me-1"></i>
                                 <!---#lsCurrencyFormat(variables.actualPrice, "none", "en_IN")#  --->
-                                #variables.actualPrice# 
+                                <span id="totalActualPrice" name="totalActualPrice">#variables.actualPrice#</span>
                             </strong>
                         </p>
                         <p class="d-flex justify-content-between">
                             <span>Tax:</span>
                             <strong id="">
                                 <i class="fa-solid fa-indian-rupee-sign me-1"></i>
-                                <span id = "totalTax"> 
-                                    #variables.totalTax#
-                                </span> 
+                                <span id = "totalTax" name ="totalTax"> #variables.totalTax#</span> 
                             </strong>
                             </p>
                         <hr>
@@ -186,9 +189,7 @@
                             <span>Total:</span> 
                             <strong id="">
                                 <i class="fa-solid fa-indian-rupee-sign me-1"></i>
-                                <span id = "totalPrice"> 
-                                        #variables.totalPrice#
-                                </span>
+                                <span id ="totalPrice" name="totalPrice">#variables.totalPrice#</span>
                             </strong>
                         </h4>
                         <button class="btn btn-success w-100 mt-3 proceedBtn text-dark fw-semibold rounded-pill"

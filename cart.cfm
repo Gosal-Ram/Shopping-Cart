@@ -50,28 +50,19 @@
                                     <i class="fa-solid fa-indian-rupee-sign me-1"></i>
                                     <cfset variables.productPrice = (local.item.quantity*local.item.price) + 
                                                                     (local.item.quantity*local.item.tax)>
-                                    <span id ="productPrice" value = "#variables.productPrice#">
-                                        #variables.productPrice#
-                                        <!---#lsCurrencyFormat(variables.productPrice, "none", "en_IN")# --->
-                                    </span>
+                                    <span name ="productPrice">#variables.productPrice#</span>
                                 </h4>
                                 <p class="mb-0">
                                     Tax: 
                                     <i class="fa-solid fa-indian-rupee-sign me-1"></i>
                                     <cfset variables.productTax = local.item.quantity*local.item.tax>
-                                    <span id="productTax">
-                                        <!---#lsCurrencyFormat(variables.productTax, "none", "en_IN")# --->
-                                        #variables.productTax#
-                                    </span>
+                                    <span name="productTax">#variables.productTax#</span>
                                 </p>
                                 <p class="text-muted mb-0">
                                     Price: 
                                     <i class="fa-solid fa-indian-rupee-sign me-1"></i>
                                     <cfset variables.productActualPrice = local.item.quantity*local.item.price>
-                                    <span id ="productActualPrice">
-                                        <!---#lsCurrencyFormat(variables.productActualPrice, "none", "en_IN")# --->
-                                        #variables.productActualPrice#
-                                    </span>
+                                    <span name ="productActualPrice">#variables.productActualPrice#</span>
                                 </p>
                                 <button type = "button" 
                                     class="btn btn-secondary btn-sm mt-2" 
@@ -101,20 +92,14 @@
                             <span>Subtotal:</span> 
                             <strong>
                                 <i class="fa-solid fa-indian-rupee-sign me-1"></i>
-                                <span id="totalActualPrice" value = "#variables.actualPrice#">
-                                    <!---#lsCurrencyFormat(variables.actualPrice, "none", "en_IN")# --->
-                                    #variables.actualPrice#
-                                </span> 
+                                <span name="totalActualPrice">#variables.actualPrice#</span> 
                             </strong>
                         </p>
                         <p class="d-flex justify-content-between">
                             <span>Tax:</span>
                             <strong>
                                 <i class="fa-solid fa-indian-rupee-sign me-1"></i>
-                                <span id="totalTax">
-                                    <!---#lsCurrencyFormat(variables.totalTax, "none", "en_IN")# --->
-                                    #variables.totalTax#
-                                </span>
+                                <span name="totalTax"> #variables.totalTax#</span>
                             </strong>
                             </p>
                         <hr>
@@ -122,10 +107,7 @@
                             <span>Total:</span> 
                             <strong>
                                 <i class="fa-solid fa-indian-rupee-sign me-1"></i>
-                                 <span id="totalPrice">
-                                    <!---#lsCurrencyFormat(variables.totalPrice, "none", "en_IN")# --->
-                                    #variables.totalPrice#
-                                 </span> 
+                                <span name="totalPrice">#variables.totalPrice#</span> 
                             </strong>
                         </h4>
                         <a class="btn btn-success w-100 mt-3 proceedBtn text-dark fw-semibold rounded-pill"

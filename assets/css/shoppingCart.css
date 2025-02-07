@@ -41,6 +41,17 @@
 .addToCartBtn{
     background-color: #f8d340;
 }
+.orderCardHeader{
+    background-color: #c2cddd;
+    color: #878787;
+}
+.orderCardFooter{
+    background-color: #c2cddd;
+}
+.orderTitle{
+    font-size: small;
+    font-weight: bold;
+}
 
 .addToCartBtn:hover{
     background-color: #facc16;
