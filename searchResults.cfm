@@ -4,7 +4,7 @@
 <cfif Len(Trim(variables.search)) GT 0>
     <cfset variables.getAllProducts = application.shoppingCart.fetchProducts(searchInput = variables.search)>
 <cfelse>
-    <cflocation  url="home.cfm">
+    <cflocation  url="home.cfm" addToken="no"> 
 </cfif>
 <main>
     <div class="container-fluid my-3">

@@ -18,7 +18,7 @@
         <div class="card p-4 shadow-sm">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <p class ="mb-1 text-muted">Name  : <span class="fw-semibold text-dark"> #session.firstName# #session.lastName#</span></p>
+                    <p class ="mb-1 text-muted">Name : <span class="fw-semibold text-dark"> #session.firstName# #session.lastName#</span></p>
                     <p class="mb-1 text-muted">Email :<span class="fw-semibold text-dark"> #session.email#</span></p>
                 </div>
 
