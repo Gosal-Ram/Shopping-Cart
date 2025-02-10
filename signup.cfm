@@ -1,6 +1,6 @@
 <cfinclude  template="header.cfm">
 <main>
-  <div class="container flex-column mx-auto mt-5 px-5 pt-5 w-50 justify-content-center bg-light shadow-lg">
+  <div class="container flex-column mx-auto my-5 px-5 pt-5 pb-3 w-50 justify-content-center bg-light shadow">
     <h3 class= "text-center">Sign Up</h3>
     <form class="d-flex flex-column my-5" method="POST" onsubmit = "signupValidate()">
       <input type="text" name="firstName" id="firstName" class="form-control my-3 p-2" placeholder="First Name">

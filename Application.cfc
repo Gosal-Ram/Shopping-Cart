@@ -11,23 +11,48 @@
 
     <cffunction  name="onRequestStart" returnType="boolean"> 
         <cfargument name="requestPage" type="String" required=true> 
-
+    
         <cfset local.userAllowedPages = ["/login.cfm", 
                                         "/signup.cfm", 
                                         "/home.cfm",
+                                        "/cart.cfm",
+                                        "/profile.cfm",
+                                        "/searchResults.cfm",
                                         "/userCategory.cfm", 
                                         "/userSubCategory.cfm", 
+                                        "/userProduct.cfm", 
                                         "/searchResults.cfm",
-                                        "/userProduct.cfm"]>
+                                        "/userProduct.cfm",
+                                        "/component/shoppingcart.cfc"]>
+
+        <cfset local.adminPages = ["/category.cfm", 
+                                    "/subCategory.cfm", 
+                                    "/product.cfm"]>
+
+        <cfset local.loggedInUserAllowedPages = ["/order.cfm",
+                                    "/orderDetails.cfm", 
+                                    "/generateInvoice.cfm"]>
+
+
+        <cfif arrayContains(local.adminPages, arguments.requestPage)>
+            <cfif structKeyExists(session, "userId") AND session.roleId EQ 1>
+                <cfreturn true>
+            <cfelse>
+                <cflocation  url = "/home.cfm" addtoken = "no">  
+            </cfif>
+        <cfelseif arrayContains(local.loggedInUserAllowedPages, arguments.requestPage)>
+            <cfif structKeyExists(session, "userId") AND (session.roleId EQ 2 OR session.roleId EQ 1)>
+                <cfreturn true>
+            <cfelse>
+                <cflocation  url = "/home.cfm" addtoken = "no">  
+            </cfif>
+        </cfif>
+
         <cfif structKeyExists(url,"reload") AND url.reload EQ 1>
             <cfset onApplicationStart()>  
             <cfreturn true> 
         </cfif>  
-        <cfif structKeyExists(session, "userId") OR arrayContains(local.userAllowedPages, arguments.requestPage) >
-            <cfreturn true> 
-        <cfelse>
-            <cflocation  url = "/login.cfm">  
-        </cfif>
+        <cfreturn true>
     </cffunction>
 
     <cffunction name="onMissingTemplate" returnType="boolean">
@@ -62,8 +87,7 @@
         </cfif>
     </cffunction>
 
-    <!--- 
-        <cffunction name="onRequest" returnType="void">
+    <!--- <cffunction name="onRequest" returnType="void">
             <cfargument name="targetPage" type="String" required=true/>
             
             <cfinclude template="#Arguments.targetPage#">
@@ -72,6 +96,5 @@
         <cffunction name="onRequestEnd" returnType="void">
             <cfargument type="String" name="targetPage" required=true/>
         
-        </cffunction>  
-    --->
+        </cffunction>  --->
 </cfcomponent>
