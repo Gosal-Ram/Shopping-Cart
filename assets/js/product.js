@@ -192,7 +192,7 @@ function editProductOpenModal(fldProduct_Id){
         },
         success:function(response){
             let responseParsed = JSON.parse(response);         // autopopulate Product details
-            console.log(responseParsed)
+            // console.log(responseParsed)
             document.getElementById("productName").value =responseParsed.DATA[0][0];
             document.getElementById("productDescription").value = responseParsed.DATA[0][4];
             document.getElementById("brandSelect").value = responseParsed.DATA[0][3];;

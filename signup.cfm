@@ -9,7 +9,7 @@
       <span id="lastNameError" class="text-danger"></span>
       <input type="mail" name="emailId" id="emailId" class="form-control my-3 p-2" placeholder="Email ID">
       <span id="emailIdError" class="text-danger"></span>
-      <input type="text" name="phone" id="phone" class="form-control my-3 p-2" placeholder="Phone">
+      <input type="text" name="phone" id="phone" maxlength="10" class="form-control my-3 p-2" placeholder="Phone">
       <span class="text-danger " id="phoneError"></span>
       <input type="password" name="pwd1" id="pwd1" class="form-control my-3 p-2" placeholder="Password">
       <span id="pwd1Error" class="text-danger"></span>

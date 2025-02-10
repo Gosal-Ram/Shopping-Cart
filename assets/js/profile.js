@@ -43,7 +43,7 @@ function userProfileValidate() {
     }
 
     let emailIdValue = emailId.val().trim();
-    console.log(emailIdValue);
+    // console.log(emailIdValue);
     if (emailIdValue == "") {
         setError(emailId, emailIdError, "Email is required.");
     } else if (!emailRegex.test(emailIdValue)) {
@@ -94,27 +94,3 @@ function deleteAddress(addressId){
     }
 }
 
-function openAddAddressModal(){
-    document.getElementById("receiverFirstNameError").textContent = "";
-    document.getElementById("receiverLastNameError").textContent = "";
-    document.getElementById("receiverPhoneError").textContent = "";
-    document.getElementById("receiverEmailError").textContent = "";
-    document.getElementById("addressLine1Error").textContent = "";
-    document.getElementById("addressLine2Error").textContent = "";
-    document.getElementById("emailIdError").textContent = "";
-    document.getElementById("cityError").textContent = "";
-    document.getElementById("stateError").textContent = "";
-    document.getElementById("pincodeError").textContent = "";
-    
-    $("#receiverFirstName").removeClass("border-danger");
-    $("#receiverLastName").removeClass("border-danger");
-    $("#receiverPhone").removeClass("border-danger");
-    $("#receiverEmail").removeClass("border-danger");
-    $("#newAddressLine1").removeClass("border-danger");
-    $("#newAddressLine2").removeClass("border-danger");
-    $("#receiverCity").removeClass("border-danger");
-    $("#receiverState").removeClass("border-danger");
-    $("#receiverPin").removeClass("border-danger");
-    
-    document.getElementById("userAddressAddForm").reset();
-}

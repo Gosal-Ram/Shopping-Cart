@@ -18,7 +18,7 @@
     <cfset variables.queryGetAddresses = application.shoppingCart.fetchAddresses()>
     <cfoutput>
     <main>
-        <div class="container my-3">
+        <div class="container orderContainer my-3">
             <h2 class="mb-4">Checkout</h2>
             <div class="row">
                 <div class="col-md-8">
@@ -29,7 +29,7 @@
                                 DELIVERY ADDRESS
                             </button>
                             </h2>
-                            <div id="flush-collapseOne" class="accordion-collapse collapse  " data-bs-parent="##accordionFlushExample">
+                            <div id="flush-collapseOne" class="accordion-collapse collapse " data-bs-parent="##accordionFlushExample">
                                 <div class="accordion-body">
                                     <cfloop array="#variables.queryGetAddresses#" item="local.item">
                                         <div class="d-flex justify-content-between align-items-center" id="#local.item.addressId#">
@@ -70,7 +70,7 @@
                                 ORDER SUMMARY
                             </button>
                             </h2>
-                            <div id="flush-collapseTwo" class="accordion-collapse collapse show " data-bs-parent="##accordionFlushExample">
+                            <div id="flush-collapseTwo" class="accordion-collapse collapse show" data-bs-parent="##accordionFlushExample">
                                 <div class="accordion-body">      
                                     <cfloop array="#variables.getCartDetails#" index="local.item">
                                         <div class="card mb-3 p-3 d-flex flex-row align-items-center" id = "cartId_#local.item.cartId#">
@@ -87,9 +87,7 @@
                                                             id = "btnDecrease"
                                                             onClick = "decreaseCount(#local.item.cartId#)"
                                                             class="btn btn-outline-primary btn-sm me-2 btn-quantity"
-                                                            <cfif local.item.quantity EQ 1>
-                                                                disabled
-                                                            </cfif>>-
+                                                            >-
                                                         </button>
                                                         <span class="mx-2" id="quantityCount_#local.item.cartId#">#local.item.quantity#</span>
                                                         <button type = "button" 
@@ -99,7 +97,7 @@
                                                     </div> 
                                                 <cfelse>
                                                     <div class="d-flex align-items-center">
-                                                        Quantity - #local.item.quantity#
+                                                        Quantity : #local.item.quantity#
                                                     </div> 
                                                 </cfif>
                                             </div>
@@ -200,6 +198,7 @@
                 </div>
             </div>
         </div>
+        <div id = "resultContainer"></div>
         <!--- Add Address Modal --->
         <div class="modal fade" id="addAddressModal" tabindex="-1">
             <div class="modal-dialog">
@@ -224,11 +223,6 @@
                                 <label class="form-label">Phone</label>
                                 <input type="text" class="form-control" id="receiverPhone" maxlength="10" name="receiverPhone">
                                 <span id="receiverPhoneError" class="text-danger"></span>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Email</label>
-                                <input type="text" class="form-control" id="receiverEmail" name="receiverEmail">
-                                <span id="receiverEmailError" class="text-danger"></span>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Address Line 1</label>

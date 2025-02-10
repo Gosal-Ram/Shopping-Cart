@@ -14,7 +14,6 @@ function logOut(){
 function addressValidate(){
     let firstName = $("#receiverFirstName");
     let lastName = $("#receiverLastName");
-    let emailId = $("#receiverEmail");
     let phone = $("#receiverPhone");
     let addLine1 = $("#newAddressLine1");
     let addLine2 = $("#newAddressLine2");
@@ -24,7 +23,6 @@ function addressValidate(){
 
     let firstNameError = document.getElementById("receiverFirstNameError");
     let lastNameError = document.getElementById("receiverLastNameError");
-    let emailIdError = document.getElementById("receiverEmailError");
     let phoneError = document.getElementById("receiverPhoneError");
     let addLine1Error = document.getElementById("addressLine1Error");
     let addLine2Error = document.getElementById("addressLine2Error");
@@ -33,7 +31,6 @@ function addressValidate(){
     let pincodeError = document.getElementById("pincodeError");
 
     const nameCityStateRegex = /^[A-Za-z ]+$/;
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     const phoneRegex = /^[0-9]{10}$/;
     const addressRegex = /^.+$/;
     const pincodeRegex = /^[0-9]{6}$/;
@@ -61,13 +58,6 @@ function addressValidate(){
         setError(lastName, lastNameError, "Enter a valid last name.");
     } else {
         resetError(lastName, lastNameError);
-    }
-    
-    let emailIdValue = emailId.val().trim();
-    if (emailIdValue === "" || !emailRegex.test(emailIdValue)) {
-        setError(emailId, emailIdError, "Enter a valid email address.");
-    } else {
-        resetError(emailId, emailIdError);
     }
     
     let phoneValue = phone.val().trim();
@@ -152,4 +142,24 @@ function saveNewAddress() {
     })
 }
 
-
+function openAddAddressModal(){
+    document.getElementById("receiverFirstNameError").textContent = "";
+    document.getElementById("receiverLastNameError").textContent = "";
+    document.getElementById("receiverPhoneError").textContent = "";
+    document.getElementById("addressLine1Error").textContent = "";
+    document.getElementById("addressLine2Error").textContent = "";
+    document.getElementById("cityError").textContent = "";
+    document.getElementById("stateError").textContent = "";
+    document.getElementById("pincodeError").textContent = "";
+    
+    $("#receiverFirstName").removeClass("border-danger");
+    $("#receiverLastName").removeClass("border-danger");
+    $("#receiverPhone").removeClass("border-danger");
+    $("#newAddressLine1").removeClass("border-danger");
+    $("#newAddressLine2").removeClass("border-danger");
+    $("#receiverCity").removeClass("border-danger");
+    $("#receiverState").removeClass("border-danger");
+    $("#receiverPin").removeClass("border-danger");
+    
+    document.getElementById("userAddressAddForm").reset();
+}

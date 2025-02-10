@@ -1,4 +1,4 @@
-        <cfset local.adminWebPages = ["/category.cfm","/subCategory.cfm","/product.cfm","/login.cfm","/signup.cfm"]>
+        <cfset local.adminWebPages = ["/category.cfm","/subCategory.cfm","/product.cfm","/login.cfm","/signup.cfm" ,"/cart.cfm"]>
         <cfif arrayContains(local.adminWebPages, cgi.SCRIPT_NAME)>
             <footer class = "text-dark bg-white p-3 text-center w-100 position-sticky">
                 <cfif cgi.SCRIPT_NAME EQ "/login.cfm" OR cgi.SCRIPT_NAME EQ "/signup.cfm">

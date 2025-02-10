@@ -5,23 +5,61 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <cfswitch expression = "#cgi.SCRIPT_NAME#">
           <cfcase value="/login.cfm">
-            <title>Log in to Shopping Cart</title>
+            <title>Log in | Shopping Cart</title>
           </cfcase>
+
           <cfcase value="/signup.cfm">
-            <title>Sign in</title>
+            <title>Sign in | ShoppingCart</title>
           </cfcase>
+
           <cfcase value="/category.cfm">
-            <title>Categories</title>
+              <title>Admin Dashboard | Categories</title>
           </cfcase>
+
           <cfcase value="/subCategory.cfm">
-            <title>Sub Categories</title>
+              <title>Admin Dashboard | Sub Categories</title>
           </cfcase>
+
           <cfcase value="/product.cfm">
-            <title>Products</title>
+              <title>Admin Dashboard | Products</title>
           </cfcase>
+
+          <cfcase value="/userCategory.cfm">
+              <title>Categories | ShoppingCart</title>
+          </cfcase>
+
+          <cfcase value="/userSubcategory.cfm">
+              <title>Sub Categories | ShoppingCart</title>
+          </cfcase>
+
+          <cfcase value="/userProduct.cfm">
+              <title>Products | ShoppingCart</title>
+          </cfcase>
+
+          <cfcase value="/cart.cfm">
+              <title>Cart | ShoppingCart</title>
+          </cfcase>
+
+          <cfcase value="/order.cfm">
+              <title>Checkout | ShoppingCart</title>
+          </cfcase>
+
+          <cfcase value="/orderdetails.cfm">
+              <title>All Previous Orders | ShoppingCart</title>
+          </cfcase>
+
+          <cfcase value="/profile.cfm">
+              <title>My Profile | ShoppingCart</title>
+          </cfcase>
+
+          <cfcase value="/searchResults.cfm">
+              <title>Search Results | ShoppingCart</title>
+          </cfcase>
+
           <cfcase value="/home.cfm">
-            <title>HOME</title>
+            <title>Home | ShoppingCart</title>
           </cfcase>
+
           <cfdefaultcase>
             <title>SHOPPING CART</title>
           </cfdefaultcase>
@@ -52,7 +90,7 @@
               <!--- SEARCH BAR--->
               <form action="searchResults.cfm" method="get" class="searchInputDiv"> 
                 <div class="input-group my-2 " >  
-                  <input class="form-control border-end-0 border rounded-pill" placeholder="Search.." type="search" id="searchInput" name="s">
+                  <input class="form-control border-end-0 border rounded-pill" placeholder="Search for Products,Brands and More" type="search" id="searchInput" name="s">
                   <span class="ms-2">
                     <button class="btn btn-outline-secondary bg-white border-start-0 border rounded-pill" type="submit">
                       <i class="fa fa-search"></i>

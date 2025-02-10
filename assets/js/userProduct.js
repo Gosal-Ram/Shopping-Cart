@@ -23,6 +23,7 @@ function addToCartAndBuy(logInFlag, productId, buyNowFlag,encodedProductId){
                     let cartCountPrev = Number(document.getElementById("cartCount").innerHTML);
                     let cartCount = cartCountPrev +1;
                     document.getElementById("cartCount").innerHTML = cartCount;
+                    location.href = "cart.cfm";
                 }
 
                 if(buyNowFlag){
@@ -36,7 +37,7 @@ function addToCartAndBuy(logInFlag, productId, buyNowFlag,encodedProductId){
         });
     } 
     else{
-        console.log(encodedProductId);
+        // console.log(encodedProductId);
         if(buyNowFlag){
             location.href =`login.cfm?productId=${encodedProductId}&buyNow=1`;
         }else{

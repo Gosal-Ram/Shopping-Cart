@@ -1,7 +1,7 @@
 let offset = 0;
 let limit = 4;
 function toggleView(subCategoryId){
-    console.log(subCategoryId);
+    // console.log(subCategoryId);
     offset += 4;
     $.ajax({
         type:"POST",
@@ -14,7 +14,7 @@ function toggleView(subCategoryId){
         },
         success:function(response){
             let responseParsed = JSON.parse(response);
-            console.log(responseParsed);
+            // console.log(responseParsed);
             const columns = responseParsed.COLUMNS; //arr
             const data = responseParsed.DATA;    //arr
 

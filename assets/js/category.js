@@ -58,7 +58,7 @@ function saveCategory(){
                 method : "editCategory"},
             success:function(response){
                 let responseParsed = JSON.parse(response);
-                console.log(responseParsed)
+                // console.log(responseParsed)
                 if(responseParsed != "Category Name already exists"){
                     document.getElementById("categoryname-"+categoryId).textContent=categoryName;
                 }
