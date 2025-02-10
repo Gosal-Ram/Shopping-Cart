@@ -1,13 +1,29 @@
 <cfinclude  template="header.cfm">
 <cfset variables.queryGetAllOrders = application.shoppingCart.fetchOrderHistory()>
 
+<cfif structKeyExists(form, "submitBtn")>
+    <cfset variables.queryGetAllOrders = application.shoppingCart.fetchOrderHistory(searchTerm = form.searchInput)>
+</cfif>
+
 <cfoutput>
 <main>
     <div class="container my-3">
         <h2 class="mb-4">Your Orders</h2>
-        <div class="">
+            <form method="POST" class="searchInputDiv"> 
+                <div class="input-group my-2  w-100">  
+                    <input class="form-control border-end-0 border rounded-pill" placeholder="Search.." type="search" id="searchInput" name="searchInput">
+                    <span class="ms-2">
+                    <button  name = "submitBtn" class="btn btn-outline-secondary bg-white border-start-0 border rounded-pill" type="submit">
+                        <i class="fa fa-search"></i>
+                    </button>
+                    </span>
+                </div>
+            </form>  
+        <!--- <div class="">
+            <form method = "get">
             <input type="search" id="orderItemsSearch" class="form-control w-100 mb-4" placeholder="Search OrderID"> 
-        </div>
+            </form>
+        </div> --->
         <cfif arrayLen(variables.queryGetAllOrders) EQ 0>
             <p>No orders found.</p>
         <cfelse>

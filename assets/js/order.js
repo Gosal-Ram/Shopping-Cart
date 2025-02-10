@@ -136,7 +136,7 @@ function increaseCount(cartId,document){
     let quantity = prevCount + 1 ;
     let orderContainer = document.getElementById(`cartId_${cartId}`);
     console.log(orderContainer);
-    console.log(orderContainer.getElementsByName("productPrice"));
+    // console.log(orderContainer.getElementsByName("productPrice"));
     // $("#cartId_234 [name='productPrice']").text()
 
     // let productPriceElement = orderContainer.getElementsByName("productPrice")[0].textContent;
@@ -152,7 +152,7 @@ function increaseCount(cartId,document){
             let responseParsed = JSON.parse(response);
             // console.log(responseParsed);
             quantityElement.innerHTML = quantity;
-            // location.reload();
+            location.reload();
         }
     })
 

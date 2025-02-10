@@ -135,10 +135,6 @@
                 <script src="assets/js/product.js"></script>
             </cfcase>
 
-            <cfcase value="/orderDetails.cfm">
-                <script src="assets/js/orderDetails.js"></script>
-            </cfcase>
-
             <cfcase value="/userProduct.cfm">
                 <script src="assets/js/userProduct.js"></script>
             </cfcase>

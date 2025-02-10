@@ -1240,8 +1240,9 @@
                 <cfif structKeyExists(arguments, "orderId")>
                     AND o.fldOrder_Id = <cfqueryparam value="#arguments.orderId#" cfsqltype="VARCHAR">
                 </cfif>
+
                 <cfif structKeyExists(arguments, "searchTerm")>
-                    AND o.fldOrder_Id LIKE <cfqueryparam value="%#arguments.searchTerm#%" cfsqltype="VARCHAR">
+                    AND o.fldOrder_Id LIKE <cfqueryparam value="%#trim(arguments.searchTerm)#%" cfsqltype="VARCHAR">
                 </cfif>
 			GROUP BY
 				o.fldOrder_Id
