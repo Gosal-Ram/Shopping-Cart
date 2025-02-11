@@ -26,7 +26,7 @@ function saveSubCategory(){
                 let responseParsed = JSON.parse(response);
                 document.getElementById("subCategoryFunctionResult").innerHTML = responseParsed.resultMsg;
                 let subCategoryId = responseParsed.subCategoryid;
-                let subCategoryEachDiv = 
+                /*let subCategoryEachDiv = 
                     `<div class = "d-flex justify-content-between align-items-center" id = "${subCategoryId}">
                         <div id = "subcategoryname-${subCategoryId}">${subCategoryName}</div>
                             <div>
@@ -45,8 +45,8 @@ function saveSubCategory(){
                             </a>
                             </div>
                         </div>`;
-                $("#mainDiv").append(subCategoryEachDiv);
-                // location.reload();
+                $("#mainDiv").append(subCategoryEachDiv); */
+                location.reload();
             }
         })
     }

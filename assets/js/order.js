@@ -63,7 +63,6 @@ function cardValidate() {
     } else {
         clearError(cvv, cvvError);
     }
-
     return isValid;
 }
 
@@ -104,12 +103,9 @@ function placeOrder(productId,productQuantity){
             `;
         
             $("#resultContainer").html(resultHtml).show();
-            alert(responseParsed.resultMsg);
             if(responseParsed.resultMsg =="Order placed SuccessFully and cart updated"){
                 // header cart icon update
-                let cartCountPrev = Number(document.getElementById("cartCount").innerHTML);
-                let cartCount = cartCountPrev -1;
-                document.getElementById("cartCount").innerHTML = cartCount;
+                document.getElementById("cartCount").innerHTML = responseParsed.cartCount;
             } 
         }
     })
@@ -139,7 +135,6 @@ function increaseCount(cartId){
             method : "editCart"
         },
         success:function(response){
-            // let responseParsed = JSON.parse(response);
             quantityElement.innerHTML = newQuantity;
 
             let updatedProductActualPrice = (productActualPriceElementValue / prevCount) * newQuantity;
@@ -164,7 +159,6 @@ function decreaseCount(cartId){
     let prevCount = parseInt(quantityElement.innerHTML); 
     if(prevCount > 1){
         let newQuantity = prevCount - 1;
-        // console.log(newQuantity);
         let productActualPriceElement = $(`#cartId_${cartId} [name='productActualPrice']`);
         let productTaxElement = $(`#cartId_${cartId} [name='productTax']`);
         let productPriceElement = $(`#cartId_${cartId} [name='productPrice']`);
@@ -185,9 +179,7 @@ function decreaseCount(cartId){
             },
             success:function(response){
                 let responseParsed = JSON.parse(response);
-                // console.log(responseParsed);
                 quantityElement.innerHTML = newQuantity;
-                // location.reload();
                 let updatedProductActualPrice = (productActualPriceElementValue / prevCount) * newQuantity;
                 let updatedProductTax = (productTaxElementValue / prevCount) * newQuantity;
                 let updatedTotalPrice = updatedProductActualPrice + updatedProductTax;

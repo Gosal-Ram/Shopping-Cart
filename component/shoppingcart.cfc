@@ -636,7 +636,37 @@
     <cffunction  name="deleteCategory" access="remote" returnType = "boolean">
         <cfargument  name="categoryId" type="integer" required ="true">
 
+        <cfquery name = "local.querySoftDeleteproduct">
+            -- product table updation
+            UPDATE 
+                tblproduct
+            SET 
+                fldActive = 0 , 
+                fldUpdatedBy =<cfqueryparam value = "#session.userId#" cfsqltype="integer">
+            WHERE 
+                fldSubCategoryId IN (
+                    SELECT 
+                        fldSubCategory_Id
+                    FROM
+                        tblsubcategory
+                    WHERE
+                        fldCategoryId = <cfqueryparam value = "#arguments.categoryId#" cfsqltype="integer">
+                )
+        </cfquery>
+    
+        <cfquery name = "local.querySoftDeleteSubCategory" >
+            -- subcategory table updation
+            UPDATE 
+                tblsubcategory
+            SET 
+                fldActive = 0 , 
+                fldUpdatedBy =<cfqueryparam value = "#session.userId#" cfsqltype="integer">
+            WHERE 
+                fldCategoryId = <cfqueryparam value = "#arguments.categoryId#" cfsqltype="integer">
+        </cfquery>
+
         <cfquery name = "local.querySoftDeleteCategory" >
+            -- category table updation
             UPDATE 
                 tblcategory
             SET 
@@ -652,6 +682,7 @@
         <cfargument  name="productId" type="integer"  required ="true">
 
         <cfquery name = "local.querySoftDeleteproduct" >
+            -- product table updation
             UPDATE 
                 tblproduct
             SET 
@@ -667,6 +698,7 @@
         <cfargument  name="subCategoryId" type="integer" required ="true">
 
         <cfquery name = "local.querySoftDeleteSubCategory" >
+            -- subcategory table updation
             UPDATE 
                 tblsubcategory
             SET 
@@ -675,6 +707,19 @@
             WHERE 
                 fldSubCategory_Id = <cfqueryparam value = "#arguments.subCategoryId#" cfsqltype="integer">
         </cfquery>
+
+        <cfquery name = "local.querySoftDeleteproduct" >
+            -- product table updation
+            UPDATE 
+                tblproduct
+            SET 
+                fldActive = 0 , 
+                fldUpdatedBy =<cfqueryparam value = "#session.userId#" cfsqltype="integer">
+            WHERE 
+                fldSubCategoryId = <cfqueryparam value = "#arguments.subCategoryId#" cfsqltype="integer">
+        </cfquery>
+
+
         <cfreturn true>
     </cffunction>
 
@@ -1099,7 +1144,7 @@
 
         <cfset local.cardNumber = "1111111111111111">
         <cfset local.cvv = "111">
-        <cfset local.placeOrderResult = { "resultMsg" = ""}>
+        <cfset local.placeOrderResult = { "resultMsg" = "","cartCount" = ""}>
         <cfif NOT isNumeric(arguments.cardNumber) OR len(trim(arguments.cardNumber)) NEQ 16>
             <cfset local.placeOrderResult["resultMsg"] = "Enter a valid card number (16 digits).">
         </cfif>
@@ -1137,6 +1182,7 @@
 
                 <cfset session.cartCount = getUserCartCount()>
                 <cfset local.placeOrderResult["resultMsg"] = "Order placed SuccessFully and cart updated">
+                <cfset local.placeOrderResult["cartCount"] = session.cartCount>
                 <cfmail to ="#session.email#" from="gosalram554@gmail.com" subject="Your Order Confirmation - #local.orderId#">
                     Dear Customer,
                     Your order #local.orderId# has been successfully placed.  

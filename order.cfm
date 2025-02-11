@@ -25,11 +25,19 @@
                     <div class="accordion accordion-flush" id="accordionFlushExample">
                         <div class="accordion-item">
                             <h2 class="accordion-header">
-                            <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="##flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                            <button class="accordion-button collapsed fw-semibold" 
+                                type="button" 
+                                data-bs-toggle="collapse" 
+                                data-bs-target="##flush-collapseOne" 
+                                aria-expanded="false" 
+                                aria-controls="flush-collapseOne">
                                 DELIVERY ADDRESS
                             </button>
                             </h2>
                             <div id="flush-collapseOne" class="accordion-collapse collapse " data-bs-parent="##accordionFlushExample">
+                                <cfif structKeyExists(variables, "queryGetAddresses") AND arrayLen(variables.queryGetAddresses) EQ 0>
+                                    <span class = "my-2 text-danger">Please add atleast 1 delivery address</span>
+                                </cfif>
                                 <div class="accordion-body">
                                     <cfloop array="#variables.queryGetAddresses#" item="local.item">
                                         <div class="d-flex justify-content-between align-items-center" id="#local.item.addressId#">
@@ -71,6 +79,9 @@
                             </button>
                             </h2>
                             <div id="flush-collapseTwo" class="accordion-collapse collapse show" data-bs-parent="##accordionFlushExample">
+                                <cfif structKeyExists(variables, "getCartDetails") AND arrayLen(variables.getCartDetails) EQ 0>
+                                    <span class = "my-2 text-danger">Please add atleast 1 item</span>
+                                </cfif>                            
                                 <div class="accordion-body">      
                                     <cfloop array="#variables.getCartDetails#" index="local.item">
                                         <div class="card mb-3 p-3 d-flex flex-row align-items-center" id = "cartId_#local.item.cartId#">
@@ -191,7 +202,15 @@
                             </strong>
                         </h4>
                         <button class="btn btn-success w-100 mt-3 proceedBtn text-dark fw-semibold rounded-pill"
-                            onClick= "placeOrder(#variables.productId#,#variables.productQuantity#)">
+                            onClick= "placeOrder(#variables.productId#,#variables.productQuantity#)"
+                            <cfif structKeyExists(variables, "queryGetAddresses") 
+                                AND structKeyExists(variables, "getCartDetails") 
+                                AND arrayLen(variables.queryGetAddresses) GT 0 
+                                AND arrayLen(variables.getCartDetails) GT 0>
+                            <cfelse>
+                                hidden
+                            </cfif>
+                            >
                             PLACE YOUR ORDER
                         </button>
                     </div>

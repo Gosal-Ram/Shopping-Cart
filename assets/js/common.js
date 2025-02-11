@@ -136,7 +136,6 @@ function saveNewAddress() {
         },
         success:function(response){
             let responseParsed = JSON.parse(response);
-            // console.log(responseParsed);
             location.reload();
         }
     })

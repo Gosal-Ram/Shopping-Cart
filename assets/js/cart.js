@@ -54,7 +54,6 @@ function increaseCount(cartId){
         },
         success:function(response){
             let responseParsed = JSON.parse(response);
-            // console.log(responseParsed);
             quantityElement.innerHTML = newQuantity;
 
             let updatedProductActualPrice = (productActualPriceElementValue / prevCount) * newQuantity;
@@ -67,10 +66,8 @@ function increaseCount(cartId){
 
             productPriceElement.text(updatedTotalPrice);
             updateCartTotals();
-            // location.reload();
         }
     })
-
 }
 
 function decreaseCount(cartId){
@@ -78,7 +75,6 @@ function decreaseCount(cartId){
     let prevCount = parseInt(quantityElement.innerHTML); 
     if(prevCount > 1){
         let newQuantity = prevCount - 1;
-        // console.log(newQuantity);
         
     let productActualPriceElement = $(`#cartId_${cartId} [name='productActualPrice']`);
     let productTaxElement = $(`#cartId_${cartId} [name='productTax']`);
@@ -95,7 +91,6 @@ function decreaseCount(cartId){
             },
             success:function(response){
                 let responseParsed = JSON.parse(response);
-                // console.log(responseParsed);
                 quantityElement.innerHTML = newQuantity;
 
                 let updatedProductActualPrice = (productActualPriceElementValue / prevCount) * newQuantity;
@@ -106,8 +101,7 @@ function decreaseCount(cartId){
     
                 productTaxElement.text(updatedProductTax);
     
-                productPriceElement.text(updatedTotalPrice);       
-                // location.reload();
+                productPriceElement.text(updatedTotalPrice);     
                 updateCartTotals();
             }
         })

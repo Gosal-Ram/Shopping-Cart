@@ -24,7 +24,7 @@ function saveCategory(){
                 let responseParsed = JSON.parse(response);
                 let categoryId = responseParsed.categoryId;
                 document.getElementById("categoryFunctionResult").innerHTML = responseParsed.resultMsg;
-                let categoryEachDiv = 
+                /*                 let categoryEachDiv = 
                 `<div class = "d-flex justify-content-between align-items-center" id = "${categoryId}">
                     <div id = "categoryname-${categoryId}">${categoryName}</div>
                     <div>
@@ -43,8 +43,8 @@ function saveCategory(){
                         </a>
                     </div>
                 </div>`;
-                $("#mainDiv").append(categoryEachDiv);
-                // location.reload();
+                $("#mainDiv").append(categoryEachDiv); */
+                location.reload();
             }
         })
     }
@@ -58,7 +58,6 @@ function saveCategory(){
                 method : "editCategory"},
             success:function(response){
                 let responseParsed = JSON.parse(response);
-                // console.log(responseParsed)
                 if(responseParsed != "Category Name already exists"){
                     document.getElementById("categoryname-"+categoryId).textContent=categoryName;
                 }

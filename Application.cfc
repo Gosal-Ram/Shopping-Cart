@@ -11,19 +11,6 @@
 
     <cffunction  name="onRequestStart" returnType="boolean"> 
         <cfargument name="requestPage" type="String" required=true> 
-    
-        <cfset local.userAllowedPages = ["/login.cfm", 
-                                        "/signup.cfm", 
-                                        "/home.cfm",
-                                        "/cart.cfm",
-                                        "/profile.cfm",
-                                        "/searchResults.cfm",
-                                        "/userCategory.cfm", 
-                                        "/userSubCategory.cfm", 
-                                        "/userProduct.cfm", 
-                                        "/searchResults.cfm",
-                                        "/userProduct.cfm",
-                                        "/component/shoppingcart.cfc"]>
 
         <cfset local.adminPages = ["/category.cfm", 
                                     "/subCategory.cfm", 

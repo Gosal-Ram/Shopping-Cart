@@ -43,7 +43,6 @@ function userProfileValidate() {
     }
 
     let emailIdValue = emailId.val().trim();
-    // console.log(emailIdValue);
     if (emailIdValue == "") {
         setError(emailId, emailIdError, "Email is required.");
     } else if (!emailRegex.test(emailIdValue)) {
@@ -89,6 +88,7 @@ function deleteAddress(addressId){
             },
             success:function(){
             document.getElementById(addressId).remove();
+            location.reload();
             }
         })
     }
