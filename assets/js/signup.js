@@ -16,7 +16,8 @@ function signupValidate() {
     const nameRegex = /^[A-Za-z]{2,}( [A-Za-z]{1,})?$/;
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     const phoneRegex = /^[0-9]{10}$/;
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
+    const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
+
     let isValid = true;
     let setError = (element, errorElement, message) => {
         errorElement.textContent = message;
@@ -63,7 +64,8 @@ function signupValidate() {
 
     let pwd1Value = pwd1.val().trim();
     if (passwordRegex.test(pwd1Value) == 0) {
-        pwd1Error.textContent = "Password must be at least 8 characters, include a letter, a number, and a special symbol.";
+        pwd1Error.textContent = 
+        "Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special symbol";
         pwd1.addClass("border-danger");
         isValid = false;
     } 

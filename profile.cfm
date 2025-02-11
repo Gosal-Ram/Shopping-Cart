@@ -110,6 +110,7 @@
             </div>
         </div>
     </div>
+    
     <!--- Add Address Modal --->
     <div class="modal fade" id="addAddressModal" tabindex="-1">
         <div class="modal-dialog">

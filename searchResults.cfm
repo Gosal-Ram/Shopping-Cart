@@ -8,12 +8,12 @@
 </cfif>
 <main>
     <div class="container-fluid my-3">
-        <div class = "d-flex justify-content-between align-items-center">
-            <div class ="h3 ms-3">
-                Showing results for "#variables.search#"
-            </div>
-        </div>
         <cfif variables.getAllProducts.recordCount GT 0>
+            <div class = "d-flex justify-content-between align-items-center">
+                <div class ="h3 ms-3">
+                    Showing results for "#variables.search#"
+                </div>
+            </div>
             <div class= "productListingContainer d-flex flex-sm-wrap ms-5 mb-3 ">
                 <cfloop query="variables.getAllProducts">
                     <cfset variables.encryptedProductId = encrypt("#variables.getAllProducts.fldProduct_Id#",application.key,"AES","Base64")>
@@ -45,8 +45,8 @@
                 </cfloop> 
             </div>
         <cfelse>
-            <div class= "productListingContainer d-flex flex-sm-wrap ms-5 mb-3 ">
-                <h5>No results for "#variables.search#".</h5>
+            <div class= "productListingContainer ms-5 mb-3 ">
+                <h5>No results for "#variables.search#"</h5>
                 <p>Try checking your spelling or use more general terms</p>
             </div>
         </cfif>

@@ -3,7 +3,9 @@
 <cfset variables.getCategoryNames = application.shoppingCart.fetchCategories(variables.categoryId)>
 <cfset variables.getAllSubCategories = application.shoppingCart.fetchSubCategories(variables.categoryId)>
 <cfset variables.getAllProducts = application.shoppingCart.fetchProducts()>
+
 <cfset variables.productStruct = structNew()>
+<!---storing all products in a struct to skip database call inside loop --->
 <cfloop query="variables.getAllProducts">
     <cfset variables.subCategoryId = variables.getAllProducts.fldSubCategoryId>
     <cfif NOT structKeyExists(variables.productStruct, variables.subCategoryId)>
@@ -57,5 +59,6 @@
     </div>
 </main>
 </cfoutput>
+
 <cfinclude  template="footer.cfm">  
 

@@ -43,10 +43,16 @@ function cardValidate() {
     const cardNumberValue = cardNumber.val().trim();
     if (cardNumberValue === "") {
         setError(cardNumber, cardNumberError, "Enter your card number");
-        alert("Enter your card number");
+        // alert("Enter your card number");
+        document.getElementById("flush-collapseThree").classList.add("show");
+        document.getElementById("flush-collapseOne").classList.remove("show");
+        document.getElementById("flush-collapseTwo").classList.remove("show");
     } else if (!cardRegex.test(cardNumberValue)) {
         setError(cardNumber, cardNumberError, "Card number must be exactly 16 digits");
-        alert("Card number must be exactly 16 digits");
+        // alert("Card number must be exactly 16 digits");
+        document.getElementById("flush-collapseThree").classList.add("show");
+        document.getElementById("flush-collapseOne").classList.remove("show");
+        document.getElementById("flush-collapseTwo").classList.remove("show");
     } else {
         clearError(cardNumber, cardNumberError);
     }
@@ -54,11 +60,17 @@ function cardValidate() {
     const cvvValue = cvv.val().trim();
     if (cvvValue === "") {
         setError(cvv, cvvError, "Enter your CVV");
-        alert("Enter CVV");
+        // alert("Enter CVV");
+        document.getElementById("flush-collapseThree").classList.add("show");
+        document.getElementById("flush-collapseOne").classList.remove("show");
+        document.getElementById("flush-collapseTwo").classList.remove("show");
 
     } else if (!cvvRegex.test(cvvValue)) {
         setError(cvv, cvvError, "CVV must be exactly 3 digits");
-        alert("CVV must be exactly 3 digits");
+        // alert("CVV must be exactly 3 digits");
+        document.getElementById("flush-collapseThree").classList.add("show");
+        document.getElementById("flush-collapseOne").classList.remove("show");
+        document.getElementById("flush-collapseTwo").classList.remove("show");
 
     } else {
         clearError(cvv, cvvError);
@@ -66,7 +78,7 @@ function cardValidate() {
     return isValid;
 }
 
-function placeOrder(productId,productQuantity){ 
+function placeOrder(productId){ 
     let isValidCard = cardValidate();
     if(!isValidCard){
         return false;  
@@ -86,7 +98,6 @@ function placeOrder(productId,productQuantity){
             totalPrice:totalPrice,
             totalTax:totalTax,
             productId:productId,
-            productQuantity:productQuantity,
             method : "placeOrder"
         },
         success: function(response) {

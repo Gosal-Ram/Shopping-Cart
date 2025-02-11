@@ -6,8 +6,7 @@ CREATE PROCEDURE IF NOT EXISTS spOrderBuyNow(
     IN addressId INT,
     IN totalPrice  DECIMAL(10,2),
     IN totalTax  DECIMAL(10,2),
-    IN productId INT ,
-    IN productQuantity INT 
+    IN productId INT 
 )
 BEGIN
 	-- Order Tbl insertion
@@ -39,13 +38,15 @@ BEGIN
     SELECT 
         orderId,
         productId,
-        productQuantity,
-        fldPrice,
-        fldTax
+        c.fldQuantity,
+        p.fldPrice,
+        p.fldTax
+        
     FROM 
-        tblProduct
+		tblCart c
+		INNER JOIN tblProduct p ON c.fldProductId = p.fldProduct_Id
     WHERE 
-        fldProduct_Id = productId;
+        c.fldProductId = productId;
         
 	-- Delete cartitems from tbl cart 
 	DELETE FROM
@@ -57,4 +58,3 @@ BEGIN
 END //
 
 DELIMITER ;
-

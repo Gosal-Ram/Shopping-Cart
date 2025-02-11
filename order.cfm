@@ -2,17 +2,15 @@
 <cfif NOT structKeyExists(session, "cartCount") OR session.cartCount EQ 0>
     <cflocation  url="cart.cfm" addToken="no">
 <cfelse>
-    <!--- declaring 0 for not to interfere with buyNow with cart checkout--->
-    <cfset variables.productId = 0>
-    <cfset variables.productQuantity = 0> 
+    <!--- declaring 0 for not to interfere with ordering a product via buyNow and cart checkout--->
+    <cfset variables.productId = 0> 
     <cfif structKeyExists(url, "productId")>
-        <!--- Buy Now Product  --->
+        <!--- Product Ordering via Buy Now --->
         <cfset variables.productId = decrypt(url.productId, application.key, "AES", "Base64")>
         <cfset variables.cartId = decrypt(url.cartId, application.key, "AES", "Base64")>
         <cfset variables.getCartDetails = application.shoppingCart.fetchCart(cartId = variables.cartId)>
-        <cfset variables.productQuantity = 1>
     <cfelse>
-        <!---Cart Checkout--->
+        <!---Product Ordering via Cart Checkout--->
         <cfset variables.getCartDetails = application.shoppingCart.fetchCart()>
     </cfif>
     <cfset variables.queryGetAddresses = application.shoppingCart.fetchAddresses()>
@@ -34,9 +32,12 @@
                                 DELIVERY ADDRESS
                             </button>
                             </h2>
-                            <div id="flush-collapseOne" class="accordion-collapse collapse " data-bs-parent="##accordionFlushExample">
+                            <div id="flush-collapseOne" class="accordion-collapse collapse show" data-bs-parent="##accordionFlushExample">
                                 <cfif structKeyExists(variables, "queryGetAddresses") AND arrayLen(variables.queryGetAddresses) EQ 0>
-                                    <span class = "my-2 text-danger">Please add atleast 1 delivery address</span>
+                                    <div class="alert text-center p-3">
+                                        <span class="fw-semibold text-danger">Please add at least one delivery address.</span>
+                                        <br>
+                                    </div>
                                 </cfif>
                                 <div class="accordion-body">
                                     <cfloop array="#variables.queryGetAddresses#" item="local.item">
@@ -78,9 +79,13 @@
                                 ORDER SUMMARY
                             </button>
                             </h2>
-                            <div id="flush-collapseTwo" class="accordion-collapse collapse show" data-bs-parent="##accordionFlushExample">
+                            <div id="flush-collapseTwo" class="accordion-collapse collapse" data-bs-parent="##accordionFlushExample">
                                 <cfif structKeyExists(variables, "getCartDetails") AND arrayLen(variables.getCartDetails) EQ 0>
-                                    <span class = "my-2 text-danger">Please add atleast 1 item</span>
+                                    <div class="alert text-center p-3">
+                                        <span class="fw-semibold text-danger">Your order is empty! Please add at least 1 item.</span>
+                                        <br>
+                                        <a href="home.cfm" class="btn btn-primary mt-2">Shop Products</a>
+                                    </div>
                                 </cfif>                            
                                 <div class="accordion-body">      
                                     <cfloop array="#variables.getCartDetails#" index="local.item">
@@ -176,13 +181,11 @@
                             <cfset variables.totalPrice = variables.totalPrice + 
                                 (local.item.quantity*local.item.price) + 
                                 (local.item.quantity*local.item.tax)>
-                            <cfset variables.productQuantity= local.item.quantity>
                         </cfloop>
                         <p class="d-flex justify-content-between">
                             <span>Subtotal:</span> 
                             <strong id="actualPrice">
                                 <i class="fa-solid fa-indian-rupee-sign me-1"></i>
-                                <!---#lsCurrencyFormat(variables.actualPrice, "none", "en_IN")#  --->
                                 <span id="totalActualPrice" name="totalActualPrice">#variables.actualPrice#</span>
                             </strong>
                         </p>
@@ -202,7 +205,8 @@
                             </strong>
                         </h4>
                         <button class="btn btn-success w-100 mt-3 proceedBtn text-dark fw-semibold rounded-pill"
-                            onClick= "placeOrder(#variables.productId#,#variables.productQuantity#)"
+                            onClick= "placeOrder(#variables.productId#)"
+                            <!---button being hidden for if no address (or) removal of orders using buyNow--->
                             <cfif structKeyExists(variables, "queryGetAddresses") 
                                 AND structKeyExists(variables, "getCartDetails") 
                                 AND arrayLen(variables.queryGetAddresses) GT 0 
@@ -218,6 +222,7 @@
             </div>
         </div>
         <div id = "resultContainer"></div>
+
         <!--- Add Address Modal --->
         <div class="modal fade" id="addAddressModal" tabindex="-1">
             <div class="modal-dialog">
@@ -282,4 +287,5 @@
     </main>
     </cfoutput>
 </cfif>
+
 <cfinclude template="footer.cfm">

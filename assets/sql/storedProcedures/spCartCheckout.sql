@@ -56,5 +56,3 @@ BEGIN
 END //
 
 DELIMITER ;
-
-CALL spOrderCartCheckout("4408dp62-ac6f-4ec2-a5fe-446d7d6a472f",2,1,1.00,1.00);

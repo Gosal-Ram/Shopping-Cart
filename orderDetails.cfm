@@ -20,6 +20,7 @@
             </div>
         </form>  
         <cfif arrayLen(variables.queryGetAllOrders) EQ 0>
+            <!---if no products ordered--->
             <p>No orders found.</p>
         <cfelse>
             <cfloop array="#variables.queryGetAllOrders#" item="local.order">

@@ -13,7 +13,7 @@ function toggleView(subCategoryId){
         },
         success:function(response){
             let responseParsed = JSON.parse(response);
-            console.log(responseParsed);
+            // console.log(responseParsed);
             const columns = responseParsed.COLUMNS; //arr
             const data = responseParsed.DATA;    //arr
             if(data.length < 4 ){

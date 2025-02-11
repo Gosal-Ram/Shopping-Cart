@@ -3,7 +3,7 @@
 <cfset variables.getAllProducts = application.shoppingCart.fetchProducts(productId = variables.productId)>
 <cfset variables.subCategoryId = variables.getAllProducts.fldSubCategoryId>
 <cfset variables.getAllProductImages = application.shoppingCart.fetchProductImages(productId = variables.productId)>
-
+<!--- getting products's category, subcategory information for PRODUCT PATH UI and NAVIGATION --->
 <cfset variables.getCategoryId = application.shoppingCart.fetchSubCategories(subCategoryId = variables.subCategoryId)>
 <cfset variables.categoryId = #variables.getCategoryId[1].categoryId#>
 <cfset variables.subCategoryName = #variables.getCategoryId[1].subCategoryName#>

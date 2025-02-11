@@ -85,7 +85,7 @@
             </div>
             <cfset local.nonNavBarPages = ["/category.cfm","/subCategory.cfm","/product.cfm","/login.cfm","/signup.cfm"]>
             <cfif arrayContains(local.nonNavBarPages, cgi.SCRIPT_NAME)>
-              <!---  SEARCH BAR EXCLUDED  --->
+              <!---  SEARCH BAR EXCLUDED FOR ADMIN DASHBOARD ,LOGIN ,SIGNUP PAGES  --->
             <cfelse>
               <!--- SEARCH BAR--->
               <form action="searchResults.cfm" method="get" class="searchInputDiv"> 
@@ -101,17 +101,17 @@
             </cfif>
             <cfif structKeyExists(session, "roleId") AND structKeyExists(session, "isLoggedIn")>
               <cfif session.roleId EQ 1 AND session.isLoggedIn EQ true>
-                <!-- ADMIN -->
+                <!-- ADMIN UI -->
                 <div class="mx-2">
                   <a href = "cart.cfm">
                     <button type="button" class="btn btn-primary position-relative">
                       CART
                       <i class="bi bi-cart4"></i>
-                      <!--- <cfif structKeyExists(session, "cartCount") AND session.cartCount GT 0>
+                      <cfif structKeyExists(session, "cartCount") AND session.cartCount GT 0>
                           <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                             #session.cartCount# 
                           </span>
-                      </cfif> --->
+                      </cfif>
                     </button>
                   </a>
                   <span class="fw-semibold text-light">Hello #session.firstName#!</span>
@@ -127,7 +127,7 @@
                   </a>          
                 </div>
               <cfelseif session.roleId EQ 2 AND session.isLoggedIn EQ true>
-                <!-- USER LOGGED IN -->
+                <!-- LOGGED IN USER UI-->
                 <div class="mx-2">
                   <a href = "cart.cfm">
                     <button type="button" class="btn btn-primary position-relative">
@@ -152,7 +152,7 @@
               </cfif>
             <cfelse>
               <div class="mx-2">
-                <!-- USER NOT LOGGED IN -->
+                <!-- NOT LOGGED IN USER UI -->
                 <a href = "cart.cfm">
                   <button type="button" class="btn btn-primary position-relative">
                     CART
@@ -171,12 +171,13 @@
             </cfif> 
         </header>
         <cfif arrayContains(local.nonNavBarPages, cgi.SCRIPT_NAME)>
-          <!---  NAV BAR EXCLUDED  --->
+          <!---  NAV BAR EXCLUDED FOR ADMIN DASHBOARD ,LOGIN ,SIGNUP PAGES  --->
         <cfelse>
           <!---  NAV BAR  --->
           <cfset variables.getAllCategories = application.shoppingCart.fetchCategories()>
           <cfset variables.getAllSubCategories = application.shoppingCart.fetchSubCategories()>
           <cfset variables.subCategoryStruct = structNew()>
+          <!---storing all subcategories in a struct to skip database call inside loop --->
           <cfloop array="#variables.getAllSubCategories#" item="local.subItem">
               <cfset variables.categoryId = local.subItem.categoryId>
               <cfif NOT structKeyExists(variables.subCategoryStruct, variables.categoryId)>
@@ -184,7 +185,7 @@
               </cfif>
               <cfset arrayAppend(variables.subCategoryStruct[variables.categoryId], local.subItem)>
           </cfloop>
-          <!---<cfdump  var="#variables.subCategoryStruct#"> --->
+
           <nav class="navbar-expand-lg bg-light">
             <div class="container-fluid">
               <div class="collapse navbar-collapse">
@@ -194,7 +195,7 @@
                     <cfset variables.encodedCategoryId = encodeForURL(variables.encryptedCategoryId)>
                     <li class="nav-item toggleContainer">
                       <a class="nav-link linkTxt" href="userCategory.cfm?categoryId=#variables.encodedCategoryId#" id="#item.categoryId#" role="button">
-                          #item.categoryName#
+                        #item.categoryName#
                       </a>
                       <ul class="dropdown-menu">
                         <cfif structKeyExists(variables.subCategoryStruct, item.categoryId)>
@@ -203,7 +204,7 @@
                                 <cfset variables.encodedSubCategoryId = encodeForURL(variables.encryptedSubCategoryId)>
                                 <li>
                                   <a class="dropdown-item linkTxt" href="userSubCategory.cfm?subCategoryId=#variables.encodedSubCategoryId#">
-                                      #subItem.subCategoryName#
+                                    #subItem.subCategoryName#
                                   </a>
                                 </li>
                             </cfloop>

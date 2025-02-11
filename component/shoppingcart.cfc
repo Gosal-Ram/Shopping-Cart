@@ -23,9 +23,11 @@
                 OR fldPhone = <cfqueryparam value = "#arguments.userInput#" cfsqltype="VARCHAR">)
                 AND fldActive = 1       
         </cfquery>
+        <!---Validation--->
         <cfif len(trim(arguments.userInput)) EQ 0 OR len(trim(arguments.password)) EQ 0>
             <cfset local.loginResult = "Please provide both username/email and password.">
         <cfelseif local.queryUserLogin.recordcount GT 0>
+        <!--- if username exists--->
             <cfif local.queryUserLogin.fldHashedPassword EQ hash(arguments.password & local.queryUserLogin.fldUserSaltString, "SHA-512")>
                 <cfset local.loginResult = "User Login Successful">
                 <cfset session.isLoggedIn = true>
@@ -36,20 +38,23 @@
                 <cfset session.userId = local.queryUserLogin.fldUser_Id>
                 <cfset session.roleId = local.queryUserLogin.fldRoleId>
                 <cfif structKeyExists(arguments, "productId")>
-                    <!--- to add product to the cart of a not logged in user--->
+                    <!--- to add product to the cart of a not logged in user(after logging in)--->
                     <cfset local.CartResult = addToCart(arguments.productId)>
                     <cfif structKeyExists(arguments, "buyNow")>
-                        <!--- to order a product of a  not logged in user--->
+                        <!--- to order a product of a  not logged in user(after logging in)--->
                         <cfset local.encodedCartId = local.CartResult.cartId>
                         <cfset local.quantityCount = local.CartResult.quantity>
                         <cfset local.encryptedProductId = encrypt("#arguments.productId#",application.key,"AES","Base64")>
                         <cfset local.encodedProductId = encodeForURL(local.encryptedProductId)>
                         <cflocation  url="order.cfm?productId=#local.encodedProductId#&cartId=#local.encodedCartId#" addToken="no">
                     </cfif>
-                    <cflocation  url="cart.cfm" addtoken = "no"> 
+                    <cflocation  url="cart.cfm" addtoken = "no">
+                    <!---return msg for debugging purpose--->
                     <!---<cfset local.loginResult &= local.CartResult.resultMsg > --->
                 </cfif>
+                <!--- updating cart count for header display purpose--->
                 <cfset session.cartCount = getUserCartCount()>
+                <!---redirecting user based on roleId--->
                 <cfif local.queryUserLogin.fldRoleId EQ 1>
                     <cflocation url = "category.cfm" addToken="no">
                 <cfelse>
@@ -326,6 +331,7 @@
 
         <cfset local.categoryId = 0>
         <cfset local.addCategoryResult = { "resultMsg" = "", "categoryId" = "" }>
+        <!---Validation--->
         <cfif len(trim(arguments.categoryName)) EQ 0>
             <cfset local.addCategoryResult["resultMsg"] = "Enter Category Name ">
         <cfelseif categoryUniqueCheck(categoryName = arguments.categoryName,
@@ -352,6 +358,7 @@
 
         <cfset local.subCategoryId = 0>   
         <cfset local.addSubCategoryResult = { "resultMsg" = "", "subCategoryid" = "" }>
+        <!---Validation--->
         <cfif len(trim(arguments.subCategoryName)) EQ 0 OR len(trim(arguments.selectedCategoryId)) EQ 0>
             <cfset local.addSubCategoryResult["resultMsg"] = "Please enter a Subcategory Name and select a valid Category">
         <cfelseif subCategoryUniqueCheck(subCategoryName = arguments.subCategoryName,
@@ -389,6 +396,7 @@
 
         <cfset local.productId = 0>   
         <cfset local.addProductResult = { "resultMsg" = "", "productId" = "" }>
+        <!---Validation--->
         <cfif len(trim(arguments.productName)) EQ 0 OR 
             len(trim(arguments.selectedSubCategoryId)) EQ 0 OR 
             len(trim(arguments.selectedCategoryId)) EQ 0 OR 
@@ -463,6 +471,7 @@
         <cfargument required="true" name="categoryId">
 
         <cfset local.editCategoryResult = "">
+        <!---Validation--->
         <cfif len(trim(arguments.categoryName)) EQ 0>
             <cfset local.editCategoryResult = "Enter Category Name ">
         <cfelseif categoryUniqueCheck(categoryName = arguments.categoryName,
@@ -493,6 +502,7 @@
                                                 "subCategoryName" = "",
                                                 "subCategoryId" = "",
                                                 "selectedCategoryId" = ""}>
+        <!---Validation--->
         <cfif len(trim(arguments.subCategoryName)) EQ 0 OR len(trim(arguments.selectedCategoryId)) EQ 0>
             <cfset local.editSubCategoryResult["resultMsg"] = "Please enter a Subcategory Name and select a valid Category">
         <cfelseif subCategoryUniqueCheck(subCategoryName = arguments.subCategoryName,
@@ -528,18 +538,9 @@
         <cfargument name="productTax" type="integer" required="true">
         <cfargument name="productImages" type="string" required="true">
         <cfargument name="productId" type="integer" required="true">
-        <!---  <cfdump  var="#arguments#"> --->
 
         <cfset local.editProductResult = "">
-        <!---         <cfset local.validExtensions = "png,jpg,jpeg">
-        <cfset local.imageList = listToArray(arguments.productImages, ",")>
-        <cfset local.invalidImages = []> 
-        <cfloop array="#local.imageList#" index="local.image">
-            <cfset local.extension = listLast(local.image, ".")>
-            <cfif NOT listFindNoCase(local.validExtensions, local.extension)>
-                <cfset arrayAppend(local.invalidImages, local.image)> 
-            </cfif>
-        </cfloop>--->
+        <!---Validation--->
         <cfif len(trim(arguments.productName)) EQ 0 OR 
             len(trim(arguments.selectedSubCategoryId)) EQ 0 OR 
             len(trim(arguments.selectedCategoryId)) EQ 0 OR 
@@ -552,8 +553,6 @@
                                      productId = arguments.productId,
                                      selectedSubCategoryId = arguments.selectedSubCategoryId) GT 0>
             <cfset local.editProductResult = "Product Name already exists">
-            <!---         <cfelseif arraylen(local.invalidImages) GT 0>
-            <cfset local.editProductResult = "some images have unsupported formats. Please upload in .png, .jpg or .jpeg"> --->
         <cfelse>
             <cffile
                 action="uploadall"
@@ -563,7 +562,6 @@
                 strict="true"
                 result="local.productUploadedImages"
                 allowedextensions=".png,.jpg,.jpeg,">
-            <!---             <cfdump  var="#local.productUploadedImages#"> --->
             <cfquery name="local.queryEditProduct">
                 UPDATE 
                     tblproduct
@@ -591,7 +589,7 @@
                     )
                 </cfquery>
             </cfloop>
-            <cfset local.editProductResult = "Sub Category Edited">
+            <cfset local.editProductResult = "product Edited">
         </cfif>
         <cfreturn local.editProductResult>
     </cffunction>
@@ -635,9 +633,8 @@
 
     <cffunction  name="deleteCategory" access="remote" returnType = "boolean">
         <cfargument  name="categoryId" type="integer" required ="true">
-
+        <!--- product table updation --->
         <cfquery name = "local.querySoftDeleteproduct">
-            -- product table updation
             UPDATE 
                 tblproduct
             SET 
@@ -653,9 +650,8 @@
                         fldCategoryId = <cfqueryparam value = "#arguments.categoryId#" cfsqltype="integer">
                 )
         </cfquery>
-    
+        <!---subcategory table updation --->
         <cfquery name = "local.querySoftDeleteSubCategory" >
-            -- subcategory table updation
             UPDATE 
                 tblsubcategory
             SET 
@@ -664,9 +660,8 @@
             WHERE 
                 fldCategoryId = <cfqueryparam value = "#arguments.categoryId#" cfsqltype="integer">
         </cfquery>
-
+        <!---category table updation --->
         <cfquery name = "local.querySoftDeleteCategory" >
-            -- category table updation
             UPDATE 
                 tblcategory
             SET 
@@ -680,9 +675,8 @@
     
     <cffunction  name="deleteProduct" access="remote" returnType = "boolean" >
         <cfargument  name="productId" type="integer"  required ="true">
-
+        <!---product table updation --->
         <cfquery name = "local.querySoftDeleteproduct" >
-            -- product table updation
             UPDATE 
                 tblproduct
             SET 
@@ -696,9 +690,8 @@
     
     <cffunction  name="deleteSubCategory" access="remote" returnType = "boolean" >
         <cfargument  name="subCategoryId" type="integer" required ="true">
-
+        <!--- subcategory table updation --->
         <cfquery name = "local.querySoftDeleteSubCategory" >
-            -- subcategory table updation
             UPDATE 
                 tblsubcategory
             SET 
@@ -707,9 +700,8 @@
             WHERE 
                 fldSubCategory_Id = <cfqueryparam value = "#arguments.subCategoryId#" cfsqltype="integer">
         </cfquery>
-
+        <!--- product table updation --->
         <cfquery name = "local.querySoftDeleteproduct" >
-            -- product table updation
             UPDATE 
                 tblproduct
             SET 
@@ -718,8 +710,6 @@
             WHERE 
                 fldSubCategoryId = <cfqueryparam value = "#arguments.subCategoryId#" cfsqltype="integer">
         </cfquery>
-
-
         <cfreturn true>
     </cffunction>
 
@@ -735,6 +725,7 @@
         <cfargument name="pwd2" type="string" required="yes">
         <cfargument name="phone" type="string" required="yes">
 
+        <!---Validation--->
         <cfset local.signUpResult = "">
         <cfif len(trim(arguments.firstName)) EQ 0>
             <cfset local.signUpResult = "First Name is required.">
@@ -762,9 +753,11 @@
                 OR fldPhone = <cfqueryparam value = "#arguments.phone#" cfsqltype="VARCHAR">)
                 AND fldActive = <cfqueryparam value="1" cfsqltype="INTEGER">       
         </cfquery>
+
         <cfif local.queryUserUniqueCheck.recordcount GT 0>
             <cfset local.signUpResult = "User mail or phone already exists">
         </cfif>
+
         <cfif len(trim(local.signUpResult)) GT 0>
             <cfreturn local.signUpResult>
         <cfelse>
@@ -799,7 +792,7 @@
         
         <cfset local.addToCartResult = { "resultMsg" = "","cartId" = "", "quantity" = ""}>
         <cfif structKeyExists(arguments, "productId") AND len(trim(arguments.productId)) GT 0 AND arguments.productId NEQ 0>
-            <!---  EXISTING PRODUCT CHECK  --->
+            <!---  EXISTING PRODUCT IN CART CHECK  --->
             <cfquery name ="local.queryAddToCartNewProductCheck">
                 SELECT 
                     fldQuantity,fldCart_Id
@@ -814,7 +807,7 @@
                 <cfset variables.encryptedCartId = encrypt("#local.queryAddToCartNewProductCheck.fldCart_Id#",application.key,"AES","Base64")>
                 <cfset variables.encodedCartId = encodeForURL(variables.encryptedCartId)>
                 <cfset local.addToCartResult["cartId"] = variables.encodedCartId>
-                <!--- PRODUCT UPDATE    --->
+                <!--- PRODUCT UPDATE--->
                 <cfquery name ="local.queryUpdateCart">
                     UPDATE
                         tblcart
@@ -828,7 +821,7 @@
                 <cfset local.addToCartResult["quantity"] = local.updatedQuantity>
 
             <cfelse>
-                <!--- NEW PRODUCT ADD    --->
+                <!--- NEW PRODUCT ADD TO CART     --->
                 <cfquery name ="local.queryAddToCart" result = "local.resultqueryAddToCart">
                     INSERT INTO 
                         tblcart(fldUserId,
@@ -848,6 +841,7 @@
                 <cfset local.addToCartResult["quantity"] = 1>
             </cfif>
         </cfif>
+        <!--- updating cart count for header display purpose--->
         <cfset session.cartCount = getUserCartCount() >
         <cfreturn local.addToCartResult>
     </cffunction> 
@@ -953,6 +947,7 @@
         <cfargument name="emailId" type="string" required="yes">
         <cfargument name="phone" type="string" required="yes">
 
+        <!---Validation--->
         <cfset local.updateUserInfoResult = {"resultMsg" = ""}>
         <cfif len(trim(arguments.firstName)) EQ 0>
             <cfset local.updateUserInfoResult["resultMsg"] = "First Name is required.">
@@ -966,6 +961,7 @@
         <cfif NOT isNumeric(arguments.phone) OR len(trim(arguments.phone)) NEQ 10 >
             <cfset local.updateUserInfoResult["resultMsg"] = "Enter a valid 10-digit phone number.">
         </cfif>
+
         <cfquery name ="local.queryUserUniqueCheck">
             SELECT 
                 fldEmail,
@@ -1001,7 +997,6 @@
             <cfset session.email = arguments.emailId>
             <cfset session.phone = arguments.phone>
             <cfset local.updateUserInfoResult["resultMsg"] = "User details Updated">
-            <!---<cflocation  url="profile.cfm" addToken="no"> --->
         </cfif>
         <cfreturn local.updateUserInfoResult>
     </cffunction>
@@ -1058,7 +1053,7 @@
         <cfargument name="city" type="string" required="yes">
         <cfargument name="state" type="string" required="yes">
         <cfargument name="pincode" type="string" required="yes">
-
+        <!---Validation--->
         <cfset local.addNewAddressResult = { "resultMsg" = ""}>
         <cfif len(trim(arguments.firstName)) EQ 0>
             <cfset local.addNewAddressResult["resultMsg"] = "First Name is required.">
@@ -1140,7 +1135,6 @@
         <cfargument  name="totalPrice" type="string" required ="true">
         <cfargument  name="totalTax" type="string" required ="true">
         <cfargument  name="productId" type="string" required ="true">
-        <cfargument  name="productQuantity" type="string" required ="true">
 
         <cfset local.cardNumber = "1111111111111111">
         <cfset local.cvv = "111">
@@ -1158,8 +1152,8 @@
             <cfif (arguments.cardNumber EQ local.cardNumber) AND (arguments.cvv EQ local.cvv)>
                 <cfset local.addressDetailsArray = fetchAddresses(addressId = arguments.selectedAddress)>
                 <cfset local.orderId = createUUID()>
-                <cfif arguments.productId NEQ 0 AND arguments.productQuantity NEQ 0>
-                    <!---  Buy Now  --->
+                <cfif arguments.productId NEQ 0>
+                    <!---Product ordering using  Buy Now  --->
                     <cfstoredproc procedure="spOrderBuyNow">
                         <cfprocparam cfsqltype="VARCHAR" variable="orderId" value="#local.orderId#">
                         <cfprocparam cfsqltype="integer" variable="userId" value="#session.userId#">
@@ -1167,10 +1161,9 @@
                         <cfprocparam cfsqltype="decimal" variable="totalPrice" value="#arguments.totalPrice#">
                         <cfprocparam cfsqltype="decimal" variable="totalTax" value="#arguments.totalTax#">
                         <cfprocparam cfsqltype="integer" variable="productId" value="#arguments.productId#">
-                        <cfprocparam cfsqltype="integer" variable="productQuantity" value="#arguments.productQuantity#">
                     </cfstoredproc>
                 <cfelse>
-                    <!--- Cart Checkout --->
+                    <!---Product ordering using Cart Checkout --->
                     <cfstoredproc procedure="spOrderCartCheckout">
                         <cfprocparam cfsqltype="VARCHAR" variable="orderId" value="#local.orderId#">
                         <cfprocparam cfsqltype="integer" variable="userId" value="#session.userId#">
@@ -1179,7 +1172,7 @@
                         <cfprocparam cfsqltype="decimal" variable="totalTax" value="#arguments.totalTax#">
                     </cfstoredproc>
                 </cfif>
-
+                <!--- updating cart count for header display purpose--->
                 <cfset session.cartCount = getUserCartCount()>
                 <cfset local.placeOrderResult["resultMsg"] = "Order placed SuccessFully and cart updated">
                 <cfset local.placeOrderResult["cartCount"] = session.cartCount>
@@ -1195,7 +1188,6 @@
                     Pincode : #local.addressDetailsArray[1].pincode#  
                     Phone :#local.addressDetailsArray[1].phone#  
                     Total Price: Rs #arguments.totalPrice# 
-                    Items Ordered: #arguments.productQuantity#  
                     Best regards,  
                     ShoppingCart
                 </cfmail>
@@ -1281,144 +1273,4 @@
          <cfreturn local.ordersArray> 
     </cffunction>
 
-    <!--- <cffunction  name="placeOrder" access="remote" returnType = "struct" returnFormat ="JSON">
-        <cfargument  name="cardNumber" type="string" required ="true">
-        <cfargument  name="cvv" type="string" required ="true">
-        <cfargument  name="selectedAddress" type="string" required ="true">
-        <cfargument  name="totalPrice" type="string" required ="true">
-        <cfargument  name="totalTax" type="string" required ="true">
-        <cfargument  name="productId" type="string" required ="true">
-        <cfargument  name="productQuantity" type="string" required ="true">
-
-        <cfset local.cardNumber = "1111111111111111">
-        <cfset local.cvv = "111">
-        <cfset local.placeOrderResult = { "resultMsg" = ""}>
-        <cfif NOT isNumeric(arguments.cardNumber) OR len(trim(arguments.cardNumber)) NEQ 16>
-            <cfset local.placeOrderResult["resultMsg"] = "Enter a valid card number (16 digits).">
-        </cfif>
-        <cfif NOT isNumeric(arguments.cvv) OR len(trim(arguments.cvv)) NEQ 3 >
-            <cfset local.placeOrderResult["resultMsg"] = "Enter a valid CVV (3 or 4 digits).">
-        </cfif>
-        <cfif len(trim(local.placeOrderResult["resultMsg"])) GT 0>
-            <cfreturn local.placeOrderResult>
-        <cfelse>
-            <cfif (arguments.cardNumber EQ local.cardNumber) AND (arguments.cvv EQ local.cvv)>
-
-                <cfset local.addressDetailsArray = fetchAddresses(addressId = arguments.selectedAddress)>
-                <cfset local.orderId = createUUID()>
-                <!--- Q0.0--->
-                <cfquery name = "local.queryPlaceOrder" >
-                    INSERT INTO 
-                        tblOrder(
-                            fldOrder_Id,
-                            fldUserId,
-                            fldAddressId,
-                            fldTotalPrice,
-                            fldTotalTax,
-                            fldOrderDate)
-                    VALUES(
-                        <cfqueryparam value = "#local.orderId#" cfsqltype = "VARCHAR">,
-                        <cfqueryparam value = "#session.userId#" cfsqltype = "INTEGER">,
-                        <cfqueryparam value = "#arguments.selectedAddress#" cfsqltype = "INTEGER">,
-                        <cfqueryparam value = "#arguments.totalPrice#" cfsqltype = "DECIMAL">,
-                        <cfqueryparam value = "#arguments.totalTax#" cfsqltype = "DECIMAL">,
-                        now())
-                </cfquery>
-                <cfset local.placeOrderResult["resultMsg"] = "Order placed SuccessFully ">
-                <cfif arguments.productId NEQ 0 AND arguments.productQuantity NEQ 0>
-                    <!---  Buy Now  --->
-                    <cfset local.getProductDetails = application.shoppingCart.fetchProducts(productId = arguments.productId)>
-                    <!--- Q1.1--->
-                    <cfquery name = "local.queryAddOrderItemsDetails" >
-                        INSERT INTO 
-                            tblorderitems(
-                                fldOrderId,
-                                fldProductId,
-                                fldQuantity,
-                                fldUnitPrice,
-                                fldUnitTax)
-                        VALUES(
-                            <cfqueryparam value = "#local.orderId#" cfsqltype = "VARCHAR">,
-                            <cfqueryparam value = "#arguments.productId#" cfsqltype = "INTEGER">,
-                            <cfqueryparam value = "#arguments.productQuantity#" cfsqltype = "INTEGER">,
-                            <cfqueryparam value = "#local.fldPrice#" cfsqltype = "DECIMAL">,
-                            <cfqueryparam value = "#local.getProductDetails.fldTax#" cfsqltype = "DECIMAL">
-                        )
-                    </cfquery>
-                    <!--- Q1.2--->
-                    <cfquery name = "local.queryRemoveCartItems">
-                        DELETE FROM  
-                            tblCart
-                        WHERE
-                            fldUserId = <cfqueryparam value = "#session.userId#" cfsqltype = "INTEGER">
-                            AND fldProductId = <cfqueryparam value = "#arguments.productId#" cfsqltype = "INTEGER">
-                    </cfquery>
-                    <cfset session.cartCount = getUserCartCount()>
-                    <cfset local.placeOrderResult["resultMsg"]&= "and cart updated">
-                <cfelse>
-                    <!--- Cart Checkout --->
-                    <cfset local.getCartItems = fetchCart()>
-                    <cfloop array="#local.getCartItems#" index="local.item">
-                        <!--- Q2.1--->
-                        <cfquery name = "local.queryAddOrderItemsDetails" >
-                            INSERT INTO 
-                                tblorderitems(
-                                    fldOrderId,
-                                    fldProductId,
-                                    fldQuantity,
-                                    fldUnitPrice,
-                                    fldUnitTax)
-                            VALUES(
-                                <cfqueryparam value = "#local.orderId#" cfsqltype = "VARCHAR">,
-                                <cfqueryparam value = "#local.item.productId#" cfsqltype = "INTEGER">,
-                                <cfqueryparam value = "#local.item.quantity#" cfsqltype = "INTEGER">,
-                                <cfqueryparam value = "#local.item.price#" cfsqltype = "DECIMAL">,
-                                <cfqueryparam value = "#local.item.tax#" cfsqltype = "DECIMAL">
-                            )
-                        </cfquery>
-                    </cfloop>
-                    <!--- Q2.2--->
-                    <cfquery name = "local.queryRemoveCartItems">
-                        DELETE FROM  
-                            tblCart
-                        WHERE
-                            fldUserId = <cfqueryparam value = "#session.userId#" cfsqltype = "INTEGER">
-                    </cfquery>
-                    <cfset session.cartCount = getUserCartCount()>
-                    <cfset local.placeOrderResult["resultMsg"]&= "and cart updated">
-                </cfif>
-                <cfmail to ="#session.email#" from="gosalram554@gmail.com" subject="Your Order Confirmation - #local.orderId#">
-                Dear Customer,
-                Your order #local.orderId# has been successfully placed.  
-                Here are the details:
-                Delivery Address: #local.addressDetailsArray[1].firstName# #local.addressDetailsArray[1].lastName#,
-                    #local.addressDetailsArray[1].addLine1#,
-                    #local.addressDetailsArray[1].addLine2#,
-                    #local.addressDetailsArray[1].city#,
-                    #local.addressDetailsArray[1].state#,
-                Pincode : #local.addressDetailsArray[1].pincode#  
-                Phone :#local.addressDetailsArray[1].phone#  
-                Total Price: Rs #arguments.totalPrice# 
-                Items Ordered: #arguments.productQuantity#  
-                Best regards,  
-                ShoppingCart
-                </cfmail>
-            <cfelse>
-                <cfset local.placeOrderResult["resultMsg"] = "Invalid Card">
-            </cfif>
-        </cfif>               
-        <cfreturn local.placeOrderResult>
-    </cffunction> --->
 </cfcomponent>
-
-
-
-
-
-
-
-
-
-
-
-
