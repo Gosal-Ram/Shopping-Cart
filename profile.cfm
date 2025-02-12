@@ -110,6 +110,7 @@
             </div>
         </div>
     </div>
+    
     <!--- Add Address Modal --->
     <div class="modal fade" id="addAddressModal" tabindex="-1">
         <div class="modal-dialog">
@@ -134,14 +135,8 @@
 
                         <div class="mb-3">
                             <label class="form-label">Phone</label>
-                            <input type="number" class="form-control" id="receiverPhone" maxlength="10" name="receiverPhone">
+                            <input type="text" class="form-control" id="receiverPhone" maxlength="10" name="receiverPhone">
                             <span id="receiverPhoneError" class="text-danger"></span>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Email</label>
-                            <input type="text" class="form-control" id="receiverEmail" name="receiverEmail">
-                            <span id="receiverEmailError" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">
@@ -170,7 +165,7 @@
 
                         <div class="mb-3">
                             <label class="form-label">Pincode</label>
-                            <input type="number" maxlength="6" class="form-control" id="receiverPin" name="receiverPin">
+                            <input type="text" maxlength="6" class="form-control" id="receiverPin" name="receiverPin">
                             <span id="pincodeError" class="text-danger"></span>
                         </div>
 

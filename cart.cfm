@@ -17,7 +17,7 @@
             <div class="row">
                 <div class="col-md-8">
                     <cfloop array="#variables.getCartDetails#" index="local.item">
-                        <div class="card mb-3 p-3 d-flex flex-row align-items-center" id = "#local.item.cartId#">
+                        <div class="card cartItem mb-3 p-3 d-flex flex-row align-items-center" id = "cartId_#local.item.cartId#">
                             <img src="assets/images/productImages/#local.item.defaultImg#" alt="#local.item.productName#"
                                 class="img-fluid me-3 cartProductImg" 
                                 width = "100"
@@ -30,9 +30,7 @@
                                         id = "btnDecrease"
                                         onClick = "decreaseCount(#local.item.cartId#)"
                                         class="btn btn-outline-primary btn-sm me-2 btn-quantity"
-                                        <cfif local.item.quantity EQ 1>
-                                            disabled
-                                        </cfif>>-
+                                        >-
                                     </button>
 
                                     <span class="mx-2" id="quantityCount_#local.item.cartId#">
@@ -92,14 +90,14 @@
                             <span>Subtotal:</span> 
                             <strong>
                                 <i class="fa-solid fa-indian-rupee-sign me-1"></i>
-                                <span name="totalActualPrice">#variables.actualPrice#</span> 
+                                <span name="totalActualPrice" id="totalActualPrice">#variables.actualPrice#</span> 
                             </strong>
                         </p>
                         <p class="d-flex justify-content-between">
                             <span>Tax:</span>
                             <strong>
                                 <i class="fa-solid fa-indian-rupee-sign me-1"></i>
-                                <span name="totalTax"> #variables.totalTax#</span>
+                                <span name="totalTax" id="totalTax"> #variables.totalTax#</span>
                             </strong>
                             </p>
                         <hr>
@@ -107,7 +105,7 @@
                             <span>Total:</span> 
                             <strong>
                                 <i class="fa-solid fa-indian-rupee-sign me-1"></i>
-                                <span name="totalPrice">#variables.totalPrice#</span> 
+                                <span name="totalPrice" id="totalPrice">#variables.totalPrice#</span> 
                             </strong>
                         </h4>
                         <a class="btn btn-success w-100 mt-3 proceedBtn text-dark fw-semibold rounded-pill"

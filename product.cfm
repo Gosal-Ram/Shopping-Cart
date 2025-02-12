@@ -1,8 +1,10 @@
 <cfset variables.subCategoryId = decrypt(url.subCategoryId,application.key,"AES","Base64")>
+<!---fetching products's categoryId ,subcategoryname for dynamic switching the categories & subcategories while adding a new product--->
 <cfset variables.getCategoryId = application.shoppingCart.fetchSubCategories(subCategoryId = variables.subCategoryId)>
 <cfset variables.categoryId = #variables.getCategoryId[1].categoryId#>
 <cfset variables.getSubCategoryName = application.shoppingCart.fetchSubCategories(categoryId = variables.categoryId)>
 <cfset variables.subCategoryName = #variables.getSubCategoryName[1].subCategoryName#>
+
 <cfoutput>
 <cfinclude  template="header.cfm">
 <main>
@@ -59,6 +61,7 @@
     </cfloop>
   </div>
 </main>
+
 <!-- Save product Modal -->
 <form method="POST" id="productAddForm" enctype="multipart/form-data" onsubmit="modalValidate()">
   <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -119,7 +122,7 @@
             <input type="number" name="productTax" id="productTax" value="" placeholder="Product Tax" class="form-control">
             <div id="productTaxError" class="text-danger"></div>
             <label for="imgFiles" class="modalLabel mb-2">Product Images</label>
-            <input type="file" name="productImages" id="imgFiles" class="form-control" multiple>
+            <input type="file" name="productImages" id="imgFiles" class="form-control" accept="image/*" multiple>
             <div id="productImagesError" class="text-danger"></div>
         </div>
         <div class="modal-footer">
@@ -132,6 +135,7 @@
     </div>
   </div>
 </form>
+
 <!-- Carousal modal -->
 <div class="modal fade" id="imgModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -158,5 +162,6 @@
   </div>
 </div>
 </cfoutput>
+
 <cfinclude  template="footer.cfm">
 

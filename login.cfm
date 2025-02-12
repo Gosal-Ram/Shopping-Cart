@@ -14,9 +14,9 @@
     </form>
     <cfif structKeyExists(form,"submitBtn")>   
       <cfif structKeyExists(url, "productId")>
-        <!--- not loggedin user on ordering a product or addiing a product to cart --->
+        <!--- not loggedin user on ordering a product (OR) adding a product to cart --->
         <cfif structKeyExists(url, "buyNow")>
-          <!--- not loggedin user on ordering a product --->
+          <!--- not loggedin user on ordering a product using Buy now --->
           <cfset variables.loginResult = application.shoppingCart.logIn(form.userInput,form.password,variables.productId,url.buyNow)>
         <cfelse>
           <!--- not loggedin user addiing a product to cart --->

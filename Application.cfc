@@ -11,29 +11,13 @@
 
     <cffunction  name="onRequestStart" returnType="boolean"> 
         <cfargument name="requestPage" type="String" required=true> 
-    
-        <cfset local.userAllowedPages = ["/login.cfm", 
-                                        "/signup.cfm", 
-                                        "/home.cfm",
-                                        "/cart.cfm",
-                                        "/profile.cfm",
-                                        "/searchResults.cfm",
-                                        "/userCategory.cfm", 
-                                        "/userSubCategory.cfm", 
-                                        "/userProduct.cfm", 
-                                        "/searchResults.cfm",
-                                        "/userProduct.cfm",
-                                        "/component/shoppingcart.cfc"]>
 
         <cfset local.adminPages = ["/category.cfm", 
                                     "/subCategory.cfm", 
                                     "/product.cfm"]>
-
         <cfset local.loggedInUserAllowedPages = ["/order.cfm",
                                     "/orderDetails.cfm", 
                                     "/generateInvoice.cfm"]>
-
-
         <cfif arrayContains(local.adminPages, arguments.requestPage)>
             <cfif structKeyExists(session, "userId") AND session.roleId EQ 1>
                 <cfreturn true>
@@ -87,14 +71,4 @@
         </cfif>
     </cffunction>
 
-    <!--- <cffunction name="onRequest" returnType="void">
-            <cfargument name="targetPage" type="String" required=true/>
-            
-            <cfinclude template="#Arguments.targetPage#">
-        </cffunction>
-
-        <cffunction name="onRequestEnd" returnType="void">
-            <cfargument type="String" name="targetPage" required=true/>
-        
-        </cffunction>  --->
 </cfcomponent>

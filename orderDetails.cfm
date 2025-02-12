@@ -9,22 +9,18 @@
 <main>
     <div class="container my-3">
         <h2 class="mb-4">Your Orders</h2>
-            <form method="POST" class="searchInputDiv"> 
-                <div class="input-group my-2  w-100">  
-                    <input class="form-control border-end-0 border rounded-pill" placeholder="Search.." type="search" id="searchInput" name="searchInput">
-                    <span class="ms-2">
-                    <button  name = "submitBtn" class="btn btn-outline-secondary bg-white border-start-0 border rounded-pill" type="submit">
-                        <i class="fa fa-search"></i>
-                    </button>
-                    </span>
-                </div>
-            </form>  
-        <!--- <div class="">
-            <form method = "get">
-            <input type="search" id="orderItemsSearch" class="form-control w-100 mb-4" placeholder="Search OrderID"> 
-            </form>
-        </div> --->
+        <form method="POST" class="searchInputDiv"> 
+            <div class="input-group my-2">  
+                <input class="form-control border-end-0 border rounded-pill" placeholder="Search OrderID" type="search" id="searchInput" name="searchInput">
+                <span class="ms-2">
+                <button  name = "submitBtn" class="btn btn-outline-secondary bg-white border-start-0 border rounded-pill" type="submit">
+                    <i class="fa fa-search"></i>
+                </button>
+                </span>
+            </div>
+        </form>  
         <cfif arrayLen(variables.queryGetAllOrders) EQ 0>
+            <!---if no products ordered--->
             <p>No orders found.</p>
         <cfelse>
             <cfloop array="#variables.queryGetAllOrders#" item="local.order">
@@ -41,14 +37,13 @@
                                 <span>
                                     Rs.
                                     #local.order.totalPrice#
-                                    <!---(tax :Rs.#local.order.totalTax#) --->
+                                    <small class="text-muted">(Includes Tax: Rs. #local.order.totalTax#)</small>
                                 </span>
                             </div>
                         </div>
                         <div class = "d-flex flex-column mb-0">
                             <span class="orderTitle">Order ID: #local.order.orderId#</span>
                             <a href="generateInvoice.cfm?orderId=#local.order.orderId#" target="_blank" class="">
-                                <!---<img src="./assets/images/pdf-icon.png" class = "" alt="" width="39"> --->
                                 Invoice
                             </a>
                         </div>

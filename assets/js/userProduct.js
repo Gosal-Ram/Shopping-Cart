@@ -1,11 +1,10 @@
 function changeMainImage(src) {
     const activeItem = document.querySelector(".carousel-item.active img");
-    // let imageElement = document.getElementById("productThumbnailImg");
     if (activeItem) {
-        activeItem.src = src;
-        // imageElement.classList.add("border-primary");        
+        activeItem.src = src;    
     }
 }
+
 function addToCartAndBuy(logInFlag, productId, buyNowFlag,encodedProductId){
 
     if(logInFlag){
@@ -24,11 +23,11 @@ function addToCartAndBuy(logInFlag, productId, buyNowFlag,encodedProductId){
                     let cartCount = cartCountPrev +1;
                     document.getElementById("cartCount").innerHTML = cartCount;
                 }
+                location.href = "cart.cfm";
 
                 if(buyNowFlag){
                     let encodedCartId = responseParsed.cartId;
                     let quantityCount = responseParsed.quantity;
-                    // location.href = `order.cfm?productId=${encodedProductId}&cartId=${encodedCartId}&quantityCount=${quantityCount}`;
                     location.href = `order.cfm?productId=${encodedProductId}&cartId=${encodedCartId}`;
                 }
                 
@@ -36,7 +35,6 @@ function addToCartAndBuy(logInFlag, productId, buyNowFlag,encodedProductId){
         });
     } 
     else{
-        console.log(encodedProductId);
         if(buyNowFlag){
             location.href =`login.cfm?productId=${encodedProductId}&buyNow=1`;
         }else{

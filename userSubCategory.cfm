@@ -83,7 +83,15 @@
                 id= "viewEditBtn" 
                 type = "button" 
                 name = "viewEditBtn" 
-                onclick = "toggleView(#variables.subCategoryId#)">
+                onclick = "toggleView(#variables.subCategoryId#)"
+                <!---button being hidden for subcategories which contain less than 4 products--->
+                <cfif structKeyExists(form, "filterBtn") OR 
+                structKeyExists(form, "sortASC") OR 
+                structKeyExists(form, "sortDESC") OR 
+                (structKeyExists(variables, "getAllProducts") 
+                AND variables.getAllProducts.recordCount LT 4)>
+                hidden
+                </cfif>>
                 View More
             </button>
         </div>

@@ -16,7 +16,8 @@ function signupValidate() {
     const nameRegex = /^[A-Za-z]{2,}( [A-Za-z]{1,})?$/;
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     const phoneRegex = /^[0-9]{10}$/;
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
+    const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
+
     let isValid = true;
     let setError = (element, errorElement, message) => {
         errorElement.textContent = message;
@@ -30,10 +31,10 @@ function signupValidate() {
 
     let firstNameValue = firstName.val().trim();
     if (firstNameValue === "") {
-        setError(firstName, firstNameError, "First name must be atleast 2 characters.");
+        setError(firstName, firstNameError, "First name is required");
     }
     else if(!nameRegex.test(firstNameValue)){
-        setError(firstName, firstNameError, "Enter a valid first Name ");
+        setError(firstName, firstNameError, "Enter a valid first Name (must be atleast 2 characters).");
     }
     else {
         resetError(firstName, firstNameError);
@@ -41,10 +42,10 @@ function signupValidate() {
 
     let lastNameValue = lastName.val().trim();
     if (lastNameValue === "") {
-        setError(lastName, lastNameError, "Last name must be atleast 2 characters.");
+        setError(lastName, lastNameError, "Last name is required");
     }
     else if(!nameRegex.test(lastNameValue)){
-        setError(lastName, lastNameError, "Enter a valid last Name ");
+        setError(lastName, lastNameError, "Enter a valid last Name (must be atleast 2 characters).");
     }
     else {
         resetError(lastName, lastNameError);
@@ -62,8 +63,12 @@ function signupValidate() {
     }
 
     let pwd1Value = pwd1.val().trim();
-    if (passwordRegex.test(pwd1Value) == 0) {
-        pwd1Error.textContent = "Password must be at least 8 characters, include a letter, a number, and a special symbol.";
+    if (pwd1Value === "") {
+        setError(pwd1, pwd1Error, "Password is required.");
+    } 
+    else if (passwordRegex.test(pwd1Value) == 0) {
+        pwd1Error.textContent = 
+        "Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special symbol";
         pwd1.addClass("border-danger");
         isValid = false;
     } 
@@ -73,7 +78,7 @@ function signupValidate() {
     }
 
     let pwd2Value = pwd2.val().trim();
-    if (pwd2Value === "") {
+    if (pwd2Value === ""&&pwd1Value != "") {
         setError(pwd2, pwd2Error, "Please confirm your password.");
     } 
     else if (pwd2Value !== pwd1Value) {
