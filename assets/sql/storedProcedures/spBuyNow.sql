@@ -46,7 +46,8 @@ BEGIN
 		tblCart c
 		INNER JOIN tblProduct p ON c.fldProductId = p.fldProduct_Id
     WHERE 
-        c.fldProductId = productId;
+        c.fldProductId = productId
+        AND c.fldUserId = userId;
         
 	-- Delete cartitems from tbl cart 
 	DELETE FROM
