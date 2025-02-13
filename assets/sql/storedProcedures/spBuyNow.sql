@@ -1,7 +1,7 @@
 DELIMITER //
 
 CREATE PROCEDURE IF NOT EXISTS spOrderBuyNow(
-	IN orderId VARCHAR(64),
+    IN orderId VARCHAR(64),
     IN userId INT,
     IN addressId INT,
     IN totalPrice  DECIMAL(10,2),
@@ -9,7 +9,7 @@ CREATE PROCEDURE IF NOT EXISTS spOrderBuyNow(
     IN productId INT 
 )
 BEGIN
-	-- Order Tbl insertion
+    -- Order Tbl insertion
     INSERT INTO 
         tblOrder(
             fldOrder_Id,
@@ -43,18 +43,18 @@ BEGIN
         p.fldTax
         
     FROM 
-		tblCart c
-		INNER JOIN tblProduct p ON c.fldProductId = p.fldProduct_Id
+        tblCart c
+        INNER JOIN tblProduct p ON c.fldProductId = p.fldProduct_Id
     WHERE 
         c.fldProductId = productId
         AND c.fldUserId = userId;
         
-	-- Delete cartitems from tbl cart 
-	DELETE FROM
-		tblCart
-	WHERE
+    -- Delete cartitems from tbl cart 
+    DELETE FROM
+        tblCart
+    WHERE
         fldProductId = productId
-		AND fldUserId = userId;
+        AND fldUserId = userId;
 
 END //
 

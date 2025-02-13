@@ -1,14 +1,14 @@
 DELIMITER //
 
 CREATE PROCEDURE IF NOT EXISTS spOrderCartCheckout(
-	IN orderId VARCHAR(64),
+    IN orderId VARCHAR(64),
     IN userId INT,
     IN addressId INT,
     IN totalPrice  DECIMAL(10,2),
     IN totalTax  DECIMAL(10,2)
 )
 BEGIN
-	-- Order Tbl insertion
+    -- Order Tbl insertion
     INSERT INTO 
         tblOrder(
             fldOrder_Id,
@@ -47,11 +47,11 @@ BEGIN
     WHERE 
         c.fldUserId = userId;
         
-	-- Delete cartitems from tbl cart 
-	DELETE FROM
-		tblCart
-	WHERE
-		fldUserId = userId;
+    -- Delete cartitems from tbl cart 
+    DELETE FROM
+        tblCart
+    WHERE
+        fldUserId = userId;
 
 END //
 
