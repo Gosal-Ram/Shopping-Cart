@@ -76,7 +76,7 @@
     </head>
     <body class = "overflow-x-hidden">
       <cfoutput>
-        <header class="d-flex p-1 justify-content-between align-items-center w-100 bg-primary sticky-top z-index-1">
+        <header class="d-flex p-1 justify-content-between align-items-center w-100 bg-primary sticky-top">
             <div class="ms-2 me-4">
               <a href = "home.cfm" class = "text-light text-decoration-none">
                 <img src="./assets/images/grocery-cart.png" class = "py-2" alt="" width="25">
