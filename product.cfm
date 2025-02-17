@@ -1,10 +1,10 @@
 <cfset variables.subCategoryId = decrypt(url.subCategoryId,application.key,"AES","Base64")>
 <!---fetching products's categoryId ,subcategoryname for dynamic switching the categories & subcategories while adding a new product--->
 <cfset variables.getCategoryId = application.shoppingCart.fetchSubCategories(subCategoryId = variables.subCategoryId)>
-<cfset variables.categoryId = #variables.getCategoryId[1].categoryId#>
-<cfset variables.getSubCategoryName = application.shoppingCart.fetchSubCategories(categoryId = variables.categoryId)>
-<cfset variables.subCategoryName = #variables.getSubCategoryName[1].subCategoryName#>
-
+<cfset variables.categoryId = variables.getCategoryId[1].categoryId>
+<cfset variables.getSubCategoryName = application.shoppingCart.fetchSubCategories(categoryId = variables.categoryId,
+                                                                                  subCategoryId = variables.subCategoryId)>
+<cfset variables.subCategoryName = variables.getSubCategoryName[1].subCategoryName>
 <cfoutput>
 <cfinclude  template="header.cfm">
 <main>

@@ -2,8 +2,8 @@
     <cffunction  name="logIn" access = "public" returnType="string" >
         <cfargument name ="userInput" type="string" required ="true">
         <cfargument name ="password" type="string" required = "true">
-        <cfargument name ="productId" type="string" required = "false">
-        <cfargument name ="buyNow" type="string" required = "false">
+        <cfargument name ="productId" type="integer" required = "false">
+        <cfargument name ="buyNow" type="integer" required = "false">
 
         <cfset local.loginResult = "">
         <cfquery name ="local.queryUserLogin">
@@ -61,7 +61,7 @@
                     <cflocation url = "home.cfm" addToken="no">   
                 </cfif>
             <cfelse>
-                <cfset local.loginResult = "Invalid password">
+                <cfset local.loginResult = "Your email and password do not match.">
             </cfif>
         <cfelse>
             <cfset local.loginResult = "User name doesn't exist">
@@ -70,7 +70,7 @@
     </cffunction>
 
     <cffunction name="fetchCategories" access="public" returnType="array">
-        <cfargument name="categoryId" type="string" required="false">
+        <cfargument name="categoryId" type="integer" required="false">
         
         <cfquery name="local.queryGetCategories">
             SELECT 
@@ -80,7 +80,7 @@
                 tblcategory
             WHERE 
                 fldActive = 1
-                <cfif structKeyExists(arguments, "categoryId") AND len(trim(arguments.categoryId)) NEQ 0>
+                <cfif structKeyExists(arguments, "categoryId") AND val(arguments.categoryId)>
                     AND fldCategory_Id = <cfqueryparam value="#arguments.categoryId#" cfsqltype="integer">
                 </cfif>
         </cfquery>
@@ -121,9 +121,9 @@
                 tblSubCategory
             WHERE 
                 fldActive = 1 
-            <cfif structKeyExists(arguments, "subCategoryId") AND len(trim(arguments.subCategoryId)) GT 0 AND arguments.subCategoryId NEQ 0>
+            <cfif structKeyExists(arguments, "subCategoryId") AND val(arguments.subCategoryId)>
                 AND fldSubCategory_Id = <cfqueryparam value = "#arguments.subCategoryId#" cfsqltype = "INTEGER">
-            <cfelseif structKeyExists(arguments, "categoryId") AND len(trim(arguments.categoryId)) GT 0 AND arguments.categoryId NEQ 0>
+            <cfelseif structKeyExists(arguments, "categoryId") AND val(arguments.categoryId)>
                 AND fldCategoryId = <cfqueryparam value="#arguments.categoryId#" cfsqltype="INTEGER">
             </cfif>
         </cfquery>
@@ -168,12 +168,12 @@
             WHERE 
                 p.fldActive = 1 
                 AND pi.fldDefaultImage = 1
-                <cfif structKeyExists(arguments, "productId") AND len(trim(arguments.productId)) GT 0 AND arguments.productId NEQ 0>
+                <cfif structKeyExists(arguments, "productId") AND val(arguments.productId)>
                     AND fldProduct_Id = <cfqueryparam value = "#arguments.productId#" cfsqltype = "INTEGER">
                 </cfif>
-                <cfif structKeyExists(arguments, "subCategoryId") AND  len(trim(arguments.subCategoryId)) GT 0 AND arguments.subCategoryId NEQ 0>
+                <cfif structKeyExists(arguments, "subCategoryId") AND val(arguments.subCategoryId)>
                     AND p.fldSubCategoryId = <cfqueryparam value = "#arguments.subCategoryId#" cfsqltype = "INTEGER">
-                <cfelseif structKeyExists(arguments, "productId") AND  len(trim(arguments.productId)) GT 0 AND arguments.productId NEQ 0>
+                <cfelseif structKeyExists(arguments, "productId") AND val(arguments.productId)>
                     AND p.fldProduct_Id = <cfqueryparam value = "#arguments.productId#" cfsqltype = "integer">
                 </cfif>
                 <cfif structKeyExists(arguments, "searchInput") AND len(trim(arguments.searchInput))>
@@ -182,7 +182,7 @@
                         OR b.fldBrandName LIKE <cfqueryparam value = "%#arguments.searchInput#%" cfsqltype = "varchar">)
                 </cfif>
                 <cfif structKeyExists(arguments, "filterMin") AND structKeyExists(arguments, "filterMax")
-                    AND len(trim(arguments.filterMin)) GT 0 AND len(trim(arguments.filterMax)) GT 0>
+                    AND val(arguments.filterMin) AND val(arguments.filterMax)>
                     AND p.fldPrice BETWEEN <cfqueryparam value = "#arguments.filterMin#" cfsqltype = "INTEGER"> 
                     AND <cfqueryparam value = "#arguments.filterMax#" cfsqltype = "INTEGER">  
                     ORDER BY
@@ -192,19 +192,19 @@
                     <cfif arguments.sortFlag EQ 1>  
                         ORDER BY
                             p.fldPrice
-                            <cfelseif arguments.sortFlag EQ 2 >
+                    <cfelseif arguments.sortFlag EQ 2 >
                         ORDER BY
                             p.fldPrice DESC
                     </cfif>
                 </cfif>
-                <cfif structKeyExists(arguments, "random") AND len(trim(arguments.random)) GT 0 AND  arguments.random EQ 1>
+                <cfif structKeyExists(arguments, "random") AND val(arguments.random) EQ 1>
                     ORDER BY RAND()
                     LIMIT 8
                 </cfif>
-                <cfif structKeyExists(arguments, "offset") AND len(trim(arguments.offset)) GT 0>
+                <cfif structKeyExists(arguments, "offset") AND val(arguments.offset)>
                     LIMIT <cfqueryparam value="#arguments.limit#" cfsqltype="INTEGER"> 
                     OFFSET <cfqueryparam value="#arguments.offset#" cfsqltype="INTEGER">
-                <cfelseif  structKeyExists(arguments, "limit") AND  len(trim(arguments.limit)) GT 0 AND arguments.limit NEQ 0>
+                <cfelseif  structKeyExists(arguments, "limit") AND  val(arguments.limit)>
                     LIMIT  #arguments.limit#
                 </cfif>
         </cfquery> 
@@ -231,9 +231,9 @@
 
     <cffunction  name="categoryUniqueCheck" access = "public" returnType="numeric">
         <cfargument name="categoryName" type="string" required="true">    
-        <cfargument name="categoryId" type="integer" required="true">
+        <cfargument name="categoryId" type="integer" required="false">
 
-        <cfif arguments.categoryId GT 0>
+        <cfif structKeyExists(arguments, "categoryId")>
             <cfquery name ="local.queryCategoryUniqueCheck">
                 SELECT 
                     fldCategoryName
@@ -260,10 +260,10 @@
 
     <cffunction  name="subCategoryUniqueCheck" access = "public" returnType="numeric">
         <cfargument name="subCategoryName" type="string" required="true">    
-        <cfargument name="subCategoryId" type="integer" required="true">    
+        <cfargument name="subCategoryId" type="integer" required="false">    
         <cfargument name="selectedCategoryId" type="integer" required="true">       
 
-        <cfif arguments.subCategoryId GT 0>
+        <cfif structKeyExists(arguments, "subCategoryId")>
             <!--- EDIT existing subcategory--->
             <cfquery name ="local.querySubCategoryUniqueCheck">
                 SELECT 
@@ -294,10 +294,10 @@
 
     <cffunction  name="productUniqueCheck" access = "public" returnType="numeric">
         <cfargument name="productName" type="string" required="true">    
-        <cfargument name="productId" type="string" required="true">    
+        <cfargument name="productId" type="string" required="false">    
         <cfargument name="selectedSubCategoryId" type="string" required="true">       
 
-        <cfif arguments.productId GT 0>
+        <cfif structKeyExists(arguments, "productId")>
             <!--- EDIT existing product--->
             <cfquery name ="local.queryProductUniqueCheck">
                 SELECT 
@@ -329,13 +329,11 @@
     <cffunction  name="addCategory" access = "remote" returnFormat = "JSON" returnType = "struct">
         <cfargument name="categoryName" type="string" required="true">   
 
-        <cfset local.categoryId = 0>
         <cfset local.addCategoryResult = { "resultMsg" = "", "categoryId" = "" }>
         <!---Validation--->
         <cfif len(trim(arguments.categoryName)) EQ 0>
             <cfset local.addCategoryResult["resultMsg"] = "Enter Category Name ">
-        <cfelseif categoryUniqueCheck(categoryName = arguments.categoryName,
-                                      categoryId = local.categoryId) GT 0>
+        <cfelseif categoryUniqueCheck(categoryName = arguments.categoryName) GT 0>
             <cfset local.addCategoryResult["resultMsg"] = "Category Name already exists">
         <cfelse>
             <cfquery name="local.queryAddCategory" result = "local.resultQueryAddCategory">
@@ -356,14 +354,12 @@
         <cfargument name="subCategoryName" type="string" required="true" >       
         <cfargument name="selectedCategoryId" type="string" required="true" > 
 
-        <cfset local.subCategoryId = 0>   
         <cfset local.addSubCategoryResult = { "resultMsg" = "", "subCategoryid" = "" }>
         <!---Validation--->
-        <cfif len(trim(arguments.subCategoryName)) EQ 0 OR len(trim(arguments.selectedCategoryId)) EQ 0>
+        <cfif len(trim(arguments.subCategoryName)) EQ 0 OR val(arguments.selectedCategoryId) EQ 0>
             <cfset local.addSubCategoryResult["resultMsg"] = "Please enter a Subcategory Name and select a valid Category">
         <cfelseif subCategoryUniqueCheck(subCategoryName = arguments.subCategoryName,
-                                         selectedCategoryId = arguments.selectedCategoryId,
-                                         subCategoryId = local.subCategoryId) GT 0>
+                                         selectedCategoryId = arguments.selectedCategoryId) GT 0>
             <cfset local.addSubCategoryResult["resultMsg"] = "SubCategory Name already exists">
         <cfelse>
             <cfquery name="local.queryAddSubCategory" result = "local.resultQueryAddSubCategory">
@@ -393,21 +389,19 @@
         <cfargument name="productPrice" type="integer" required="true">
         <cfargument name="productTax" type="integer" required="true">
         <cfargument name="productImages" type="string" required="true">
-
-        <cfset local.productId = 0>   
+ 
         <cfset local.addProductResult = { "resultMsg" = "", "productId" = "" }>
         <!---Validation--->
         <cfif len(trim(arguments.productName)) EQ 0 OR 
-            len(trim(arguments.selectedSubCategoryId)) EQ 0 OR 
-            len(trim(arguments.selectedCategoryId)) EQ 0 OR 
-            len(trim(arguments.selectedBrandId)) EQ 0 OR 
+            val(arguments.selectedSubCategoryId) EQ 0 OR 
+            val(arguments.selectedCategoryId) EQ 0 OR 
+            val(arguments.selectedBrandId) EQ 0 OR 
             len(trim(arguments.productDescription)) EQ 0 OR 
-            len(trim(arguments.productPrice)) EQ 0 OR 
-            len(trim(arguments.productTax)) EQ 0 OR 
+            val(arguments.productPrice) EQ 0 OR 
+            val(arguments.productTax) EQ 0 OR 
             len(trim(arguments.productImages)) EQ 0>
             <cfset local.addProductResult["resultMsg"] = "Please fill in all the required fields for adding a product.">
         <cfelseif productUniqueCheck(productName = arguments.productName,
-                                     productId = local.productId,
                                      selectedSubCategoryId = arguments.selectedSubCategoryId) GT 0>
             <cfset local.addProductResult["resultMsg"] = "Product Name already exists">
         <cfelse>
@@ -435,8 +429,8 @@
                     <cfqueryparam value="#arguments.selectedSubCategoryId#" cfsqltype="INTEGER">,
                     <cfqueryparam value="#arguments.selectedBrandId#" cfsqltype="INTEGER">,
                     <cfqueryparam value="#arguments.productDescription#" cfsqltype="VARCHAR">,
-                    <cfqueryparam value="#arguments.productPrice#" cfsqltype="DECIMAL">,
-                    <cfqueryparam value="#arguments.productTax#" cfsqltype="DECIMAL">,
+                    <cfqueryparam value="#abs(arguments.productPrice)#" cfsqltype="DECIMAL">,
+                    <cfqueryparam value="#abs(arguments.productTax)#" cfsqltype="DECIMAL">,
                     <cfqueryparam value="#session.userId#" cfsqltype="INTEGER">
                 )
             </cfquery> 
