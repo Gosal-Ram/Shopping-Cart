@@ -1,4 +1,3 @@
-<cfinclude template="header.cfm">
 <cfset variables.search = url.s>
 <cfoutput>
 <cfif Len(Trim(variables.search)) GT 0>
@@ -53,4 +52,3 @@
     </div>
 </main>
 </cfoutput>
-<cfinclude  template="footer.cfm">

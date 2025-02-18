@@ -1,4 +1,3 @@
-<cfinclude  template="header.cfm">
 <main>
     <cfset variables.queryGetCategories = application.shoppingCart.fetchCategories()>
     <div class="container flex-column mx-auto my-5 p-5 w-50 justify-content-center bg-light shadow-lg" id ="mainDiv">
@@ -72,4 +71,3 @@
         </div>
     </div>
 </form>
-<cfinclude  template="footer.cfm">

@@ -6,7 +6,6 @@
                                                                                   subCategoryId = variables.subCategoryId)>
 <cfset variables.subCategoryName = variables.getSubCategoryName[1].subCategoryName>
 <cfoutput>
-<cfinclude  template="header.cfm">
 <main>
   <div class="container flex-column mx-auto my-5 p-5 w-50 justify-content-center bg-light shadow-lg" id ="mainDiv">
     <div class = "d-flex justify-content-between align-items-center mb-3" >
@@ -164,5 +163,4 @@
 </div>
 </cfoutput>
 
-<cfinclude  template="footer.cfm">
 

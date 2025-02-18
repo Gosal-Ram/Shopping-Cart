@@ -1,4 +1,3 @@
-<cfinclude template="header.cfm">
 <cfset variables.categoryId = decrypt(url.categoryId, application.key,"AES","Base64")>
 <cfset variables.getCategoryNames = application.shoppingCart.fetchCategories(variables.categoryId)>
 <cfset variables.getAllSubCategories = application.shoppingCart.fetchSubCategories(variables.categoryId)>
@@ -60,5 +59,4 @@
 </main>
 </cfoutput>
 
-<cfinclude  template="footer.cfm">  
 

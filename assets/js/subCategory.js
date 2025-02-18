@@ -5,14 +5,11 @@ function openAddSubCategoryModal(){
     document.getElementById("modalSubmitBtn").value = "";
 }
 
-function saveSubCategory(){
+function saveSubCategory(categoryId){
     let isModalValid = modalValidate();
     if(!isModalValid){
         return false;
     }
-    let params = new URLSearchParams(document.location.search);
-    let categoryId =params.get("categoryId");
-    let subCategoryId = document.getElementById("modalSubmitBtn").value;
     const subCategoryName = document.getElementById("subCategoryName").value
     const selectedCategoryId = document.getElementById("categorySelect").value;
     if (document.getElementById("modalSubmitBtn").value.length==0){          // add NEW SUB CATEGORY
@@ -26,7 +23,27 @@ function saveSubCategory(){
                 let responseParsed = JSON.parse(response);
                 document.getElementById("subCategoryFunctionResult").innerHTML = responseParsed.resultMsg;
                 let subCategoryId = responseParsed.subCategoryid;
-                location.reload();
+                let subCategoryEachDiv = 
+                    `<div class = "d-flex justify-content-between align-items-center" id = "${subCategoryId}">
+                        <div id = "subcategoryname-${subCategoryId}">${subCategoryName}</div>
+                            <div>
+                            <button type="button" 
+                                    onclick = "editSubCategory(${subCategoryId})" 
+                                    class = "btn btn-outline-info  px-3 my-2" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#staticBackdrop">
+                                <img src="./assets/images/editing.png" alt="" width="18" height="18" class="">
+                            </button>
+                            <button class = "btn btn-outline-info  px-3 my-2" onClick = "deleteSubCategory(${subCategoryId})">
+                                <img src="./assets/images/trash.png" alt="" width="18" height="18" class="">
+                            </button>
+                            <a class = "btn btn-outline-info  px-3 my-2" href ="product.cfm?subCategoryId=${subCategoryId}&subCategoryName=${subCategoryName}">
+                                <img src="./assets/images/right-arrow.png" alt="" width="18" height="18" class="">
+                            </a>
+                            </div>
+                        </div>`;
+                $("#mainDiv").append(subCategoryEachDiv);
+                // location.reload();
             }
         })
     }
@@ -42,20 +59,28 @@ function saveSubCategory(){
             },
             success:function(response){
                 let responseParsed = JSON.parse(response);
-                location.reload();
+                console.log(responseParsed.resultMsg);
+                document.getElementById("subCategoryFunctionResult").innerHTML = responseParsed.resultMsg;
+                if (categoryId != selectedCategoryId){
+                    document.getElementById(subCategoryId).remove();
+                }
+                if(responseParsed.resultMsg != "Sub Category Name already exists"){
+                    document.getElementById("subcategoryname-"+subCategoryId).textContent=responseParsed.subCategoryName;
+                }
+                // location.reload();
             }
         })
     }
 }
 
-function editSubCategory(fldSubCategory_Id){
+function editSubCategory(subCategoryId){
     document.getElementById("SubCategoryAddForm").reset();
-    document.getElementById("subCategoryNameError").textContent=""
+    document.getElementById("subCategoryNameError").textContent="";
     let subCategoryName = $("#subCategoryName");
     subCategoryName.removeClass("border-danger");
     document.querySelector(".modal-title").textContent = "Edit Sub Category";
-    document.getElementById("subCategoryName").value = document.getElementById(fldSubCategory_Id).childNodes[1].textContent;  // autopopulate category name
-    document.getElementById("modalSubmitBtn").value = fldSubCategory_Id;
+    document.getElementById("subCategoryName").value = document.getElementById(subCategoryId).childNodes[1].textContent;  // autopopulate category name
+    document.getElementById("modalSubmitBtn").value = subCategoryId;
     
 }
 
@@ -76,16 +101,16 @@ function modalValidate(){
     return isValid;
 }
 
-function deleteSubCategory(fldSubCategory_Id){
+function deleteSubCategory(subCategoryId){
     if(confirm("Confirm delete")){
         $.ajax({
             type:"POST",
             url: "component/shoppingcart.cfc",
-            data:{subCategoryId: fldSubCategory_Id,
+            data:{subCategoryId: subCategoryId,
                 method : "deleteSubCategory"
             },
             success:function(){
-            document.getElementById(fldSubCategory_Id).remove();  
+            document.getElementById(subCategoryId).remove();  
             }
         })
     }

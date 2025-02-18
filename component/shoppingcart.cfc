@@ -637,7 +637,8 @@
                 tblproductimages
             SET 
                 fldActive = 0,
-                fldDeactivatedBy = <cfqueryparam value = "#session.userId#" cfsqltype = "integer">
+                fldDeactivatedBy = <cfqueryparam value = "#session.userId#" cfsqltype = "integer">,
+                fldDeactivatedDate = now()
             WHERE 
                 fldProductImage_Id = <cfqueryparam value = "#arguments.productImageId#" cfsqltype = "integer"> 
         </cfquery>
@@ -645,82 +646,71 @@
 
     <cffunction  name="deleteCategory" access="remote" returnType = "boolean">
         <cfargument  name="categoryId" type="integer" required ="true">
-        <!--- product table updation --->
-        <cfquery name = "local.querySoftDeleteproduct">
+        <cfquery name = "loca.querySoftDeleteCategory">
             UPDATE 
-                tblproduct
+                tblcategory C
+                LEFT JOIN 
+                    tblsubCategory SC ON C.fldCategory_Id = SC.fldCategoryId
+                LEFT JOIN 
+                    tblProduct P ON SC.fldSubCategory_Id = P.fldSubCategoryId
+                LEFT JOIN 
+                    tblProductImages PI ON P.fldProduct_Id = PI.fldProductId
             SET 
-                fldActive = 0 , 
-                fldUpdatedBy =<cfqueryparam value = "#session.userId#" cfsqltype="integer">
+                C.fldActive = 0, 
+                C.fldUpdatedBy = <cfqueryparam value = "#session.userId#" cfsqltype="integer">,
+                SC.fldActive = 0,
+                SC.fldUpdatedBy = <cfqueryparam value = "#session.userId#" cfsqltype="integer">,
+                P.fldActive = 0,
+                P.fldUpdatedBy = <cfqueryparam value = "#session.userId#" cfsqltype="integer">,
+                PI.fldActive = 0,
+                PI.fldDeactivatedBy = <cfqueryparam value = "#session.userId#" cfsqltype = "integer">,
+                PI.fldDeactivatedDate = now()
+
             WHERE 
-                fldSubCategoryId IN (
-                    SELECT 
-                        fldSubCategory_Id
-                    FROM
-                        tblsubcategory
-                    WHERE
-                        fldCategoryId = <cfqueryparam value = "#arguments.categoryId#" cfsqltype="integer">
-                )
-        </cfquery>
-        <!---subcategory table updation --->
-        <cfquery name = "local.querySoftDeleteSubCategory" >
-            UPDATE 
-                tblsubcategory
-            SET 
-                fldActive = 0 , 
-                fldUpdatedBy =<cfqueryparam value = "#session.userId#" cfsqltype="integer">
-            WHERE 
-                fldCategoryId = <cfqueryparam value = "#arguments.categoryId#" cfsqltype="integer">
-        </cfquery>
-        <!---category table updation --->
-        <cfquery name = "local.querySoftDeleteCategory" >
-            UPDATE 
-                tblcategory
-            SET 
-                fldActive = 0 , 
-                fldUpdatedBy =<cfqueryparam value = "#session.userId#" cfsqltype="integer">
-            WHERE 
-                fldCategory_Id = <cfqueryparam value = "#arguments.categoryId#" cfsqltype="integer">
+                C.fldCategory_Id = <cfqueryparam value = "#arguments.categoryId#" cfsqltype="integer">
         </cfquery>
         <cfreturn true>
     </cffunction>
     
     <cffunction  name="deleteProduct" access="remote" returnType = "boolean" >
         <cfargument  name="productId" type="integer"  required ="true">
-        <!---product table updation --->
-        <cfquery name = "local.querySoftDeleteproduct" >
+        <cfquery name = "local.querySoftDeleteproduct">
             UPDATE 
-                tblproduct
+                tblproduct P
+                LEFT JOIN 
+                    tblProductImages PI ON P.fldProduct_Id = PI.fldProductId
             SET 
-                fldActive = 0 , 
-                fldUpdatedBy =<cfqueryparam value = "#session.userId#" cfsqltype="integer">
+                P.fldActive = 0,
+                P.fldUpdatedBy = <cfqueryparam value = "#session.userId#" cfsqltype="integer">,
+                PI.fldActive = 0,
+                PI.fldDeactivatedBy = <cfqueryparam value = "#session.userId#" cfsqltype = "integer">,
+                PI.fldDeactivatedDate = now()
             WHERE 
-                fldProduct_Id = <cfqueryparam value = "#arguments.productId#" cfsqltype="integer">
+                P.fldProduct_Id = <cfqueryparam value = "#arguments.productId#" cfsqltype="integer">
         </cfquery>
         <cfreturn true>
     </cffunction>
     
     <cffunction  name="deleteSubCategory" access="remote" returnType = "boolean" >
         <cfargument  name="subCategoryId" type="integer" required ="true">
-        <!--- subcategory table updation --->
-        <cfquery name = "local.querySoftDeleteSubCategory" >
+        <cfquery name = "local.querySoftDeleteSubCategory">
             UPDATE 
-                tblsubcategory
+                tblsubCategory SC
+                LEFT JOIN 
+                    tblProduct P ON SC.fldSubCategory_Id = P.fldSubCategoryId
+                LEFT JOIN 
+                    tblProductImages PI ON P.fldProduct_Id = PI.fldProductId
             SET 
-                fldActive = 0 , 
-                fldUpdatedBy =<cfqueryparam value = "#session.userId#" cfsqltype="integer">
+                SC.fldActive = 0,
+                SC.fldUpdatedBy = <cfqueryparam value = "#session.userId#" cfsqltype="integer">,
+                P.fldActive = 0,
+                P.fldUpdatedBy = <cfqueryparam value = "#session.userId#" cfsqltype="integer">,
+                PI.fldActive = 0,
+                PI.fldDeactivatedBy = <cfqueryparam value = "#session.userId#" cfsqltype = "integer">,
+                PI.fldDeactivatedDate = now()
+
             WHERE 
-                fldSubCategory_Id = <cfqueryparam value = "#arguments.subCategoryId#" cfsqltype="integer">
-        </cfquery>
-        <!--- product table updation --->
-        <cfquery name = "local.querySoftDeleteproduct" >
-            UPDATE 
-                tblproduct
-            SET 
-                fldActive = 0 , 
-                fldUpdatedBy =<cfqueryparam value = "#session.userId#" cfsqltype="integer">
-            WHERE 
-                fldSubCategoryId = <cfqueryparam value = "#arguments.subCategoryId#" cfsqltype="integer">
+                SC.fldSubCategory_Id = <cfqueryparam value = "#arguments.subCategoryId#" cfsqltype="integer">
         </cfquery>
         <cfreturn true>
     </cffunction>

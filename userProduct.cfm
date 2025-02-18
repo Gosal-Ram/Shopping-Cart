@@ -1,5 +1,3 @@
-<cfinclude template="header.cfm">
-
 <cfset variables.productId = decrypt(url.productId,application.key,"AES","Base64")>
 
 <cfset variables.getAllProducts = application.shoppingCart.fetchProducts(productId = variables.productId)>
@@ -128,5 +126,4 @@
 </main>
 </cfoutput>
 
-<cfinclude template="footer.cfm">
 

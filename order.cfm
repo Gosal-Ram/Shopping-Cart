@@ -1,4 +1,3 @@
-<cfinclude  template="header.cfm">
 <cfif NOT structKeyExists(session, "cartCount") OR session.cartCount EQ 0>
     <cflocation  url="cart.cfm" addToken="no">
 <cfelse>
@@ -287,5 +286,3 @@
     </main>
     </cfoutput>
 </cfif>
-
-<cfinclude template="footer.cfm">

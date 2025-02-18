@@ -1,4 +1,3 @@
-<cfinclude  template="header.cfm">
 <cfset variables.queryGetAllOrders = application.shoppingCart.fetchOrderHistory()>
 
 <cfif structKeyExists(form, "submitBtn")>
@@ -86,4 +85,3 @@
     </div>
 </main>
 </cfoutput>
-<cfinclude  template="footer.cfm">

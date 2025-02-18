@@ -24,7 +24,27 @@ function saveCategory(){
                 let responseParsed = JSON.parse(response);
                 let categoryId = responseParsed.categoryId;
                 document.getElementById("categoryFunctionResult").innerHTML = responseParsed.resultMsg;
-                location.reload();
+                /* let categoryEachDiv = 
+                `<div class = "d-flex justify-content-between align-items-center" id = "${categoryId}">
+                    <div id = "categoryname-${categoryId}">${categoryName}</div>
+                    <div>
+                        <button type="button" 
+                                onclick = "editCategory(${categoryId})" 
+                                class = "btn btn-outline-info  px-3 my-2" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#staticBackdrop">
+                        <img src="./assets/images/editing.png" alt="" width="18" height="18" class="">
+                        </button>
+                        <button class = "btn btn-outline-info  px-3 my-2" onClick = "deleteCategory(${categoryId})">
+                        <img src="./assets/images/trash.png" alt="" width="18" height="18" class="">
+                        </button>
+                        <a class = "btn btn-outline-info  px-3 my-2" href ="subCategory.cfm?categoryId=${categoryId}&categoryName=${categoryName}">
+                        <img src="./assets/images/right-arrow.png" alt="" width="18" height="18" class="">
+                        </a>
+                    </div>
+                </div>`;
+                $("#mainDiv").append(categoryEachDiv); */
+                location.reload();  
             }
         })
     }
@@ -38,7 +58,10 @@ function saveCategory(){
                 method : "editCategory"},
             success:function(response){
                 let responseParsed = JSON.parse(response);
-                location.reload();
+                if(responseParsed != "Category Name already exists"){
+                    document.getElementById("categoryname-"+categoryId).textContent=categoryName;
+                }
+                document.getElementById("categoryFunctionResult").innerHTML = responseParsed;
             }
     })
     }

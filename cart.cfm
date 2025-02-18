@@ -1,4 +1,3 @@
-<cfinclude template="header.cfm">
 <cfif NOT structKeyExists(session, "cartCount") OR session.cartCount EQ 0>
     <div class="container text-center my-5">
         <img src="assets/images/empty-cart.svg" alt="" class="img-fluid emptyCartImg">
@@ -119,4 +118,3 @@
     </main>
     </cfoutput>
 </cfif>
-<cfinclude template="footer.cfm">

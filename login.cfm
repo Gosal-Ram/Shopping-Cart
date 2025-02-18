@@ -1,4 +1,3 @@
-<cfinclude  template="header.cfm">
 <main>
   <div class="container flex-column mx-auto my-5 p-5 w-50 justify-content-center bg-light shadow">
     <h3 class= "text-center">Login</h3>
@@ -34,4 +33,3 @@
     </div>
   </div>
 </main>      
-<cfinclude  template="footer.cfm">

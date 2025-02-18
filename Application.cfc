@@ -39,6 +39,14 @@
         <cfreturn true>
     </cffunction>
 
+    <cffunction name="onRequest" returnType="void">
+        <cfargument name="targetPage" type="String" required=true>
+                
+        <cfinclude  template="header.cfm">
+        <cfinclude  template="#arguments.targetPage#">
+        <cfinclude  template="footer.cfm">
+    </cffunction>
+
     <cffunction name="onMissingTemplate" returnType="boolean">
         <cfargument name="targetPage" type="string" required=true/>
         <cflog type="error" text="Missing template: #Arguments.targetPage#">

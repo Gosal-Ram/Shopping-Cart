@@ -1,5 +1,4 @@
-<cfinclude template="header.cfm">
-  <cfset variables.queryGetAddresses = application.shoppingCart.fetchAddresses()>
+<cfset variables.queryGetAddresses = application.shoppingCart.fetchAddresses()>
 
 <cfoutput>
 <main>
@@ -177,5 +176,4 @@
     </div>
 </main>
 </cfoutput>
-<cfinclude  template="footer.cfm">
 

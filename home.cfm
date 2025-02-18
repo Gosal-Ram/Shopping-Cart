@@ -1,4 +1,3 @@
-<cfinclude  template="header.cfm">
 <main class="d-flex flex-column">
 <cfoutput>
   <div class="homeImgContainer mx-auto">
@@ -41,6 +40,5 @@
   </div>
 </cfoutput>
 </main>
-<cfinclude  template="footer.cfm">
 
 

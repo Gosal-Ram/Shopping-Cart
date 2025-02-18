@@ -3,7 +3,6 @@
 <cfset variables.categoryName = #variables.getCategoryName[1].categoryName#>
 
 <cfoutput>
-<cfinclude  template="header.cfm">
 <main>
   <cfset variables.getAllSubCategories = application.shoppingCart.fetchSubCategories(variables.categoryId)>
   <div class="container flex-column mx-auto my-5 p-5 w-50 justify-content-center bg-light shadow-lg" id ="mainDiv">
@@ -64,7 +63,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button onClick = saveSubCategory() 
+          <button onClick = "saveSubCategory(#variables.categoryId#)" 
                   type="button" 
                   name ="modalSubmitBtn" 
                   class="btn btn-primary" 
@@ -78,6 +77,4 @@
 </form>
 
 </cfoutput>
-
-<cfinclude  template="footer.cfm">
 
