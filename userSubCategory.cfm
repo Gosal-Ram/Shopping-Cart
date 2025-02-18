@@ -23,7 +23,7 @@
 </cfif>
 <cfoutput>
 <main>
-<cfif variables.getAllProducts.recordCount EQ 0>
+<cfif arrayLen(variables.getAllProducts) EQ 0>
     <h3 class= "m-2 p-3">No products found</h3>
 <cfelse>
     <form method ="post"> 
@@ -52,26 +52,26 @@
             </div>
         </div>
         <div class= "productListingContainer d-flex flex-sm-wrap ms-5 mb-3" id ="productListingContainer">
-            <cfloop query="variables.getAllProducts">
-                <cfset variables.encryptedProductId = encrypt("#variables.getAllProducts.fldProduct_Id#",application.key,"AES","Base64")>
+            <cfloop array="#variables.getAllProducts#" item = "local.product">
+                <cfset variables.encryptedProductId = local.product.productId>
                 <cfset variables.encodedProductId = encodeForURL(variables.encryptedProductId)>
                 <a class = "card m-2 p-2 productCard text-decoration-none" 
                     href = "userProduct.cfm?productId=#variables.encodedProductId#">
                     <div>
-                        <img src="./assets/images/productImages/#variables.getAllProducts.fldImageFilename#" 
+                        <img src="./assets/images/productImages/#local.product.imageFilename#" 
                             class="w-100 productImg"  
                             alt="" 
                             height ="150">
                         <div class="card-body">
-                            <h6 class="card-title" id = "#variables.getAllProducts.fldProduct_Id#">
-                                #variables.getAllProducts.fldProductName#
+                            <h6 class="card-title" id = "#local.product.productId#">
+                                #local.product.productName#
                             </h6>
-                            <div class="card-text text-muted">  #variables.getAllProducts.fldBrandName#</div>
+                            <div class="card-text text-muted">  #local.product.brandName#</div>
                             <div class="card-text text-dark fw-semibold">
                                 <i class="fa-solid fa-indian-rupee-sign me-1"></i>
-                                #variables.getAllProducts.fldPrice#
+                                #local.product.price#
                             </div>
-                            <div class="card-text productDescription">#variables.getAllProducts.fldDescription#</div>
+                            <div class="card-text productDescription">#local.product.description#</div>
                         </div>
                     </div>
                 </a>
@@ -89,7 +89,7 @@
                 structKeyExists(form, "sortASC") OR 
                 structKeyExists(form, "sortDESC") OR 
                 (structKeyExists(variables, "getAllProducts") 
-                AND variables.getAllProducts.recordCount LT 4)>
+                AND arrayLen(variables.getAllProducts) LT 4)>
                 hidden
                 </cfif>>
                 View More

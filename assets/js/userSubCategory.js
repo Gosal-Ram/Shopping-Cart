@@ -12,34 +12,34 @@ function toggleView(subCategoryId){
             method : "fetchProducts"
         },
         success:function(response){
-            let responseParsed = JSON.parse(response);
-            // console.log(responseParsed);
-            const columns = responseParsed.COLUMNS; //arr
-            const data = responseParsed.DATA;    //arr
+            let data = JSON.parse(response);
+            // console.log(data);
             if(data.length < 4 ){
                 $("#viewEditBtn").hide();
             }
             data.forEach(product => {
+                console.log(product);
+                let productId = encodeURIComponent(product.productId)
               let productHTML = `
-                  <a class="card m-2 p-2 productCard text-decoration-none" href="userProduct.cfm?productId=${product[columns.indexOf('FLDPRODUCT_ID')]}">
+                  <a class="card m-2 p-2 productCard text-decoration-none" href="userProduct.cfm?productId=${productId}">
                       <div>
-                          <img src="./assets/images/productImages/${product[columns.indexOf('FLDIMAGEFILENAME')]}" 
+                          <img src="./assets/images/productImages/${product.imageFilename}" 
                                class="w-100"  
-                               alt="${product[columns.indexOf('FLDPRODUCTNAME')]}" 
+                               alt="${product.productName}" 
                                style="height: 150px; object-fit: contain;">
                           <div class="card-body">
-                              <h6 class="card-title" id="${product[columns.indexOf('FLDPRODUCT_ID')]}">
-                                  ${product[columns.indexOf('FLDPRODUCTNAME')]}
+                              <h6 class="card-title" id="${product.productId}">
+                                  ${product.productName}
                               </h6>
                               <div class="card-text text-muted">
-                                  ${product[columns.indexOf('FLDBRANDNAME')]}
+                                  ${product.brandName}
                               </div>
                               <div class="card-text text-dark fw-semibold">
                                   <i class="fa-solid fa-indian-rupee-sign me-1"></i>
-                                  ${product[columns.indexOf('FLDPRICE')]}
+                                  ${product.price}
                               </div>
                               <div class="card-text productDescription">
-                                  ${product[columns.indexOf('FLDDESCRIPTION')]}
+                                  ${product.description}
                               </div>
                           </div>
                       </div>
@@ -47,7 +47,7 @@ function toggleView(subCategoryId){
               `;
          // Append each product card to the container
               $("#productListingContainer").append(productHTML);
-          });  
+          }); 
         }
     });
 }

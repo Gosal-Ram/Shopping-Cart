@@ -6,18 +6,18 @@
 
 <cfset variables.productStruct = structNew()>
 <!---storing all products in a struct to skip database call inside loop --->
-<cfloop query="variables.getAllProducts">
-    <cfset variables.subCategoryId = variables.getAllProducts.fldSubCategoryId>
+<cfloop array="#variables.getAllProducts#" item= "local.product">
+    <cfset variables.subCategoryId = local.product.subCategoryId>
     <cfif NOT structKeyExists(variables.productStruct, variables.subCategoryId)>
         <cfset variables.productStruct[variables.subCategoryId] = []>
     </cfif>
     <cfset arrayAppend(variables.productStruct[variables.subCategoryId], {
-        productId = variables.getAllProducts.fldProduct_Id,
-        productName = variables.getAllProducts.fldProductName,
-        brandName = variables.getAllProducts.fldBrandName,
-        price = variables.getAllProducts.fldPrice,
-        description = variables.getAllProducts.fldDescription,
-        imageFilename = variables.getAllProducts.fldImageFilename
+        productId = local.product.productId,
+        productName = local.product.productName,
+        brandName = local.product.brandName,
+        price = local.product.price,
+        description = local.product.description,
+        imageFilename = local.product.imageFilename
     })>
 </cfloop>
 <cfoutput>
@@ -34,7 +34,7 @@
             <div class="productListingContainer d-flex flex-sm-wrap ms-5 mb-3">
                 <cfif structKeyExists(variables.productStruct, local.subItem.subCategoryId)>
                     <cfloop array="#variables.productStruct[local.subItem.subCategoryId]#" item="local.productItem">
-                        <cfset variables.encryptedProductId = encrypt("#local.productItem.productId#", application.key, "AES", "Base64")>
+                        <cfset variables.encryptedProductId = local.productItem.productId>
                         <cfset variables.encodedProductId = encodeForURL(variables.encryptedProductId)>
                         <a class="card m-2 p-2 productCard text-decoration-none" href="userProduct.cfm?productId=#variables.encodedProductId#">
                             <div>

@@ -2,7 +2,7 @@
     <cffunction  name="logIn" access = "public" returnType="string" >
         <cfargument name ="userInput" type="string" required ="true">
         <cfargument name ="password" type="string" required = "true">
-        <cfargument name ="productId" type="integer" required = "false">
+        <cfargument name ="productId" type="string" required = "false">
         <cfargument name ="buyNow" type="integer" required = "false">
 
         <cfset local.loginResult = "">
@@ -39,7 +39,8 @@
                 <cfset session.roleId = local.queryUserLogin.fldRoleId>
                 <cfif structKeyExists(arguments, "productId")>
                     <!--- to add product to the cart of a not logged in user(after logging in)--->
-                    <cfset local.CartResult = addToCart(arguments.productId)>
+                    <cfset local.productId = decrypt(arguments.productId,application.key,"AES","Base64")>
+                    <cfset local.CartResult = addToCart(local.productId)>
                     <cfif structKeyExists(arguments, "buyNow")>
                         <!--- to order a product of a  not logged in user(after logging in)--->
                         <cfset local.encodedCartId = local.CartResult.cartId>
@@ -139,7 +140,7 @@
         <cfreturn local.subCategoriesArray>
     </cffunction>
 
-    <cffunction  name="fetchProducts" access = "remote" returnFormat = "JSON" returnType="query">
+    <cffunction  name="fetchProducts" access = "remote" returnFormat = "JSON" returnType="array">
         <cfargument name="subCategoryId" type="string" required="false">
         <cfargument name="sortFlag" type="string" required="false">
         <cfargument name="filterMin" type="string" required="false">
@@ -207,8 +208,25 @@
                 <cfelseif  structKeyExists(arguments, "limit") AND  val(arguments.limit)>
                     LIMIT  #arguments.limit#
                 </cfif>
-        </cfquery> 
-        <cfreturn local.queryGetProducts>
+        </cfquery>
+        <cfset local.productsArray = []>
+        <cfloop query="local.queryGetProducts">
+            <cfset local.encryptedProductId = encrypt(local.queryGetProducts.fldProduct_Id, application.key,"AES","Base64")>
+            <cfset local.product = {
+                "productName" = local.queryGetProducts.fldProductName,
+                "productId" = local.encryptedProductId,
+                <!---  "productId" = local.queryGetProducts.fldProduct_Id,--->
+                "subCategoryId" = local.queryGetProducts.fldSubCategoryId,
+                "brandId" = local.queryGetProducts.fldBrandId,
+                "description" = local.queryGetProducts.fldDescription,
+                "price" = local.queryGetProducts.fldPrice,
+                "tax" = local.queryGetProducts.fldTax,
+                "brandName" = local.queryGetProducts.fldBrandName,
+                "imageFilename" = local.queryGetProducts.fldImageFilename
+            }>
+            <cfset arrayAppend(local.productsArray, local.product)>
+        </cfloop>
+        <cfreturn local.productsArray>
     </cffunction>
 
     <cffunction  name="fetchProductImages" access = "remote" returnFormat = "JSON" returnType="query" >
@@ -785,7 +803,7 @@
         <cfargument name="productId" type="integer" required="false">
         
         <cfset local.addToCartResult = { "resultMsg" = "","cartId" = "", "quantity" = ""}>
-        <cfif structKeyExists(arguments, "productId") AND len(trim(arguments.productId)) GT 0 AND arguments.productId NEQ 0>
+        <cfif structKeyExists(arguments, "productId")>
             <!---  EXISTING PRODUCT IN CART CHECK  --->
             <cfquery name ="local.queryAddToCartNewProductCheck">
                 SELECT 

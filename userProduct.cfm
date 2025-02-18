@@ -1,7 +1,9 @@
 <cfinclude template="header.cfm">
+
 <cfset variables.productId = decrypt(url.productId,application.key,"AES","Base64")>
+
 <cfset variables.getAllProducts = application.shoppingCart.fetchProducts(productId = variables.productId)>
-<cfset variables.subCategoryId = variables.getAllProducts.fldSubCategoryId>
+<cfset variables.subCategoryId = variables.getAllProducts[1].subCategoryId>
 <cfset variables.getAllProductImages = application.shoppingCart.fetchProductImages(productId = variables.productId)>
 <!--- getting products's category, subcategory information for PRODUCT PATH UI and NAVIGATION --->
 <cfset variables.getCategoryId = application.shoppingCart.fetchSubCategories(subCategoryId = variables.subCategoryId)>
@@ -16,14 +18,14 @@
 <cfset variables.encryptedSubCategoryId = encrypt("#variables.subCategoryId#",application.key,"AES","Base64")>
 <cfset variables.encodedSubCategoryId = encodeForURL(variables.encryptedSubCategoryId)>
 
-<cfset variables.encryptedProductId = encrypt("#variables.productId#",application.key,"AES","Base64")>
+<cfset variables.encryptedProductId = url.productId >
 <cfset variables.encodedProductId = encodeForURL(variables.encryptedProductId)>
 
 <cfset variables.logInFlag = 0>
 
 <cfoutput>
 <main>
-    <cfloop query="variables.getAllProducts">
+    <cfloop array="#variables.getAllProducts#" item = "local.product">
         <div class="container my-5">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
@@ -35,7 +37,7 @@
                         <a href="userSubCategory.cfm?subCategoryId=#variables.encodedSubCategoryId#">#variables.subCategoryName#</a>
                     </li>
                     <li class="breadcrumb-item active" aria-current="page"> 
-                        #variables.getAllProducts.fldProductName# 
+                        #local.product.productName# 
                     </li>
                 </ol>
             </nav>
@@ -58,7 +60,7 @@
                         <div id="productCarousel" class="carousel slide w-100" data-bs-ride="carousel">
                             <div class="carousel-inner">
                                 <div class="carousel-item active">
-                                    <img src="assets/images/productImages/#variables.getAllProducts.fldImageFilename#" 
+                                    <img src="assets/images/productImages/#local.product.imageFilename#" 
                                     id = "mainProductImage"
                                     class="d-block w-100 productImg" 
                                     alt="" 
@@ -86,19 +88,19 @@
                 </div>
 
                 <div class="col-md-6">
-                    <h2 class="product-title">#variables.getAllProducts.fldProductName#</h2>
-                    <p class="text-muted">Brand: #variables.getAllProducts.fldBrandName#</p>
+                    <h2 class="product-title">#local.product.productName#</h2>
+                    <p class="text-muted">Brand: #local.product.brandName#</p>
                     <h3 class="text-dark">
                         <i class="fa-solid fa-indian-rupee-sign me-1"></i>
-                        #variables.getAllProducts.fldPrice#
+                        #local.product.price#
                     </h3>
                     <p class="text-success">
                         Tax : 
                         <i class="fa-solid fa-indian-rupee-sign me-1"></i>
-                        #variables.getAllProducts.fldTax#
+                        #local.product.tax#
                     </p>
                     <p class="product-description mt-4">
-                        #variables.getAllProducts.fldDescription#   
+                        #local.product.description#   
                     </p>
 
                     <div class="mt-4">
@@ -112,7 +114,6 @@
                         class="btn addToCartBtn me-2">
                             Add to Cart
                         </button>
-                        <!--- <a class="btn buyNowtBtn" href ="order.cfm?productId=#variables.encodedProductId#">Buy Now</a> --->
                         <button class="btn buyNowtBtn"
                                 type = "button" 
                                 onClick = "addToCartAndBuy(#variables.logInFlag#,#variables.productId#,1,'#variables.encodedProductId#')">

@@ -180,35 +180,35 @@ function saveProduct(){
     }
 }
 
-function editProductOpenModal(fldProduct_Id){
+function editProductOpenModal(productId){
     clearErrorMessages();
     document.getElementById("productAddForm").reset();
     document.querySelector(".modal-title").textContent = "Edit Product";    
     $.ajax({
         type:"POST",
         url: "component/shoppingcart.cfc?",
-        data:{productId:fldProduct_Id,
-              method : "fetchProducts"
+        data:{productId: productId,
+              method: "fetchProducts"
         },
         success:function(response){
             let responseParsed = JSON.parse(response);         // autopopulate Product details
             // console.log(responseParsed)
-            document.getElementById("productName").value =responseParsed.DATA[0][0];
-            document.getElementById("productDescription").value = responseParsed.DATA[0][4];
-            document.getElementById("brandSelect").value = responseParsed.DATA[0][3];;
-            document.getElementById("productPrice").value = responseParsed.DATA[0][5];
-            document.getElementById("productTax").value = responseParsed.DATA[0][6];
+            document.getElementById("productName").value =responseParsed[0].productName;
+            document.getElementById("productDescription").value = responseParsed[0].description;
+            document.getElementById("brandSelect").value = responseParsed[0].brandId;
+            document.getElementById("productPrice").value = responseParsed[0].price;
+            document.getElementById("productTax").value = responseParsed[0].tax;
         }
     })
-    document.getElementById("modalSubmitBtn").value = fldProduct_Id;
+    document.getElementById("modalSubmitBtn").value = productId;
 }
 
-function openImgCarousal(fldProduct_Id) {
+function openImgCarousal(productId) {
     $.ajax({
         type: "POST",
         url: "component/shoppingcart.cfc",
         data: {
-            productId: fldProduct_Id,
+            productId: productId,
             method : "fetchProductImages"
         },
         success: function(response) {
@@ -274,16 +274,16 @@ function deleteImage(){
     })
 }
 
-function deleteProduct(fldProduct_Id){
+function deleteProduct(productId){
     if(confirm("Confirm delete")){
         $.ajax({
             type:"POST",
             url: "component/shoppingcart.cfc",
-            data:{productId: fldProduct_Id,
+            data:{productId: productId,
                 method : "deleteProduct"
             },
             success:function(){
-            document.getElementById(fldProduct_Id).remove();
+            document.getElementById(productId).remove();
             }
         })
     }

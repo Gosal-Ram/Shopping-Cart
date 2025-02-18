@@ -19,26 +19,27 @@
         New
       </button>
     </div>
-    <cfset variables.queryGetAllProducts = application.shoppingCart.fetchProducts(variables.subCategoryId)>
+    <cfset variables.queryGetAllProducts = application.shoppingCart.fetchProducts(subCategoryId = variables.subCategoryId)>
     <span class="text-success" id ="productFunctionResult"></span>
-    <cfloop query="variables.queryGetAllProducts">
+    <cfloop array="#variables.queryGetAllProducts#" item = "local.product">
+      <cfset variables.decryptedProductId = decrypt(local.product.productId, application.key, "AES", "Base64")>
       <div class = "d-flex justify-content-between align-items-center w-100 col-6" 
-            id = "#variables.queryGetAllProducts.fldProduct_Id#">
+            id = "#variables.decryptedProductId#">
         <div class="col-6">
-          <div id = "productname-#variables.queryGetAllProducts.fldProduct_Id#" 
-            class="h5 text-bold">#variables.queryGetAllProducts.fldProductName#
+          <div id = "productname-#variables.decryptedProductId#" 
+            class="h5 text-bold">#local.product.productName#
           </div>
           <div class = "d-flex justify-content-between align-items-center">
             <div class="text-secondary">
-              <div class="h6 text-muted">#variables.queryGetAllProducts.fldBrandName#</div>
-              <div class="h6 text-bold"> #variables.queryGetAllProducts.fldPrice#</div>
+              <div class="h6 text-muted">#local.product.brandName#</div>
+              <div class="h6 text-bold"> #local.product.price#</div>
             </div>
             <button type="button" 
-              onclick = "openImgCarousal(#variables.queryGetAllProducts.fldProduct_Id#)"
+              onclick = "openImgCarousal(#variables.decryptedProductId#)"
               class="border-0"  
               data-bs-toggle="modal" 
               data-bs-target="##imgModal">
-              <img src="./assets/images/productImages/#variables.queryGetAllProducts.fldImageFileName#" 
+              <img src="./assets/images/productImages/#local.product.imageFileName#" 
                 alt="" 
                 width="85">
             </button>
@@ -46,14 +47,14 @@
         </div>
         <div class="">
           <button type="button" 
-            onclick = "editProductOpenModal(#variables.queryGetAllProducts.fldProduct_Id#)" 
+            onclick = "editProductOpenModal(#variables.decryptedProductId#)" 
             class = "btn btn-outline-info  px-3 my-2" 
             data-bs-toggle="modal" 
             data-bs-target="##staticBackdrop">
             <img src="./assets/images/editing.png" alt="" width="18" height="18" class="">
           </button>
           <button class = "btn btn-outline-info  px-3 my-2" 
-            onClick = "deleteProduct(#variables.queryGetAllProducts.fldProduct_Id#)">
+            onClick = "deleteProduct(#variables.decryptedProductId#)">
             <img src="./assets/images/trash.png" alt="" width="18" height="18" class="">
           </button>
         </div>
