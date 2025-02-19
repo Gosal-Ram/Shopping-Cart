@@ -1,7 +1,15 @@
+<cfparam  name="url.s" default = "">
 <cfset variables.search = url.s>
+<cfif structKeyExists(url, "page")>
+    <cfset variables.currentPage = url.page>
+<cfelse>
+    <cfset variables.currentPage = 1>
+</cfif>
+
 <cfoutput>
 <cfif Len(Trim(variables.search)) GT 0>
-    <cfset variables.getAllProducts = application.shoppingCart.fetchProducts(searchInput = variables.search)>
+    <cfset variables.getAllProducts = application.shoppingCart.fetchProducts(searchInput = variables.search ,
+                                                                            page = variables.currentPage)>
 <cfelse>
     <cflocation  url="home.cfm" addToken="no"> 
 </cfif>
@@ -43,6 +51,30 @@
                     </a>
                 </cfloop> 
             </div>
+            <nav>
+                <ul class="pagination justify-content-end">
+                    <li class="page-item 
+                    <cfif variables.currentPage EQ 1>
+                        disabled">
+                    <cfelse>
+                        ">
+                    </cfif> 
+                    <a class="page-link" href="searchResults.cfm?s=#variables.search#&page=#(variables.currentPage-1)#">Previous</a>
+                    </li>
+                    <li class="page-item active">
+                        <a class="page-link" href="##">#variables.currentPage#</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="searchResults.cfm?s=#variables.search#&page=#(variables.currentPage + 1)#">#variables.currentPage + 1 #</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="searchResults.cfm?s=#variables.search#&page=#(variables.currentPage+ 2)#">#variables.currentPage+ 2#</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="searchResults.cfm?s=#variables.search#&page=#(variables.currentPage+1)#">Next</a>
+                    </li>
+                </ul>
+            </nav>
         <cfelse>
             <div class= "productListingContainer ms-5 mb-3 ">
                 <h5>No results for "#variables.search#"</h5>

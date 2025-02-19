@@ -44,7 +44,7 @@ function increaseCount(cartId){
 
     let productActualPriceElementValue = Number(productActualPriceElement.text());
     let productTaxElementValue = Number(productTaxElement.text());
-
+    
     $.ajax({
         type:"POST",
         url: "component/shoppingcart.cfc",

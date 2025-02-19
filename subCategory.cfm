@@ -1,10 +1,14 @@
 <cfset variables.categoryId = decrypt(url.categoryId,application.key,"AES","Base64")>
-<cfset variables.getCategoryName = application.shoppingCart.fetchCategories(variables.categoryId)>
-<cfset variables.categoryName = #variables.getCategoryName[1].categoryName#>
+<cfset variables.getAllSubCategories = application.shoppingCart.fetchSubCategories(variables.categoryId)>
+<cfif  arrayLen(variables.getAllSubCategories) EQ 0>
+  <cfset variables.getCategoryName = application.shoppingCart.fetchCategories(variables.categoryId)>
+  <cfset variables.categoryName = variables.getCategoryName[1].categoryName>
+<cfelse>
+  <cfset variables.categoryName = variables.getAllSubCategories[1].categoryName>
+</cfif>
 
 <cfoutput>
 <main>
-  <cfset variables.getAllSubCategories = application.shoppingCart.fetchSubCategories(variables.categoryId)>
   <div class="container flex-column mx-auto my-5 p-5 w-50 justify-content-center bg-light shadow-lg" id ="mainDiv">
     <div class = "d-flex justify-content-between align-items-center mb-3" >
       <h3>#variables.categoryName#</h3>

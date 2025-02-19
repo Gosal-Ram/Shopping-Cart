@@ -1,4 +1,10 @@
-<cfset variables.queryGetAllOrders = application.shoppingCart.fetchOrderHistory()>
+<cfif structKeyExists(url, "page")>
+    <cfset variables.currentPage = url.page>
+<cfelse>
+    <cfset variables.currentPage = 1>
+</cfif>
+
+<cfset variables.queryGetAllOrders = application.shoppingCart.fetchOrderHistory(page  = variables.currentPage)>
 
 <cfif structKeyExists(form, "submitBtn")>
     <cfset variables.queryGetAllOrders = application.shoppingCart.fetchOrderHistory(searchTerm = form.searchInput)>
@@ -10,7 +16,7 @@
         <h2 class="mb-4">Your Orders</h2>
         <form method="POST" class="searchInputDiv"> 
             <div class="input-group my-2">  
-                <input class="form-control border-end-0 border rounded-pill" placeholder="Search OrderID" type="search" id="searchInput" name="searchInput">
+                <input class="form-control border-end-0 border rounded-pill" placeholder="Search OrderID, Productname ,OrderDate" type="search" id="searchInput" name="searchInput">
                 <span class="ms-2">
                 <button  name = "submitBtn" class="btn btn-outline-secondary bg-white border-start-0 border rounded-pill" type="submit">
                     <i class="fa fa-search"></i>
@@ -81,6 +87,30 @@
                     </div>
                 </div>
             </cfloop>
+            <nav>
+                <ul class="pagination justify-content-end">
+                    <li class="page-item 
+                    <cfif variables.currentPage EQ 1>
+                        disabled">
+                    <cfelse>
+                        ">
+                    </cfif> 
+                    <a class="page-link" href="orderDetails.cfm?page=#(variables.currentPage-1)#">Previous</a>
+                    </li>
+                    <li class="page-item active">
+                        <a class="page-link" href="##">#variables.currentPage#</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="orderDetails.cfm?page=#(variables.currentPage + 1)#">#variables.currentPage + 1 #</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="orderDetails.cfm?page=#(variables.currentPage+ 2)#">#variables.currentPage+ 2#</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="orderDetails.cfm?page=#(variables.currentPage+1)#">Next</a>
+                    </li>
+                </ul>
+              </nav>
         </cfif>
     </div>
 </main>

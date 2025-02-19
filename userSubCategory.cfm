@@ -1,9 +1,8 @@
 <cfset variables.subCategoryId = decrypt(url.subCategoryId,application.key,"AES","Base64")>
-<cfset variables.getCategoryId = application.shoppingCart.fetchSubCategories(subCategoryId = variables.subCategoryId)>
-<cfset variables.categoryId = variables.getCategoryId[1].categoryId>
-<cfset variables.subCategoryName = variables.getCategoryId[1].subCategoryName>
 <cfset variables.getAllProducts = application.shoppingCart.fetchProducts(subCategoryId = variables.subCategoryId,
                                     limit = 4)>
+<cfset variables.categoryId = variables.getAllProducts[1].categoryId>
+<cfset variables.subCategoryName = variables.getAllProducts[1].subCategoryName>
 <cfif structKeyExists(form, "sortASC")>
     <cfset variables.sortFlag = 1>
     <cfset variables.getAllProducts = application.shoppingCart.fetchProducts(subCategoryId = variables.subCategoryId,

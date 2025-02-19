@@ -1,14 +1,12 @@
 <cfset variables.productId = decrypt(url.productId,application.key,"AES","Base64")>
 
 <cfset variables.getAllProducts = application.shoppingCart.fetchProducts(productId = variables.productId)>
-<cfset variables.subCategoryId = variables.getAllProducts[1].subCategoryId>
 <cfset variables.getAllProductImages = application.shoppingCart.fetchProductImages(productId = variables.productId)>
 <!--- getting products's category, subcategory information for PRODUCT PATH UI and NAVIGATION --->
-<cfset variables.getCategoryId = application.shoppingCart.fetchSubCategories(subCategoryId = variables.subCategoryId)>
-<cfset variables.categoryId = #variables.getCategoryId[1].categoryId#>
-<cfset variables.subCategoryName = #variables.getCategoryId[1].subCategoryName#>
-<cfset variables.getCategoryName = application.shoppingCart.fetchCategories(variables.categoryId)>
-<cfset variables.categoryName = #variables.getCategoryName[1].categoryName#>
+<cfset variables.subCategoryId = variables.getAllProducts[1].subCategoryId>
+<cfset variables.subCategoryName = variables.getAllProducts[1].subCategoryName>
+<cfset variables.categoryId = variables.getAllProducts[1].categoryId>
+<cfset variables.categoryName = variables.getAllProducts[1].categoryName>
 
 <cfset variables.encryptedCategoryId = encrypt("#variables.categoryId#",application.key,"AES","Base64")>
 <cfset variables.encodedCategoryId = encodeForURL(variables.encryptedCategoryId)>

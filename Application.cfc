@@ -5,7 +5,7 @@
 
     <cffunction  name="onApplicationStart" returnType = "boolean">
         <cfset application.shoppingCart = createObject("component","component.shoppingcart")>  
-        <cfset application.key = generateSecretKey("AES")>
+        <cfset application.key = "FUnu1kBktJaxDNNH2xLsHQ==">
         <cfreturn true>
     </cffunction>
 

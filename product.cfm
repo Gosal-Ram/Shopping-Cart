@@ -1,10 +1,14 @@
 <cfset variables.subCategoryId = decrypt(url.subCategoryId,application.key,"AES","Base64")>
 <!---fetching products's categoryId ,subcategoryname for dynamic switching the categories & subcategories while adding a new product--->
-<cfset variables.getCategoryId = application.shoppingCart.fetchSubCategories(subCategoryId = variables.subCategoryId)>
-<cfset variables.categoryId = variables.getCategoryId[1].categoryId>
-<cfset variables.getSubCategoryName = application.shoppingCart.fetchSubCategories(categoryId = variables.categoryId,
-                                                                                  subCategoryId = variables.subCategoryId)>
-<cfset variables.subCategoryName = variables.getSubCategoryName[1].subCategoryName>
+<cfset variables.queryGetAllProducts = application.shoppingCart.fetchProducts(subCategoryId = variables.subCategoryId)>
+<cfif arrayLen(variables.queryGetAllProducts) EQ 0>
+  <cfset variables.getSubCategoryDetails = application.shoppingCart.fetchSubCategories(subCategoryId = variables.subCategoryId)>
+  <cfset variables.categoryId = variables.getSubCategoryDetails[1].categoryId>
+  <cfset variables.subCategoryName = variables.getSubCategoryDetails[1].subCategoryName>
+<cfelse>
+  <cfset variables.categoryId = variables.queryGetAllProducts[1].categoryId>
+  <cfset variables.subCategoryName = variables.queryGetAllProducts[1].subCategoryName>
+</cfif>
 <cfoutput>
 <main>
   <div class="container flex-column mx-auto my-5 p-5 w-50 justify-content-center bg-light shadow-lg" id ="mainDiv">
@@ -18,7 +22,6 @@
         New
       </button>
     </div>
-    <cfset variables.queryGetAllProducts = application.shoppingCart.fetchProducts(subCategoryId = variables.subCategoryId)>
     <span class="text-success" id ="productFunctionResult"></span>
     <cfloop array="#variables.queryGetAllProducts#" item = "local.product">
       <cfset variables.decryptedProductId = decrypt(local.product.productId, application.key, "AES", "Base64")>
