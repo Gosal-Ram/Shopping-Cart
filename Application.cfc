@@ -1,16 +1,30 @@
 <cfcomponent>
     <cfset this.name = "shoppingCart">
     <cfset this.sessionManagement = "true">
+    <cfset this.sessiontimeout =createTimespan(0, 0, 45, 0)>
     <cfset this.dataSource = "ShoppingCart">
 
     <cffunction  name="onApplicationStart" returnType = "boolean">
         <cfset application.shoppingCart = createObject("component","component.shoppingcart")>  
-        <cfset application.key = "FUnu1kBktJaxDNNH2xLsHQ==">
+        <cfquery name="local.queryGetAppConfig">
+            SELECT 
+                fldValue
+            FROM 
+                tblappconfiguration
+            WHERE 
+                fldKey = "secretKey"
+        </cfquery>
+        <cfset application.key = local.queryGetAppConfig.fldValue>
         <cfreturn true>
     </cffunction>
 
     <cffunction  name="onRequestStart" returnType="boolean"> 
-        <cfargument name="requestPage" type="String" required=true> 
+        <cfargument name="requestPage" type="String" required=true>
+
+        <cfif structKeyExists(url,"reload") AND url.reload EQ 1>
+            <cfset onApplicationStart()>  
+            <cfreturn true> 
+        </cfif>
 
         <cfset local.adminPages = ["/category.cfm", 
                                     "/subCategory.cfm", 
@@ -32,10 +46,6 @@
             </cfif>
         </cfif>
 
-        <cfif structKeyExists(url,"reload") AND url.reload EQ 1>
-            <cfset onApplicationStart()>  
-            <cfreturn true> 
-        </cfif>  
         <cfreturn true>
     </cffunction>
 
@@ -71,11 +81,15 @@
         (Arguments.EventName IS "onApplicationEnd")>
             <cfoutput>
                 <h2>An unexpected error occurred.</h2>
-                <p>Please provide the following information to technical support:</p>
-                <p>Error Event: #Arguments.EventName#</p>
-                <p>Error details:<br>
-                <cfdump var=#Arguments.Exception#></p>
             </cfoutput>
+
+            <cfmail to ="gosalram554@gmail.com" from = "gosalram554@gmail.com" subject="An error occured in shoppingcart.com">
+                Error Event: #Arguments.EventName#
+                Error message: #Arguments.Exception.message#
+                Line: #arguments.exception.tagContext[1].Line#
+                Template: #arguments.exception.tagContext[1].template#
+                #arguments.exception.tagContext[1].raw_trace#
+            </cfmail>
         </cfif>
     </cffunction>
 

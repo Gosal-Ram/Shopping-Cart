@@ -1,12 +1,13 @@
 <cfset variables.productId = decrypt(url.productId,application.key,"AES","Base64")>
 
 <cfset variables.getAllProducts = application.shoppingCart.fetchProducts(productId = variables.productId)>
-<cfset variables.getAllProductImages = application.shoppingCart.fetchProductImages(productId = variables.productId)>
 <!--- getting products's category, subcategory information for PRODUCT PATH UI and NAVIGATION --->
 <cfset variables.subCategoryId = variables.getAllProducts[1].subCategoryId>
 <cfset variables.subCategoryName = variables.getAllProducts[1].subCategoryName>
 <cfset variables.categoryId = variables.getAllProducts[1].categoryId>
 <cfset variables.categoryName = variables.getAllProducts[1].categoryName>
+<cfset variables.productImages = variables.getAllProducts[1].imageFilenames>
+<cfset variables.productDefaultImage = variables.getAllProducts[1].imageFilenames[1]>
 
 <cfset variables.encryptedCategoryId = encrypt("#variables.categoryId#",application.key,"AES","Base64")>
 <cfset variables.encodedCategoryId = encodeForURL(variables.encryptedCategoryId)>
@@ -42,8 +43,8 @@
                     <div class="d-flex">
                         <div class="me-3">
                             <div class="d-flex flex-column">
-                                <cfloop query="variables.getAllProductImages">
-                                    <img src="assets/images/productImages/#variables.getAllProductImages.fldImageFilename#" 
+                                <cfloop array="#variables.productImages#" item = "local.imgItem">
+                                    <img src="assets/images/productImages/#local.imgItem#" 
                                     class="img-thumbnail mb-2" 
                                     alt = "" 
                                     height ="65"
@@ -56,15 +57,15 @@
                         <div id="productCarousel" class="carousel slide w-100" data-bs-ride="carousel">
                             <div class="carousel-inner">
                                 <div class="carousel-item active">
-                                    <img src="assets/images/productImages/#local.product.imageFilename#" 
+                                    <img src="assets/images/productImages/#variables.productDefaultImage#" 
                                     id = "mainProductImage"
                                     class="d-block w-100 productImg" 
                                     alt="" 
                                     height="350">
                                 </div>
-                                <cfloop query="variables.getAllProductImages">
+                                <cfloop array="#variables.productImages#" item = "local.imgItem">
                                     <div class="carousel-item">
-                                        <img src="assets/images/productImages/#variables.getAllProductImages.fldImageFilename#" 
+                                        <img src="assets/images/productImages/#local.imgItem#" 
                                         class="d-block w-100 productImg" 
                                         alt="Product Image"
                                         height="350">
@@ -92,8 +93,7 @@
                     </h3>
                     <p class="text-success">
                         Tax : 
-                        <i class="fa-solid fa-indian-rupee-sign me-1"></i>
-                        #local.product.tax#
+                        #local.product.tax# %
                     </p>
                     <p class="product-description mt-4">
                         #local.product.description#   

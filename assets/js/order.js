@@ -136,6 +136,11 @@ function increaseCount(cartId){
 
     let productActualPriceElementValue = Number(productActualPriceElement.text());
     let productTaxElementValue = Number(productTaxElement.text());
+    let increaseBtn = document.getElementById(`btnIncrease_${cartId}`);
+    let decreaseBtn = document.getElementById(`btnDecrease_${cartId}`);
+
+    increaseBtn.disabled = true;
+    decreaseBtn.disabled = true;
 
 
     $.ajax({
@@ -146,22 +151,26 @@ function increaseCount(cartId){
             method : "editCart"
         },
         success:function(response){
-            quantityElement.innerHTML = newQuantity;
+            let responseParsed = JSON.parse(response);
+            quantityElement.innerHTML = responseParsed.updatedQuantity;
 
-            let updatedProductActualPrice = (productActualPriceElementValue / prevCount) * newQuantity;
-            let updatedProductTax = (productTaxElementValue / prevCount) * newQuantity;
+            let updatedProductActualPrice = (productActualPriceElementValue / prevCount) * responseParsed.updatedQuantity;
+            let updatedProductTax = (productTaxElementValue / prevCount) * responseParsed.updatedQuantity;
             let updatedTotalPrice = updatedProductActualPrice + updatedProductTax;
 
-            productActualPriceElement.text(updatedProductActualPrice);
-            totalActualPriceElement.text(updatedProductActualPrice);
+            productActualPriceElement.text(updatedProductActualPrice.toFixed(2));
+            totalActualPriceElement.text(updatedProductActualPrice.toFixed(2));
 
-            productTaxElement.text(updatedProductTax);
-            totalTaxElement.text(updatedProductTax);
+            productTaxElement.text(updatedProductTax.toFixed(2));
+            totalTaxElement.text(updatedProductTax.toFixed(2));
 
-            productPriceElement.text(updatedTotalPrice);
-            totalPriceElement.text(updatedTotalPrice);
+            productPriceElement.text(updatedTotalPrice.toFixed(2));
+            totalPriceElement.text(updatedTotalPrice.toFixed(2));
         }
-    })
+    }).always( function(){
+        increaseBtn.disabled = false;
+        decreaseBtn.disabled = false;
+    });
 
 }
 
@@ -180,6 +189,12 @@ function decreaseCount(cartId){
         let productActualPriceElementValue = Number(productActualPriceElement.text());
         let productTaxElementValue = Number(productTaxElement.text());
 
+        let increaseBtn = document.getElementById(`btnIncrease_${cartId}`);
+        let decreaseBtn = document.getElementById(`btnDecrease_${cartId}`);
+    
+        increaseBtn.disabled = true;
+        decreaseBtn.disabled = true;
+
 
         $.ajax({
             type:"POST",
@@ -190,21 +205,25 @@ function decreaseCount(cartId){
             },
             success:function(response){
                 let responseParsed = JSON.parse(response);
-                quantityElement.innerHTML = newQuantity;
-                let updatedProductActualPrice = (productActualPriceElementValue / prevCount) * newQuantity;
-                let updatedProductTax = (productTaxElementValue / prevCount) * newQuantity;
+                quantityElement.innerHTML = responseParsed.updatedQuantity;
+
+                let updatedProductActualPrice = (productActualPriceElementValue / prevCount) * responseParsed.updatedQuantity;
+                let updatedProductTax = (productTaxElementValue / prevCount) * responseParsed.updatedQuantity;
                 let updatedTotalPrice = updatedProductActualPrice + updatedProductTax;
 
-                productActualPriceElement.text(updatedProductActualPrice);
-                totalActualPriceElement.text(updatedProductActualPrice);
+                productActualPriceElement.text(updatedProductActualPrice.toFixed(2));
+                totalActualPriceElement.text(updatedProductActualPrice.toFixed(2));
     
-                productTaxElement.text(updatedProductTax);
-                totalTaxElement.text(updatedProductTax);
+                productTaxElement.text(updatedProductTax.toFixed(2));
+                totalTaxElement.text(updatedProductTax.toFixed(2));
     
-                productPriceElement.text(updatedTotalPrice);
-                totalPriceElement.text(updatedTotalPrice);
+                productPriceElement.text(updatedTotalPrice.toFixed(2));
+                totalPriceElement.text(updatedTotalPrice.toFixed(2));
             }
-        })
+        }).always( function(){
+            increaseBtn.disabled = false;
+            decreaseBtn.disabled = false;
+        });
     }
 
 }

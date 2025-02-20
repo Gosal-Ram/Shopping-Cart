@@ -15,7 +15,7 @@
       <a class = "card m-2 p-2 productCard overflow-hidden text-decoration-none"
         href = "userProduct.cfm?productId=#variables.encodedProductId#">
         <div>
-          <img src="./assets/images/productImages/#local.item.imageFilename#" 
+          <img src="./assets/images/productImages/#local.item.imageFilenames[1]#" 
             class="w-100 productImg"  
             alt=""  
             height = "150">

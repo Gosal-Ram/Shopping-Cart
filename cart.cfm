@@ -26,7 +26,7 @@
                                 <p class="text-muted">Brand: #local.item.brandName#</p>
                                 <div class="d-flex align-items-center">
                                     <button type = "button"
-                                        id = "btnDecrease"
+                                        id="btnDecrease_#local.item.cartId#"
                                         onClick = "decreaseCount(#local.item.cartId#)"
                                         class="btn btn-outline-primary btn-sm me-2 btn-quantity"
                                         >-
@@ -36,7 +36,8 @@
                                         #local.item.quantity#
                                     </span>
 
-                                    <button type = "button" 
+                                    <button type = "button"
+                                        id="btnIncrease_#local.item.cartId#" 
                                         onClick = "increaseCount(#local.item.cartId#)" 
                                         class="btn btn-outline-primary btn-sm btn-remove">+
                                     </button>
@@ -45,14 +46,13 @@
                             <div class="text-end">
                                 <h4>
                                     <i class="fa-solid fa-indian-rupee-sign me-1"></i>
-                                    <cfset variables.productPrice = (local.item.quantity*local.item.price) + 
-                                                                    (local.item.quantity*local.item.tax)>
+                                    <cfset variables.productTax = (local.item.quantity * local.item.price * local.item.tax) / 100>
+                                    <cfset variables.productPrice = (local.item.quantity * local.item.price) + variables.productTax>
                                     <span name ="productPrice">#variables.productPrice#</span>
                                 </h4>
                                 <p class="mb-0">
                                     Tax: 
                                     <i class="fa-solid fa-indian-rupee-sign me-1"></i>
-                                    <cfset variables.productTax = local.item.quantity*local.item.tax>
                                     <span name="productTax">#variables.productTax#</span>
                                 </p>
                                 <p class="text-muted mb-0">
@@ -78,11 +78,10 @@
                         <cfset variables.actualPrice = 0>
                         
                         <cfloop array="#variables.getCartDetails#" index="local.item">
-                            <cfset variables.totalTax = variables.totalTax + (local.item.quantity*local.item.tax)>
+                            <cfset local.itemTax = (local.item.quantity * local.item.price * local.item.tax) / 100>
+                            <cfset variables.totalTax = variables.totalTax + local.itemTax>
                             <cfset variables.actualPrice = variables.actualPrice + (local.item.quantity*local.item.price)>
-                            <cfset variables.totalPrice = variables.totalPrice + 
-                                (local.item.quantity*local.item.price) + 
-                                (local.item.quantity*local.item.tax)>
+                            <cfset variables.totalPrice = variables.actualPrice + variables.totalTax>
                         </cfloop>
 
                         <p class="d-flex justify-content-between">

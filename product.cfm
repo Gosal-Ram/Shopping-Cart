@@ -41,7 +41,7 @@
               class="border-0"  
               data-bs-toggle="modal" 
               data-bs-target="##imgModal">
-              <img src="./assets/images/productImages/#local.product.imageFileName#" 
+              <img src="./assets/images/productImages/#local.product.imageFilenames[1]#" 
                 alt="" 
                 width="85">
             </button>

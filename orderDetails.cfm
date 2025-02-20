@@ -4,7 +4,7 @@
     <cfset variables.currentPage = 1>
 </cfif>
 
-<cfset variables.queryGetAllOrders = application.shoppingCart.fetchOrderHistory(page  = variables.currentPage)>
+<cfset variables.queryGetAllOrders = application.shoppingCart.fetchOrderHistory(page = variables.currentPage)>
 
 <cfif structKeyExists(form, "submitBtn")>
     <cfset variables.queryGetAllOrders = application.shoppingCart.fetchOrderHistory(searchTerm = form.searchInput)>

@@ -23,7 +23,7 @@ function toggleView(subCategoryId){
               let productHTML = `
                   <a class="card m-2 p-2 productCard text-decoration-none" href="userProduct.cfm?productId=${productId}">
                       <div>
-                          <img src="./assets/images/productImages/${product.imageFilename}" 
+                          <img src="./assets/images/productImages/${product.imageFilenames[0]}" 
                                class="w-100"  
                                alt="${product.productName}" 
                                style="height: 150px; object-fit: contain;">

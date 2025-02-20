@@ -38,6 +38,12 @@ function increaseCount(cartId){
     let prevCount = parseInt(quantityElement.innerHTML); 
     let newQuantity = prevCount + 1 ;
 
+    let increaseBtn = document.getElementById(`btnIncrease_${cartId}`);
+    let decreaseBtn = document.getElementById(`btnDecrease_${cartId}`);
+
+    increaseBtn.disabled = true;
+    decreaseBtn.disabled = true;
+
     let productActualPriceElement = $(`#cartId_${cartId} [name='productActualPrice']`);
     let productTaxElement = $(`#cartId_${cartId} [name='productTax']`);
     let productPriceElement = $(`#cartId_${cartId} [name='productPrice']`);
@@ -54,20 +60,24 @@ function increaseCount(cartId){
         },
         success:function(response){
             let responseParsed = JSON.parse(response);
-            quantityElement.innerHTML = newQuantity;
 
-            let updatedProductActualPrice = (productActualPriceElementValue / prevCount) * newQuantity;
-            let updatedProductTax = (productTaxElementValue / prevCount) * newQuantity;
+            quantityElement.innerHTML = responseParsed.updatedQuantity;
+
+            let updatedProductActualPrice = (productActualPriceElementValue / prevCount) * responseParsed.updatedQuantity;
+            let updatedProductTax = (productTaxElementValue / prevCount) * responseParsed.updatedQuantity;
             let updatedTotalPrice = updatedProductActualPrice + updatedProductTax;
 
-            productActualPriceElement.text(updatedProductActualPrice);
+            productActualPriceElement.text(updatedProductActualPrice.toFixed(2));
 
-            productTaxElement.text(updatedProductTax);
+            productTaxElement.text(updatedProductTax.toFixed(2));
 
             productPriceElement.text(updatedTotalPrice);
             updateCartTotals();
         }
-    })
+    }).always( function(){
+        increaseBtn.disabled = false;
+        decreaseBtn.disabled = false;
+    });
 }
 
 function decreaseCount(cartId){
@@ -75,13 +85,19 @@ function decreaseCount(cartId){
     let prevCount = parseInt(quantityElement.innerHTML); 
     if(prevCount > 1){
         let newQuantity = prevCount - 1;
-        
-    let productActualPriceElement = $(`#cartId_${cartId} [name='productActualPrice']`);
-    let productTaxElement = $(`#cartId_${cartId} [name='productTax']`);
-    let productPriceElement = $(`#cartId_${cartId} [name='productPrice']`);
 
-    let productActualPriceElementValue = Number(productActualPriceElement.text());
-    let productTaxElementValue = Number(productTaxElement.text());
+        let productActualPriceElement = $(`#cartId_${cartId} [name='productActualPrice']`);
+        let productTaxElement = $(`#cartId_${cartId} [name='productTax']`);
+        let productPriceElement = $(`#cartId_${cartId} [name='productPrice']`);
+        let productActualPriceElementValue = Number(productActualPriceElement.text());
+        let productTaxElementValue = Number(productTaxElement.text());
+
+        let increaseBtn = document.getElementById(`btnIncrease_${cartId}`);
+        let decreaseBtn = document.getElementById(`btnDecrease_${cartId}`);
+    
+        increaseBtn.disabled = true;
+        decreaseBtn.disabled = true;
+
         $.ajax({
             type:"POST",
             url: "component/shoppingcart.cfc",
@@ -91,20 +107,23 @@ function decreaseCount(cartId){
             },
             success:function(response){
                 let responseParsed = JSON.parse(response);
-                quantityElement.innerHTML = newQuantity;
+                quantityElement.innerHTML = responseParsed.updatedQuantity;
 
-                let updatedProductActualPrice = (productActualPriceElementValue / prevCount) * newQuantity;
-                let updatedProductTax = (productTaxElementValue / prevCount) * newQuantity;
+                let updatedProductActualPrice = (productActualPriceElementValue / prevCount) * responseParsed.updatedQuantity;
+                let updatedProductTax = (productTaxElementValue / prevCount) * responseParsed.updatedQuantity;
                 let updatedTotalPrice = updatedProductActualPrice + updatedProductTax;
     
-                productActualPriceElement.text(updatedProductActualPrice);
+                productActualPriceElement.text(updatedProductActualPrice.toFixed(2));
     
-                productTaxElement.text(updatedProductTax);
+                productTaxElement.text(updatedProductTax.toFixed(2));
     
-                productPriceElement.text(updatedTotalPrice);     
+                productPriceElement.text(updatedTotalPrice.toFixed(2));     
                 updateCartTotals();
             }
-        })
+        }).always( function(){
+            increaseBtn.disabled = false;
+            decreaseBtn.disabled = false;
+        });
     }
 
 }

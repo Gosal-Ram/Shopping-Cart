@@ -140,22 +140,22 @@
             }>
             <cfset arrayAppend(local.subCategoriesArray, local.subCategory)>
         </cfloop>
-        <!---<cfdump  var="#local.subCategoriesArray#"> --->
         <cfreturn local.subCategoriesArray>
     </cffunction>
 
-    <cffunction  name="fetchProducts" access = "remote" returnFormat = "JSON" returnType="array">
-        <cfargument name="subCategoryId" type="string" required="false">
-        <cfargument name="sortFlag" type="string" required="false">
-        <cfargument name="filterMin" type="string" required="false">
-        <cfargument name="filterMax" type="string" required="false">
+    <cffunction name="fetchProducts" access="remote" returnFormat="JSON" returnType="array">
+        <cfargument name="subCategoryId" type="integer" required="false">
+        <cfargument name="categoryId" type="integer" required="false">
+        <cfargument name="sortFlag" type="integer" required="false">
+        <cfargument name="filterMin" type="integer" required="false">
+        <cfargument name="filterMax" type="integer" required="false">
         <cfargument name="searchInput" type="string" required="false">
-        <cfargument name="random" type="string" required="false">
-        <cfargument name="productId" type="string" required="false">
-        <cfargument name="offset" type="string" required="false">
-        <cfargument name="limit" type="numeric" required="false">
-        <cfargument name="page" type="numeric" required="false">
-
+        <cfargument name="random" type="integer" required="false">
+        <cfargument name="productId" type="integer" required="false">
+        <cfargument name="offset" type="integer" required="false">
+        <cfargument name="limit" type="integer" required="false">
+        <cfargument name="page" type="integer" required="false">
+    
         <cfquery name="local.queryGetProducts">
             SELECT 
                 P.fldProductName,
@@ -169,7 +169,8 @@
                 P.fldPrice,
                 P.fldTax,
                 B.fldBrandName,
-                PI.fldImageFilename
+                -- PI.fldImageFilename
+                GROUP_CONCAT(DISTINCT PI.fldImageFilename ORDER BY PI.fldDefaultImage DESC) AS fldAllImages
             FROM 
                 tblproduct P      
                 INNER JOIN tblbrands B ON P.fldBrandId = B.fldBrand_Id
@@ -178,59 +179,63 @@
                 INNER JOIN tblproductimages PI ON P.fldProduct_Id = PI.fldProductId 
             WHERE 
                 P.fldActive = 1 
-                AND PI.fldDefaultImage = 1
+                AND PI.fldActive = 1
+                --  AND PI.fldDefaultImage = 1
                 <cfif structKeyExists(arguments, "productId") AND val(arguments.productId)>
-                    AND fldProduct_Id = <cfqueryparam value = "#arguments.productId#" cfsqltype = "INTEGER">
+                    AND P.fldProduct_Id = <cfqueryparam value="#arguments.productId#" cfsqltype="INTEGER">
                 </cfif>
                 <cfif structKeyExists(arguments, "subCategoryId") AND val(arguments.subCategoryId)>
-                    AND P.fldSubCategoryId = <cfqueryparam value = "#arguments.subCategoryId#" cfsqltype = "INTEGER">
-                <cfelseif structKeyExists(arguments, "productId") AND val(arguments.productId)>
-                    AND P.fldProduct_Id = <cfqueryparam value = "#arguments.productId#" cfsqltype = "integer">
+                    AND P.fldSubCategoryId = <cfqueryparam value="#arguments.subCategoryId#" cfsqltype="INTEGER">
+                </cfif>
+                <cfif structKeyExists(arguments, "categoryId") AND val(arguments.categoryId)>
+                    AND C.fldCategory_Id = <cfqueryparam value="#arguments.categoryId#" cfsqltype="INTEGER">
                 </cfif>
                 <cfif structKeyExists(arguments, "searchInput") AND len(trim(arguments.searchInput))>
-                    AND (P.fldProductName LIKE <cfqueryparam value = "%#arguments.searchInput#%" cfsqltype = "varchar">
-                        OR P.fldDescription LIKE <cfqueryparam value = "%#arguments.searchInput#%" cfsqltype = "varchar">
-                        OR B.fldBrandName LIKE <cfqueryparam value = "%#arguments.searchInput#%" cfsqltype = "varchar">)
+                    AND (P.fldProductName LIKE <cfqueryparam value="%#arguments.searchInput#%" cfsqltype="varchar">
+                        OR P.fldDescription LIKE <cfqueryparam value="%#arguments.searchInput#%" cfsqltype="varchar">
+                        OR B.fldBrandName LIKE <cfqueryparam value="%#arguments.searchInput#%" cfsqltype="varchar">)
                 </cfif>
                 <cfif structKeyExists(arguments, "filterMin") AND structKeyExists(arguments, "filterMax")
                     AND val(arguments.filterMin) AND val(arguments.filterMax)>
-                    AND P.fldPrice BETWEEN <cfqueryparam value = "#arguments.filterMin#" cfsqltype = "INTEGER"> 
-                    AND <cfqueryparam value = "#arguments.filterMax#" cfsqltype = "INTEGER">  
-                    ORDER BY
-                        P.fldProductName
+                    AND P.fldPrice BETWEEN <cfqueryparam value="#arguments.filterMin#" cfsqltype="INTEGER"> 
+                    AND <cfqueryparam value="#arguments.filterMax#" cfsqltype="INTEGER">  
                 </cfif>
-                <cfif structKeyExists(arguments, "sortFlag")>
-                    <cfif arguments.sortFlag EQ 1>  
-                        ORDER BY
-                            P.fldPrice
-                    <cfelseif arguments.sortFlag EQ 2 >
-                        ORDER BY
-                            P.fldPrice DESC
-                    </cfif>
+
+            GROUP BY 
+                P.fldProduct_Id
+    
+            <cfif structKeyExists(arguments, "random") AND val(arguments.random) EQ 1>
+                ORDER BY RAND()
+                LIMIT 8
+            <cfelseif structKeyExists(arguments, "sortFlag")>
+                <cfif arguments.sortFlag EQ 1>  
+                    ORDER BY P.fldPrice
+                <cfelseif arguments.sortFlag EQ 2>
+                    ORDER BY P.fldPrice DESC
                 </cfif>
-                <cfif structKeyExists(arguments, "random") AND val(arguments.random) EQ 1>
-                    ORDER BY RAND()
-                    LIMIT 8
-                </cfif>
-                <cfif structKeyExists(arguments, "offset") AND val(arguments.offset)>
-                    LIMIT <cfqueryparam value="#arguments.limit#" cfsqltype="INTEGER"> 
-                    OFFSET <cfqueryparam value="#arguments.offset#" cfsqltype="INTEGER">
-                <cfelseif  structKeyExists(arguments, "limit") AND  val(arguments.limit)>
-                    LIMIT  #arguments.limit#
-                <cfelseif structKeyExists(arguments, "page") AND  val(arguments.page)>
-                    <cfset local.offset = (arguments.page - 1) * 10>
-                    LIMIT 10 OFFSET #local.offset#
-                </cfif>
+            <cfelse>
+                ORDER BY P.fldProductName
+            </cfif>
+    
+            <cfif structKeyExists(arguments, "offset") AND val(arguments.offset)>
+                LIMIT <cfqueryparam value="#arguments.limit#" cfsqltype="INTEGER"> 
+                OFFSET <cfqueryparam value="#arguments.offset#" cfsqltype="INTEGER">
+            <cfelseif structKeyExists(arguments, "limit") AND val(arguments.limit)>
+                LIMIT <cfqueryparam value="#arguments.limit#" cfsqltype="INTEGER">
+            <cfelseif structKeyExists(arguments, "page") AND val(arguments.page)>
+                <cfset local.offset = (arguments.page - 1) * 10>
+                LIMIT 10 OFFSET #local.offset#
+            </cfif>
         </cfquery>
+    
         <cfset local.productsArray = []>
         <cfloop query="local.queryGetProducts">
-            <cfset local.encryptedProductId = encrypt(local.queryGetProducts.fldProduct_Id, application.key,"AES","Base64")>
+            <cfset local.encryptedProductId = encrypt(local.queryGetProducts.fldProduct_Id, application.key, "AES", "Base64")>
             <cfset local.product = {
                 "productName" = local.queryGetProducts.fldProductName,
                 "subCategoryName" = local.queryGetProducts.fldSubCategoryName,
                 "categoryName" = local.queryGetProducts.fldCategoryName,
                 "productId" = local.encryptedProductId,
-                <!---  "productId" = local.queryGetProducts.fldProduct_Id,--->
                 "subCategoryId" = local.queryGetProducts.fldSubCategoryId,
                 "categoryId" = local.queryGetProducts.fldCategory_Id,
                 "brandId" = local.queryGetProducts.fldBrandId,
@@ -238,14 +243,15 @@
                 "price" = local.queryGetProducts.fldPrice,
                 "tax" = local.queryGetProducts.fldTax,
                 "brandName" = local.queryGetProducts.fldBrandName,
-                "imageFilename" = local.queryGetProducts.fldImageFilename
+                <!---"imageFilename" = local.queryGetProducts.fldImageFilename --->
+                 "imageFilenames" = listToArray(local.queryGetProducts.fldAllImages) 
             }>
             <cfset arrayAppend(local.productsArray, local.product)>
         </cfloop>
-        <!---<cfdump  var="#local.productsArray#"> --->
+    
         <cfreturn local.productsArray>
     </cffunction>
-
+    
     <cffunction  name="fetchProductImages" access = "remote" returnFormat = "JSON" returnType="query" >
         <cfargument  name="productId" type="integer" required="true">
 
@@ -444,10 +450,9 @@
                 action="uploadall"
                 destination="#expandpath("../assets/images/productImages")#"
                 nameconflict="MakeUnique"
-                accept="image/png,image/jpeg,.png,.jpg,.jpeg,.avif"
+                accept="image/*"
                 strict="true"
-                result="local.productUploadedImages"
-                allowedextensions=".png,.jpg,.jpeg,.avif">
+                result="local.productUploadedImages">
             
             <cfquery name="local.queryAddProduct" result = "local.resultQueryAddProduct">
                 INSERT INTO 
@@ -532,7 +537,7 @@
                                                 "subCategoryId" = "",
                                                 "selectedCategoryId" = ""}>
         <!---Validation--->
-        <cfif len(trim(arguments.subCategoryName)) EQ 0 OR len(trim(arguments.selectedCategoryId)) EQ 0>
+        <cfif len(trim(arguments.subCategoryName)) EQ 0 OR val(arguments.selectedCategoryId) EQ 0>
             <cfset local.editSubCategoryResult["resultMsg"] = "Please enter a Subcategory Name and select a valid Category">
         <cfelseif subCategoryUniqueCheck(subCategoryName = arguments.subCategoryName,
                                          selectedCategoryId = arguments.selectedCategoryId,
@@ -571,12 +576,12 @@
         <cfset local.editProductResult = "">
         <!---Validation--->
         <cfif len(trim(arguments.productName)) EQ 0 OR 
-            len(trim(arguments.selectedSubCategoryId)) EQ 0 OR 
-            len(trim(arguments.selectedCategoryId)) EQ 0 OR 
-            len(trim(arguments.selectedBrandId)) EQ 0 OR 
+            val(arguments.selectedSubCategoryId) EQ 0 OR 
+            val(arguments.selectedCategoryId) EQ 0 OR 
+            val(arguments.selectedBrandId) EQ 0 OR 
             len(trim(arguments.productDescription)) EQ 0 OR 
-            len(trim(arguments.productPrice)) EQ 0 OR 
-            len(trim(arguments.productTax)) EQ 0>
+            val(arguments.productPrice) EQ 0 OR 
+            val(arguments.productTax) EQ 0>
             <cfset local.editProductResult= "Please fill in all the required fields for adding a product.">
         <cfelseif productUniqueCheck(productName = arguments.productName,
                                      productId = arguments.productId,
@@ -587,10 +592,9 @@
                 action="uploadall"
                 destination="#expandpath("../assets/images/productImages")#"
                 nameconflict="MakeUnique"
-                accept="image/png,image/jpeg,.jpeg,"
+                accept="image/*"
                 strict="true"
-                result="local.productUploadedImages"
-                allowedextensions=".png,.jpg,.jpeg,">
+                result="local.productUploadedImages">
             <cfquery name="local.queryEditProduct">
                 UPDATE 
                     tblproduct
@@ -956,6 +960,7 @@
                     fldCart_Id = <cfqueryparam value = "#arguments.cartId#" cfsqltype="integer">
             </cfquery>
             <cfset local.editCartResult["resultMsg"] = "Cart Updated">
+            <cfset local.editCartResult["updatedQuantity"] = arguments.quantity>
         </cfif>
         <cfreturn local.editCartResult>
     </cffunction>
@@ -1265,7 +1270,7 @@
 				o.fldOrder_Id
             ORDER BY
                 o.fldOrderDate DESC
-            <cfif structKeyExists(arguments, "page") AND arguments.page GT 0>
+            <cfif structKeyExists(arguments, "page") AND val(arguments.page) GT 0>
                 <cfset local.offset = (arguments.page - 1) * arguments.limit>
             <cfelse>
                 <cfset local.offset = 0>
