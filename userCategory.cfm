@@ -31,7 +31,7 @@
         <cfloop collection="#variables.productStruct#" item="subCategoryId">
             <cfset local.subCategory = variables.productStruct[subCategoryId]>
 
-            <a class="h4 text-decoration-none" href="userSubCategory.cfm?subCategoryId=#local.subCategory.encryptedSubCategoryId#">
+            <a class="h4 text-decoration-none" href="/userSubCategory.cfm?subCategoryId=#local.subCategory.encryptedSubCategoryId#">
                 <h4> #local.subCategory.subCategoryName#</h4>
             </a>
 
@@ -40,7 +40,7 @@
                     <!--- Looping the struct's products Array under each subcategory --->
                     <cfset variables.encryptedProductId = encodeForURL(local.productItem.productId)>
 
-                    <a class="card m-2 p-2 productCard text-decoration-none" href="userProduct.cfm?productId=#variables.encryptedProductId#">
+                    <a class="card m-2 p-2 productCard text-decoration-none" href="/userProduct.cfm?productId=#variables.encryptedProductId#">
                         <div>
                             <img src="./assets/images/productImages/#local.productItem.imageFilename#"
                                 class="w-100 productImg"

@@ -1,4 +1,4 @@
-        <cfset local.adminWebPages = ["/category.cfm","/subCategory.cfm","/product.cfm","/login.cfm","/signup.cfm"]>
+        <cfset local.adminWebPages = ["/admin/category.cfm","/admin/subCategory.cfm","/admin/product.cfm","/login.cfm","/signup.cfm"]>
         <cfif arrayContains(local.adminWebPages, cgi.SCRIPT_NAME)>
             <footer class = "text-dark bg-white p-3 text-center w-100 position-sticky">
                 <cfif cgi.SCRIPT_NAME EQ "/login.cfm" OR cgi.SCRIPT_NAME EQ "/signup.cfm">
@@ -103,10 +103,6 @@
             </footer>
         </cfif>
         <cfswitch expression="#cgi.SCRIPT_NAME#">
-            <cfcase value="/login.cfm">
-                <script src="assets/js/login.js"></script>
-            </cfcase>
-
             <cfcase value="/cart.cfm">
                 <script src="assets/js/cart.js"></script>
             </cfcase>
@@ -119,19 +115,15 @@
                 <script src="assets/js/order.js"></script>
             </cfcase>
 
-            <cfcase value="/signup.cfm">
-                <script src="assets/js/signup.js"></script>
-            </cfcase>
-
-            <cfcase value="/category.cfm">
+            <cfcase value="/admin/category.cfm">
                 <script src="assets/js/category.js"></script>
             </cfcase>
 
-            <cfcase value="/subCategory.cfm">
+            <cfcase value="/admin/subCategory.cfm">
                 <script src="assets/js/subCategory.js"></script>
             </cfcase>
 
-            <cfcase value="/product.cfm">
+            <cfcase value="/admin/product.cfm">
                 <script src="assets/js/product.js"></script>
             </cfcase>
 
@@ -148,6 +140,7 @@
             </cfcase>
         </cfswitch>
         <script src="assets/js/common.js"></script>
+        <script src="assets/js/validations.js"></script>
     </body>
 </html>
 

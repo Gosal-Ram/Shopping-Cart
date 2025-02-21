@@ -6,7 +6,6 @@ function changeMainImage(src) {
 }
 
 function addToCartAndBuy(logInFlag, productId, buyNowFlag,encodedProductId){
-
     if(logInFlag){
         $.ajax({
             type:"POST",
@@ -23,12 +22,12 @@ function addToCartAndBuy(logInFlag, productId, buyNowFlag,encodedProductId){
                     let cartCount = cartCountPrev +1;
                     document.getElementById("cartCount").innerHTML = cartCount;
                 }
-                location.href = "cart.cfm";
+                location.href = "/cart.cfm";
 
                 if(buyNowFlag){
                     let encodedCartId = responseParsed.cartId;
                     let quantityCount = responseParsed.quantity;
-                    location.href = `order.cfm?productId=${encodedProductId}&cartId=${encodedCartId}`;
+                    location.href = `/order.cfm?productId=${encodedProductId}&cartId=${encodedCartId}`;
                 }
                 
             }
@@ -36,9 +35,9 @@ function addToCartAndBuy(logInFlag, productId, buyNowFlag,encodedProductId){
     } 
     else{
         if(buyNowFlag){
-            location.href =`login.cfm?productId=${encodedProductId}&buyNow=1`;
+            location.href =`/login.cfm?productId=${encodedProductId}&buyNow=1`;
         }else{
-            location.href =`login.cfm?productId=${encodedProductId}`;
+            location.href =`/login.cfm?productId=${encodedProductId}`;
         }
     }
 }

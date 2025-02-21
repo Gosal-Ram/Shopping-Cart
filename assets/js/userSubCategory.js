@@ -21,7 +21,7 @@ function toggleView(subCategoryId){
                 console.log(product);
                 let productId = encodeURIComponent(product.productId)
               let productHTML = `
-                  <a class="card m-2 p-2 productCard text-decoration-none" href="userProduct.cfm?productId=${productId}">
+                  <a class="card m-2 p-2 productCard text-decoration-none" href="/userProduct.cfm?productId=${productId}">
                       <div>
                           <img src="./assets/images/productImages/${product.imageFilenames[0]}" 
                                class="w-100"  

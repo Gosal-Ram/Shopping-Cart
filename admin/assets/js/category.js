@@ -37,7 +37,7 @@ function saveCategory(){
                         <button class = "btn btn-outline-info  px-3 my-2" onClick = "deleteCategory(${categoryId})">
                         <img src="./assets/images/trash.png" alt="" width="18" height="18" class="">
                         </button>
-                        <a class = "btn btn-outline-info  px-3 my-2" href ="/subCategory.cfm?categoryId=${categoryId}&categoryName=${categoryName}">
+                        <a class = "btn btn-outline-info  px-3 my-2" href ="subCategory.cfm?categoryId=${categoryId}&categoryName=${categoryName}">
                         <img src="./assets/images/right-arrow.png" alt="" width="18" height="18" class="">
                         </a>
                     </div>

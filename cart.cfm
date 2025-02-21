@@ -3,7 +3,7 @@
         <img src="assets/images/empty-cart.svg" alt="" class="img-fluid emptyCartImg">
         <h3 class="mt-4 text-muted">Your cart is empty!</h3>
         <p class="text-muted">Looks like you haven't added anything to your cart yet.</p>
-        <a href="home.cfm" class="btn btn-primary mt-3">
+        <a href="/home.cfm" class="btn btn-primary mt-3">
             <i class="fa-solid fa-shopping-cart me-2"></i> Continue Shopping
         </a>
     </div>
@@ -107,7 +107,7 @@
                             </strong>
                         </h4>
                         <a class="btn btn-success w-100 mt-3 proceedBtn text-dark fw-semibold rounded-pill"
-                            href = "order.cfm">
+                            href = "/order.cfm">
                             Proceed to Checkout
                         </a>
                     </div>

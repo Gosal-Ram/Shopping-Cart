@@ -80,16 +80,21 @@
         <cfif NOT (Arguments.EventName IS "onSessionEnd") OR
         (Arguments.EventName IS "onApplicationEnd")>
             <cfoutput>
-                <h2>An unexpected error occurred.</h2>
+                <div class="text-center mt-4">
+                    <h4>An unexpected error occurred.</h4>
+                    <a href="/home.cfm" class="btn btn-primary mt-3">
+                        <i class="fa-solid fa-shopping-cart me-2"></i> Continue Shopping
+                    </a>
+                </div>
             </cfoutput>
 
-            <cfmail to ="gosalram554@gmail.com" from = "gosalram554@gmail.com" subject="An error occured in shoppingcart.com">
+            <!--- <cfmail to ="gosalram554@gmail.com" from = "gosalram554@gmail.com" subject="An error occured in shoppingcart.com">
                 Error Event: #Arguments.EventName#
                 Error message: #Arguments.Exception.message#
                 Line: #arguments.exception.tagContext[1].Line#
                 Template: #arguments.exception.tagContext[1].template#
                 #arguments.exception.tagContext[1].raw_trace#
-            </cfmail>
+            </cfmail> --->
         </cfif>
     </cffunction>
 

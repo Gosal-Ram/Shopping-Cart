@@ -65,7 +65,7 @@
                 <button type="button" onClick = "openAddAddressModal()" class="btn btn-outline-success mt-3 fw-semibold" data-bs-toggle="modal" data-bs-target="##addAddressModal">
                     <i class="fa-solid fa-plus me-1"></i> Add Address
                 </button>
-                <a href="orderDetails.cfm" class="btn btn-outline-primary mt-3 ms-3 fw-semibold">
+                <a href="/orderDetails.cfm" class="btn btn-outline-primary mt-3 ms-3 fw-semibold">
                     <i class='fas fa-shopping-bag'></i> My Orders
                 </a>
             </div>

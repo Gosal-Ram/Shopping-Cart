@@ -12,15 +12,15 @@
             <title>Sign in | ShoppingCart</title>
           </cfcase>
 
-          <cfcase value="/category.cfm">
+          <cfcase value="/admin/category.cfm">
               <title>Admin Dashboard | Categories</title>
           </cfcase>
 
-          <cfcase value="/subCategory.cfm">
+          <cfcase value="/admin/subCategory.cfm">
               <title>Admin Dashboard | Sub Categories</title>
           </cfcase>
 
-          <cfcase value="/product.cfm">
+          <cfcase value="/admin/product.cfm">
               <title>Admin Dashboard | Products</title>
           </cfcase>
 
@@ -78,17 +78,17 @@
       <cfoutput>
         <header class="d-flex p-1 justify-content-between align-items-center w-100 bg-primary sticky-top">
             <div class="ms-2 me-4">
-              <a href = "home.cfm" class = "text-light text-decoration-none">
+              <a href = "/home.cfm" class = "text-light text-decoration-none">
                 <img src="./assets/images/grocery-cart.png" class = "py-2" alt="" width="25">
                 <span>SHOPPING CART</span>    
               </a>  
             </div>
-            <cfset local.nonNavBarPages = ["/category.cfm","/subCategory.cfm","/product.cfm","/login.cfm","/signup.cfm"]>
+            <cfset local.nonNavBarPages = ["/admin/category.cfm","/admin/subCategory.cfm","/admin/product.cfm","/login.cfm","/signup.cfm"]>
             <cfif arrayContains(local.nonNavBarPages, cgi.SCRIPT_NAME)>
               <!---  SEARCH BAR EXCLUDED FOR ADMIN DASHBOARD ,LOGIN ,SIGNUP PAGES  --->
             <cfelse>
               <!--- SEARCH BAR--->
-              <form action="searchResults.cfm" method="get" class="searchInputDiv"> 
+              <form action="/searchResults.cfm" method="get" class="searchInputDiv"> 
                 <div class="input-group my-2 " >  
                   <input class="form-control border-end-0 border rounded-pill" placeholder="Search for Products,Brands and More" type="search" id="searchInput" name="s">
                   <span class="ms-2">
@@ -103,7 +103,7 @@
               <cfif session.roleId EQ 1 AND session.isLoggedIn EQ true>
                 <!-- ADMIN UI -->
                 <div class="mx-2">
-                  <a href = "cart.cfm">
+                  <a href = "/cart.cfm">
                     <button type="button" class="btn btn-primary position-relative">
                       CART
                       <i class="bi bi-cart4"></i>
@@ -115,10 +115,10 @@
                     </button>
                   </a>
                   <span class="fw-semibold text-light">Hello #session.firstName#!</span>
-                  <a class="btn text-light" href="profile.cfm">
+                  <a class="btn text-light" href="/profile.cfm">
                     <img src="./assets/images/user.png" alt="" width="18" height="18" class="">
                   </a>
-                  <a class="btn text-light" href="category.cfm">
+                  <a class="btn text-light" href="/admin/category.cfm">
                     ADMIN
                   </a>
                   <a class="btn text-light" onClick="logOut()"> 
@@ -129,7 +129,7 @@
               <cfelseif session.roleId EQ 2 AND session.isLoggedIn EQ true>
                 <!-- LOGGED IN USER UI-->
                 <div class="mx-2">
-                  <a href = "cart.cfm">
+                  <a href = "/cart.cfm">
                     <button type="button" class="btn btn-primary position-relative">
                       CART
                       <i class="bi bi-cart4"></i>
@@ -140,7 +140,7 @@
                       </cfif>
                     </button>
                   </a>
-                  <a class="btn text-light" href="profile.cfm">
+                  <a class="btn text-light" href= "/profile.cfm">
                     <img src="./assets/images/user.png" alt="" width="18" height="18" class="">
                     <span class="fw-semibold text-light">#session.firstName#</span>
                   </a>
@@ -153,17 +153,17 @@
             <cfelse>
               <!-- NOT LOGGED IN USER UI -->
               <div class="mx-2">
-                <a href = "cart.cfm">
+                <a href = "/cart.cfm">
                   <button type="button" class="btn btn-primary position-relative">
                     CART
                     <i class="bi bi-cart4"></i>
                   </button>
                 </a>
-                <a class="btn text-light" href="signup.cfm">
+                <a class="btn text-light" href="/signup.cfm">
                   <img src="./assets/images/user.png" alt="" width="18" height="18" class="">
                   <span class="fw-semibold text-light">Hello, <span class="fw-bold text-white">Sign in</span></span>
                 </a>
-                <a class="btn text-light" href = "login.cfm"> 
+                <a class="btn text-light" href = "/login.cfm"> 
                   <img src="./assets/images/exit.png" alt="" width="18" height="18">
                   Login
                 </a>        

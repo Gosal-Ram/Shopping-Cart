@@ -83,7 +83,7 @@
                                     <div class="alert text-center p-3">
                                         <span class="fw-semibold text-danger">Your order is empty! Please add at least 1 item.</span>
                                         <br>
-                                        <a href="home.cfm" class="btn btn-primary mt-2">Shop Products</a>
+                                        <a href="/home.cfm" class="btn btn-primary mt-2">Shop Products</a>
                                     </div>
                                 </cfif>                            
                                 <div class="accordion-body">      

@@ -1,38 +1,3 @@
-function removeProduct(cartId){
-    if(confirm("Confirm remove cart item")){
-        $.ajax({
-            type:"POST",
-            url: "component/shoppingcart.cfc",
-            data:{cartId: cartId,
-                method : "deleteCartItem"
-            },
-            success:function(){
-                document.getElementById(`cartId_${cartId}`).remove();
-                location.reload();
-            }
-        })
-    }
-}
-
-function updateCartTotals() {
-    let totalActualPrice = 0;
-    let totalTax = 0;
-    let totalPrice = 0;
-
-    $(".cartItem").each(function () {
-        let productActualPrice = Number($(this).find("[name='productActualPrice']").text());
-        let productTax = Number($(this).find("[name='productTax']").text());
-
-        totalActualPrice += productActualPrice;
-        totalTax += productTax;
-        totalPrice += productActualPrice + productTax;
-    });
-    
-    $("#totalActualPrice").text(totalActualPrice);
-    $("#totalTax").text(totalTax);
-    $("#totalPrice").text(totalPrice);
-}
-
 function increaseCount(cartId){
     let quantityElement = document.getElementById(`quantityCount_${cartId}`);
     let prevCount = parseInt(quantityElement.innerHTML); 
@@ -71,7 +36,7 @@ function increaseCount(cartId){
 
             productTaxElement.text(updatedProductTax.toFixed(2));
 
-            productPriceElement.text(updatedTotalPrice);
+            productPriceElement.text(updatedTotalPrice.toFixed(2));
             updateCartTotals();
         }
     }).always( function(){
@@ -128,6 +93,37 @@ function decreaseCount(cartId){
 
 }
 
+function removeProduct(cartId){
+    if(confirm("Confirm remove cart item")){
+        $.ajax({
+            type:"POST",
+            url: "component/shoppingcart.cfc",
+            data:{cartId: cartId,
+                method : "deleteCartItem"
+            },
+            success:function(){
+                document.getElementById(`cartId_${cartId}`).remove();
+                location.reload();
+            }
+        })
+    }
+}
 
+function updateCartTotals() {
+    let totalActualPrice = 0;
+    let totalTax = 0;
+    let totalPrice = 0;
 
+    $(".cartItem").each(function () {
+        let productActualPrice = Number($(this).find("[name='productActualPrice']").text());
+        let productTax = Number($(this).find("[name='productTax']").text());
 
+        totalActualPrice += productActualPrice;
+        totalTax += productTax;
+        totalPrice += productActualPrice + productTax;
+    });
+    
+    $("#totalActualPrice").text(totalActualPrice.toFixed(2));
+    $("#totalTax").text(totalTax.toFixed(2));
+    $("#totalPrice").text(totalPrice.toFixed(2));
+}

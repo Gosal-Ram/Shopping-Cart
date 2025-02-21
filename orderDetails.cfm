@@ -48,7 +48,7 @@
                         </div>
                         <div class = "d-flex flex-column mb-0">
                             <span class="orderTitle">Order ID: #local.order.orderId#</span>
-                            <a href="generateInvoice.cfm?orderId=#local.order.orderId#" target="_blank" class="">
+                            <a href="/generateInvoice.cfm?orderId=#local.order.orderId#" target="_blank" class="">
                                 Invoice
                             </a>
                         </div>
@@ -95,19 +95,19 @@
                     <cfelse>
                         ">
                     </cfif> 
-                    <a class="page-link" href="orderDetails.cfm?page=#(variables.currentPage-1)#">Previous</a>
+                    <a class="page-link" href="/orderDetails.cfm?page=#(variables.currentPage-1)#">Previous</a>
                     </li>
                     <li class="page-item active">
                         <a class="page-link" href="##">#variables.currentPage#</a>
                     </li>
                     <li class="page-item">
-                        <a class="page-link" href="orderDetails.cfm?page=#(variables.currentPage + 1)#">#variables.currentPage + 1 #</a>
+                        <a class="page-link" href="/orderDetails.cfm?page=#(variables.currentPage + 1)#">#variables.currentPage + 1 #</a>
                     </li>
                     <li class="page-item">
-                        <a class="page-link" href="orderDetails.cfm?page=#(variables.currentPage+ 2)#">#variables.currentPage+ 2#</a>
+                        <a class="page-link" href="/orderDetails.cfm?page=#(variables.currentPage+ 2)#">#variables.currentPage+ 2#</a>
                     </li>
                     <li class="page-item">
-                        <a class="page-link" href="orderDetails.cfm?page=#(variables.currentPage+1)#">Next</a>
+                        <a class="page-link" href="/orderDetails.cfm?page=#(variables.currentPage+1)#">Next</a>
                     </li>
                 </ul>
               </nav>

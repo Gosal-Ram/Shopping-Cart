@@ -26,7 +26,7 @@
                     <cfset variables.encryptedProductId = local.product.productId>
                     <cfset variables.encodedProductId = encodeForURL(variables.encryptedProductId)>
                     <a class = "card m-2 p-2 productCard text-decoration-none" 
-                        href = "userProduct.cfm?productId=#variables.encodedProductId#">
+                        href = "/userProduct.cfm?productId=#variables.encodedProductId#">
                         <div>
                             <img src="./assets/images/productImages/#local.product.imageFilenames[1]#" 
                                 class="w-100 productImg"  
@@ -59,19 +59,19 @@
                     <cfelse>
                         ">
                     </cfif> 
-                    <a class="page-link" href="searchResults.cfm?s=#variables.search#&page=#(variables.currentPage-1)#">Previous</a>
+                    <a class="page-link" href="/searchResults.cfm?s=#variables.search#&page=#(variables.currentPage-1)#">Previous</a>
                     </li>
                     <li class="page-item active">
                         <a class="page-link" href="##">#variables.currentPage#</a>
                     </li>
                     <li class="page-item">
-                        <a class="page-link" href="searchResults.cfm?s=#variables.search#&page=#(variables.currentPage + 1)#">#variables.currentPage + 1 #</a>
+                        <a class="page-link" href="/searchResults.cfm?s=#variables.search#&page=#(variables.currentPage + 1)#">#variables.currentPage + 1 #</a>
                     </li>
                     <li class="page-item">
-                        <a class="page-link" href="searchResults.cfm?s=#variables.search#&page=#(variables.currentPage+ 2)#">#variables.currentPage+ 2#</a>
+                        <a class="page-link" href="/searchResults.cfm?s=#variables.search#&page=#(variables.currentPage+ 2)#">#variables.currentPage+ 2#</a>
                     </li>
                     <li class="page-item">
-                        <a class="page-link" href="searchResults.cfm?s=#variables.search#&page=#(variables.currentPage+1)#">Next</a>
+                        <a class="page-link" href="/searchResults.cfm?s=#variables.search#&page=#(variables.currentPage+1)#">Next</a>
                     </li>
                 </ul>
             </nav>
