@@ -24,14 +24,14 @@
         <div id ="subcategoryname-#local.item.subCategoryId#">#local.item.subCategoryName#</div>
         <div>
           <button type="button" onclick = "editSubCategory(#local.item.subCategoryId#)" class = "btn btn-outline-info  px-3 my-2" data-bs-toggle="modal" data-bs-target="##staticBackdrop">
-            <img src="./assets/images/editing.png" alt="" width="18" height="18" class="">
+            <img src="/assets/images/editing.png" alt="" width="18" height="18" class="">
           </button>
           <button class = "btn btn-outline-info  px-3 my-2" onClick = "deleteSubCategory(#local.item.subCategoryId#)">
-            <img src="./assets/images/trash.png" alt="" width="18" height="18" class="">
+            <img src="/assets/images/trash.png" alt="" width="18" height="18" class="">
           </button>
           <a class = "btn btn-outline-info  px-3 my-2" id="subcategory-link-#local.item.subCategoryId#"
             href ="/admin/product.cfm?subCategoryId=#encodedSubCategoryId#">
-            <img src="./assets/images/right-arrow.png" alt="" width="18" height="18" class="">
+            <img src="/assets/images/right-arrow.png" alt="" width="18" height="18" class="">
           </a>
         </div>
       </div>

@@ -139,8 +139,8 @@
                 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
             </cfcase>
         </cfswitch>
-        <script src="assets/js/common.js"></script>
-        <script src="assets/js/validations.js"></script>
+        <script src="/assets/js/common.js"></script>
+        <script src="/assets/js/validations.js"></script>
     </body>
 </html>
 

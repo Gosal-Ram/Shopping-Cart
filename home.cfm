@@ -1,7 +1,7 @@
 <main class="d-flex flex-column">
 <cfoutput>
   <div class="homeImgContainer mx-auto">
-     <img src="./assets/images/Photo Modern New Collection Banner.png" alt="" 
+     <img src="/assets/images/Photo Modern New Collection Banner.png" alt="" 
         class= "w-100 homeCartImg"
         height = "550">
   </div>
@@ -16,7 +16,7 @@
         <a class = "card m-2 p-2 productCard overflow-hidden text-decoration-none"
           href = "/userProduct.cfm?productId=#variables.encodedProductId#">
           <div>
-            <img src="./assets/images/productImages/#local.item.imageFilenames[1]#" 
+            <img src="./productImages/#local.item.imageFilenames[1]#" 
               class="w-100 productImg"  
               alt=""  
               height = "150">

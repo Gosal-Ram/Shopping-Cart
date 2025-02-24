@@ -1,9 +1,9 @@
-<cfset variables.queryGetAddresses = application.shoppingCart.fetchAddresses()>
+<cfset variables.queryGetAddresses = application.user.fetchAddresses()>
 
 <cfoutput>
 <main>
     <cfif structKeyExists(form,"userSubmitBtn")>   
-        <cfset variables.editUserDetailsResult = application.shoppingCart.updateUserInfo(
+        <cfset variables.editUserDetailsResult = application.user.updateUserInfo(
             firstName = form.userFirstName,
             lastName = form.userLastName,
             emailId = form.userEmail,

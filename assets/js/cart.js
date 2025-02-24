@@ -18,7 +18,7 @@ function increaseCount(cartId){
     
     $.ajax({
         type:"POST",
-        url: "component/shoppingcart.cfc",
+        url: "/component/user.cfc",
         data:{cartId: cartId,
             quantity : newQuantity,
             method : "editCart"
@@ -65,7 +65,7 @@ function decreaseCount(cartId){
 
         $.ajax({
             type:"POST",
-            url: "component/shoppingcart.cfc",
+            url: "/component/user.cfc",
             data:{cartId: cartId,
                 quantity : newQuantity,
                 method : "editCart"
@@ -93,21 +93,30 @@ function decreaseCount(cartId){
 
 }
 
-function removeProduct(cartId){
-    if(confirm("Confirm remove cart item")){
-        $.ajax({
-            type:"POST",
-            url: "component/shoppingcart.cfc",
-            data:{cartId: cartId,
-                method : "deleteCartItem"
-            },
-            success:function(){
-                document.getElementById(`cartId_${cartId}`).remove();
-                location.reload();
-            }
-        })
-    }
+function removeProduct(cartId) {
+    alertify.confirm("Confirm remove item",
+        function() { 
+            $.ajax({
+                type:"POST",
+                url: "/component/user.cfc",
+                data:{cartId: cartId,
+                    method : "deleteCartItem"
+                },
+                success:function(){
+                    document.getElementById(`cartId_${cartId}`).remove();
+                    location.reload();
+                },
+                error: function() {
+                    alertify.error('Failed to remove product');
+                }
+            })
+        },
+        function() { 
+            alertify.error('remove canceled');
+        }
+    );
 }
+
 
 function updateCartTotals() {
     let totalActualPrice = 0;

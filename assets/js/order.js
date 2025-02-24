@@ -1,18 +1,27 @@
-function removeProduct(cartId){
-    if(confirm("Confirm remove cart item")){
-        $.ajax({
-            type:"POST",
-            url: "component/shoppingcart.cfc",
-            data:{cartId: cartId,
-                method : "deleteCartItem"
-            },
-            success:function(){
-                document.getElementById(`cartId_${cartId}`).remove();
-                location.reload();
-            }
-        })
-    }
+function removeProduct(cartId) {
+    alertify.confirm("Confirm remove cart item",
+        function() { 
+            $.ajax({
+                type:"POST",
+                url: "/component/user.cfc",
+                data:{cartId: cartId,
+                    method : "deleteCartItem"
+                },
+                success:function(){
+                    document.getElementById(`cartId_${cartId}`).remove();
+                    location.reload();
+                },
+                error: function() {
+                    alertify.error('Failed to remove product');
+                }
+            })
+        },
+        function() { 
+            alertify.error('remove canceled');
+        }
+    );
 }
+
 
 function placeOrder(productId){ 
     let isValidCard = cardValidate();
@@ -27,7 +36,7 @@ function placeOrder(productId){
     
     $.ajax({
         type:"POST",
-        url: "component/shoppingcart.cfc",
+        url: "/component/user.cfc",
         data:{cardNumber: cardNumber,
             cvv: cvv,
             selectedAddress:selectedAddress,
@@ -81,7 +90,7 @@ function increaseCount(cartId){
 
     $.ajax({
         type:"POST",
-        url: "component/shoppingcart.cfc",
+        url: "/component/user.cfc",
         data:{cartId: cartId,
             quantity : newQuantity,
             method : "editCart"
@@ -134,7 +143,7 @@ function decreaseCount(cartId){
 
         $.ajax({
             type:"POST",
-            url: "component/shoppingcart.cfc",
+            url: "/component/user.cfc",
             data:{cartId: cartId,
                 quantity : newQuantity,
                 method : "editCart"

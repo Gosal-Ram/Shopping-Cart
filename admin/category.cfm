@@ -24,15 +24,15 @@
                             class = "btn btn-outline-info  px-3 my-2" 
                             data-bs-toggle="modal" 
                             data-bs-target="##staticBackdrop">
-                        <img src="./assets/images/editing.png" alt="" width="18" height="18" class="">
+                        <img src="/assets/images/editing.png" alt="" width="18" height="18" class="">
                     </button>
 
                     <button class = "btn btn-outline-info  px-3 my-2" onClick = "deleteCategory(#local.item.categoryId#)">
-                        <img src="./assets/images/trash.png" alt="" width="18" height="18" class="">
+                        <img src="/assets/images/trash.png" alt="" width="18" height="18" class="">
                     </button>
 
                     <a class = "btn btn-outline-info  px-3 my-2" href ="/admin/subCategory.cfm?categoryId=#variables.encodedCategoryId#">
-                        <img src="./assets/images/right-arrow.png" alt="" width="18" height="18" class="">
+                        <img src="/assets/images/right-arrow.png" alt="" width="18" height="18" class="">
                     </a>
                 </div>
             </div>

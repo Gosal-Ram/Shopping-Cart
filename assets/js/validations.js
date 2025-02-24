@@ -387,7 +387,7 @@ function saveProductValidate(){
         isValid = false;
     }
     else if (!namePattern.test((productName.val().trim()))) {
-        document.getElementById("productNameError").textContent = "Product Name should only contain letters";
+        document.getElementById("productNameError").textContent = "Enter  a valid product name.";
         isValid = false;
     }  
     else {
@@ -398,6 +398,10 @@ function saveProductValidate(){
     if (productDescription.val().trim().length === 0) {
         document.getElementById("productDescriptionError").textContent = "Enter product description.";
         productDescription.addClass("border-danger");
+        isValid = false;
+    } 
+    else if (!namePattern.test((productDescription.val().trim()))) {
+        document.getElementById("productDescriptionError").textContent = "Enter valid product description.";
         isValid = false;
     } 
     else {
@@ -420,6 +424,11 @@ function saveProductValidate(){
         productTax.addClass("border-danger");
         isValid = false;
     } 
+    else if ( parseFloat(productTax.val()) > 100) {
+        document.getElementById("productTaxError").textContent = "Product tax must below 100%";
+        productTax.addClass("border-danger");
+        isValid = false;
+    }
     else {
         document.getElementById("productTaxError").textContent = "";
     }
@@ -458,7 +467,7 @@ function saveProductValidate(){
 function saveSubCategoryValidate(){
     let isValid = true;
     let subCategoryName = $("#subCategoryName");
-    const namePattern = /^[A-Za-z ]+$/;
+    const namePattern = /^[A-Za-z0-9 ]+$/;
 
     if (subCategoryName.val().trim().length==0) {
         document.getElementById("subCategoryNameError").textContent = "Enter Sub Category Name";
@@ -466,7 +475,7 @@ function saveSubCategoryValidate(){
         isValid = false;
     }
     else if (!namePattern.test((subCategoryName.val().trim()))) {
-        document.getElementById("subCategoryNameError").textContent = "Subcategory Name should only contain letters";
+        document.getElementById("subCategoryNameError").textContent = "Enter a valid Sub Category Name";
         isValid = false;
     } 
     return isValid;
@@ -474,7 +483,7 @@ function saveSubCategoryValidate(){
 
 function saveCategoryValidate(){
     let isValid = true;
-    const namePattern = /^[A-Za-z ]+$/;
+    const namePattern = /^[A-Za-z0-9]+$/;
     let categoryName = $("#categoryName");
     
     if (categoryName.val().trim().length===0) {
@@ -483,7 +492,7 @@ function saveCategoryValidate(){
         isValid = false;
     }
     else if (!namePattern.test((categoryName.val().trim()))) {
-        document.getElementById("categoryNameError").textContent = "Category Name should only contain letters";
+        document.getElementById("categoryNameError").textContent = "Enter a valid Category Name";
         isValid = false;
     } 
     return isValid;

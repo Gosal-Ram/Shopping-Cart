@@ -1,15 +1,20 @@
-function logOut(){
-    if(confirm("Confirm logout")){
-        $.ajax({
-            type:"POST",
-            url: "component/shoppingcart.cfc",
-            data:{ method:"logOut"},
-            success:function(){
-              location.href= "/home.cfm";
-            }
-        })
-    }
-} 
+function logOut() {
+    alertify.confirm("Confirm logout",
+        function() { 
+            $.ajax({
+                type:"POST",
+                url: "/component/shoppingcart.cfc",
+                data:{ method:"logOut"},
+                success:function(){
+                  location.href= "/home.cfm";
+                },
+                error: function() {
+                    alertify.error('Failed logout');
+                }
+            })
+        }
+    );
+}
 
 function saveNewAddress() {
     let isaddressModalValid = addressValidate();
@@ -29,7 +34,7 @@ function saveNewAddress() {
     console.log(pincode);
     $.ajax({
         type:"POST",
-        url: "component/shoppingcart.cfc",
+        url: "/component/user.cfc",
         data:{firstName: firstName,
             lastName: lastName,
             phone: phone,

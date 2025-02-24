@@ -9,7 +9,7 @@ function addToCartAndBuy(logInFlag, productId, buyNowFlag,encodedProductId){
     if(logInFlag){
         $.ajax({
             type:"POST",
-            url: "component/shoppingcart.cfc",
+            url: "/component/user.cfc",
             data:{
                 productId: productId,
                 method : "addToCart"

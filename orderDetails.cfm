@@ -4,10 +4,10 @@
     <cfset variables.currentPage = 1>
 </cfif>
 
-<cfset variables.queryGetAllOrders = application.shoppingCart.fetchOrderHistory(page = variables.currentPage)>
+<cfset variables.queryGetAllOrders = application.user.fetchOrderHistory(page = variables.currentPage)>
 
 <cfif structKeyExists(form, "submitBtn")>
-    <cfset variables.queryGetAllOrders = application.shoppingCart.fetchOrderHistory(searchTerm = form.searchInput)>
+    <cfset variables.queryGetAllOrders = application.user.fetchOrderHistory(searchTerm = form.searchInput)>
 </cfif>
 
 <cfoutput>
@@ -67,7 +67,7 @@
                                 <cfloop from="1" to="#arrayLen(local.order.productNames)#" index="i">
                                     <tr class="text-center">
                                         <td>
-                                            <img src="./assets/images/productImages/#local.order.productImages[i]#" 
+                                            <img src="./productImages/#local.order.productImages[i]#" 
                                                 alt="#local.order.productNames[i]#" 
                                                 width="50" height="50">
                                         </td>

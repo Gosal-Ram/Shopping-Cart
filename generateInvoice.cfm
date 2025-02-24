@@ -1,6 +1,6 @@
 <cfoutput>
 
-<cfset variables.queryGetAllOrders = application.shoppingCart.fetchOrderHistory(orderId = url.orderId)>
+<cfset variables.queryGetAllOrders = application.user.fetchOrderHistory(orderId = url.orderId)>
 <cfset variables.order = variables.queryGetAllOrders[1]>
 <cfset variables.pdfFileName = "Invoice_#variables.order.orderId#_#dateTimeFormat(Now(), 'mm-dd-yyyy_HH-nn-ss')#.pdf">
 <cfheader name="Content-Disposition" value="inline;filename= #variables.pdfFileName#">

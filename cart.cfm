@@ -8,7 +8,7 @@
         </a>
     </div>
 <cfelse>
-    <cfset variables.getCartDetails = application.shoppingCart.fetchCart()>
+    <cfset variables.getCartDetails = application.user.fetchCart()>
     <cfoutput>
     <main>
         <div class="container my-3">
@@ -17,10 +17,14 @@
                 <div class="col-md-8">
                     <cfloop array="#variables.getCartDetails#" index="local.item">
                         <div class="card cartItem mb-3 p-3 d-flex flex-row align-items-center" id = "cartId_#local.item.cartId#">
-                            <img src="assets/images/productImages/#local.item.defaultImg#" alt="#local.item.productName#"
-                                class="img-fluid me-3 cartProductImg" 
-                                width = "100"
-                                height = "100">
+                            <cfset variables.encryptedProductId = encrypt("#local.item.productId#",application.key,"AES","Base64")>
+                            <cfset variables.encodedProductId = encodeForURL(variables.encryptedProductId)>
+                            <a href = "/userProduct.cfm?productId=#encodedProductId#">
+                                <img src="productImages/#local.item.defaultImg#" alt="#local.item.productName#"
+                                    class="img-fluid me-3 cartProductImg" 
+                                    width = "100"
+                                    height = "100">
+                            </a>
                             <div class="flex-grow-1">
                                 <h5 class="mb-1">#local.item.productName#</h5>
                                 <p class="text-muted">Brand: #local.item.brandName#</p>

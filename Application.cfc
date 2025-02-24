@@ -6,6 +6,8 @@
 
     <cffunction  name="onApplicationStart" returnType = "boolean">
         <cfset application.shoppingCart = createObject("component","component.shoppingcart")>  
+        <cfset application.user = createObject("component","component.user")>  
+        <cfset application.admin = createObject("component","component.admin")>  
         <cfquery name="local.queryGetAppConfig">
             SELECT 
                 fldValue

@@ -2,7 +2,7 @@ document.getElementById("categorySelect").onchange = function() {      //dyanami
     const categoryId = this.value;
     $.ajax({
         type: "POST",
-        url: "component/shoppingcart.cfc",
+        url: "/component/shoppingcart.cfc",
         data: {
             method :"fetchSubCategories",
             categoryId: categoryId
@@ -69,7 +69,7 @@ function saveProduct(){
         formattedData.append("method","addProduct");                 
         $.ajax({
             type:"POST",
-            url: "component/shoppingcart.cfc",
+            url: "/component/admin.cfc",
             data: formattedData,
             enctype: 'multipart/form-data',
             processData: false,
@@ -87,7 +87,7 @@ function saveProduct(){
         formattedData.append("method","editProduct");
         $.ajax({
             type:"POST",
-            url: "component/shoppingcart.cfc",
+            url: "/component/admin.cfc",
             data:formattedData,
             enctype: 'multipart/form-data',
             processData: false,
@@ -107,7 +107,7 @@ function editProductOpenModal(productId){
     document.querySelector(".modal-title").textContent = "Edit Product";    
     $.ajax({
         type:"POST",
-        url: "component/shoppingcart.cfc?",
+        url: "/component/shoppingcart.cfc?",
         data:{productId: productId,
               method: "fetchProducts"
         },
@@ -127,7 +127,7 @@ function editProductOpenModal(productId){
 function openImgCarousal(productId) {
     $.ajax({
         type: "POST",
-        url: "component/shoppingcart.cfc",
+        url: "/component/admin.cfc",
         data: {
             productId: productId,
             method : "fetchProductImages"
@@ -159,7 +159,7 @@ function openImgCarousal(productId) {
                 const carouselItem = `
                     <div class="carousel-item ${activeAttribute}">
                         ${imgDiv}
-                        <img src="assets/images/productImages/${responseParsed.DATA[i][2]}" class="d-block w-100" alt="Product Image">
+                        <img src="/productImages/${responseParsed.DATA[i][2]}" class="d-block w-100" alt="Product Image">
                     </div>`;
                 $("#carousalDiv").append(carouselItem);
             }
@@ -171,7 +171,7 @@ function setDefaultImage(productId){
     const productImageId = event.target.value;
     $.ajax({
         type:"POST",
-        url: "component/shoppingcart.cfc",
+        url: "/component/admin.cfc",
         data:{productId:productId,
             productImageId:productImageId,
             method : "editDefaultImg"
@@ -186,7 +186,7 @@ function deleteImage(){
     const productImageId = event.target.value;
     $.ajax({
         type:"POST",
-        url: "component/shoppingcart.cfc",
+        url: "/component/admin.cfc",
         data:{productImageId:productImageId,
               method: "deleteImg"},
         success:function(){
@@ -195,18 +195,26 @@ function deleteImage(){
     })
 }
 
-function deleteProduct(productId){
-    if(confirm("Confirm delete")){
-        $.ajax({
-            type:"POST",
-            url: "component/shoppingcart.cfc",
-            data:{productId: productId,
-                method : "deleteProduct"
-            },
-            success:function(){
-            document.getElementById(productId).remove();
-            }
-        })
-    }
+function deleteProduct(productId) {
+    alertify.confirm("Confirm delete",
+        function() { 
+            $.ajax({
+                type: "POST",
+                url: "/component/admin.cfc",
+                data:{productId: productId,
+                    method : "deleteProduct"
+                },
+                success: function() {
+                    document.getElementById(productId).remove();
+                    alertify.success('Product deleted');
+                },
+                error: function() {
+                    alertify.error('Failed to delete Product');
+                }
+            });
+        },
+        function() { 
+            alertify.error('Delete canceled');
+        }
+    );
 }
-  

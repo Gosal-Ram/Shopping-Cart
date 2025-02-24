@@ -44,7 +44,7 @@
                             <div class="me-3">
                                 <div class="d-flex flex-column">
                                     <cfloop array="#variables.productImages#" item = "local.imgItem">
-                                        <img src="assets/images/productImages/#local.imgItem#" 
+                                        <img src="productImages/#local.imgItem#" 
                                         class="img-thumbnail mb-2" 
                                         alt = "" 
                                         height ="65"
@@ -57,7 +57,7 @@
                             <div id="productCarousel" class="carousel slide w-100" data-bs-ride="carousel">
                                 <div class="carousel-inner">
                                     <div class="carousel-item active">
-                                        <img src="assets/images/productImages/#variables.productDefaultImage#" 
+                                        <img src="productImages/#variables.productDefaultImage#" 
                                         id = "mainProductImage"
                                         class="d-block w-100 productImg" 
                                         alt="" 
@@ -65,7 +65,7 @@
                                     </div>
                                     <cfloop array="#variables.productImages#" item = "local.imgItem">
                                         <div class="carousel-item">
-                                            <img src="assets/images/productImages/#local.imgItem#" 
+                                            <img src="productImages/#local.imgItem#" 
                                             class="d-block w-100 productImg" 
                                             alt="Product Image"
                                             height="350">

@@ -64,22 +64,24 @@
             <title>SHOPPING CART</title>
           </cfdefaultcase>
         </cfswitch>
-        <link rel="stylesheet" href="assets/bootstrap-5.3.3-dist/css/bootstrap.min.css">
-        <link rel="stylesheet" href="assets/bootstrap-5.3.3-dist/js/bootstrap.bundle.js">
+        <link rel="stylesheet" href="/assets/bootstrap-5.3.3-dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/assets/bootstrap-5.3.3-dist/js/bootstrap.bundle.js">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-        <link rel="stylesheet" href="assets/css/shoppingCart.css">
-        <link href="assets/images/shopping-cart.png" rel="icon">
+        <link rel="stylesheet" href="/assets/css/shoppingCart.css">
+        <link rel="stylesheet" href="/assets/css/alertify.min.css">
+        <link href="/assets/images/shopping-cart.png" rel="icon">
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
-        <script src="assets/bootstrap-5.3.3-dist/js/bootstrap.min.js"></script>
-        <script src="assets/js/jquery-3.7.1.min.js"></script>
+        <script src="/assets/bootstrap-5.3.3-dist/js/bootstrap.min.js"></script>
+        <script src="/assets/js/jquery-3.7.1.min.js"></script>
+        <script src="/assets/js/alertify.min.js"></script>
     </head>
     <body class = "overflow-x-hidden">
       <cfoutput>
         <header class="d-flex p-1 justify-content-between align-items-center w-100 bg-primary sticky-top">
             <div class="ms-2 me-4">
               <a href = "/home.cfm" class = "text-light text-decoration-none">
-                <img src="./assets/images/grocery-cart.png" class = "py-2" alt="" width="25">
+                <img src="/assets/images/grocery-cart.png" class = "py-2" alt="" width="25">
                 <span>SHOPPING CART</span>    
               </a>  
             </div>
@@ -116,13 +118,13 @@
                   </a>
                   <span class="fw-semibold text-light">Hello #session.firstName#!</span>
                   <a class="btn text-light" href="/profile.cfm">
-                    <img src="./assets/images/user.png" alt="" width="18" height="18" class="">
+                    <img src="/assets/images/user.png" alt="" width="18" height="18" class="">
                   </a>
                   <a class="btn text-light" href="/admin/category.cfm">
                     ADMIN
                   </a>
                   <a class="btn text-light" onClick="logOut()"> 
-                    <img src="./assets/images/exit.png" alt="" width="18" height="18">
+                    <img src="/assets/images/exit.png" alt="" width="18" height="18">
                     Logout
                   </a>          
                 </div>
@@ -141,11 +143,11 @@
                     </button>
                   </a>
                   <a class="btn text-light" href= "/profile.cfm">
-                    <img src="./assets/images/user.png" alt="" width="18" height="18" class="">
+                    <img src="/assets/images/user.png" alt="" width="18" height="18" class="">
                     <span class="fw-semibold text-light">#session.firstName#</span>
                   </a>
                   <a class="btn text-light" onClick="logOut()"> 
-                    <img src="./assets/images/exit.png" alt="" width="18" height="18">
+                    <img src="/assets/images/exit.png" alt="" width="18" height="18">
                     Logout
                   </a>          
                 </div>
@@ -160,11 +162,11 @@
                   </button>
                 </a>
                 <a class="btn text-light" href="/signup.cfm">
-                  <img src="./assets/images/user.png" alt="" width="18" height="18" class="">
+                  <img src="/assets/images/user.png" alt="" width="18" height="18" class="">
                   <span class="fw-semibold text-light">Hello, <span class="fw-bold text-white">Sign in</span></span>
                 </a>
                 <a class="btn text-light" href = "/login.cfm"> 
-                  <img src="./assets/images/exit.png" alt="" width="18" height="18">
+                  <img src="/assets/images/exit.png" alt="" width="18" height="18">
                   Login
                 </a>        
               </div>
@@ -174,46 +176,60 @@
           <!---  NAV BAR EXCLUDED FOR ADMIN DASHBOARD ,LOGIN ,SIGNUP PAGES  --->
         <cfelse>
           <!---  NAV BAR  --->
-          <cfset variables.getAllCategories = application.shoppingCart.fetchCategories()>
-          <cfset variables.getAllSubCategories = application.shoppingCart.fetchSubCategories()>
+          <cfif NOT structKeyExists(application, "cachedSubCategories")>
+            <cflock name="cacheDataLock" type="exclusive" timeout="10">
+              <cfif NOT structKeyExists(application, "cachedSubCategories")>
+                <cfset application.cachedSubCategories = application.shoppingCart.fetchSubCategories()>
+              </cfif>
+            </cflock>
+          </cfif>
+          <!--- <cfset variables.getFromCache = true>
+          <cfset variables.getAllSubCategories = application.shoppingCart.fetchSubCategories(getFromCache = variables.getFromCache)> --->
+          <cfset variables.getAllSubCategories = application.cachedSubCategories> 
           <cfset variables.subCategoryStruct = structNew()>
           <!---storing all subcategories in a struct to skip database call inside loop --->
-          <cfloop array="#variables.getAllSubCategories#" item="local.subItem">
-              <cfset variables.categoryId = local.subItem.categoryId>
+          <cfloop array="#variables.getAllSubCategories#" item="local.item">
+              <cfset variables.categoryId = local.item.categoryId>
               <cfif NOT structKeyExists(variables.subCategoryStruct, variables.categoryId)>
-                  <cfset variables.subCategoryStruct[variables.categoryId] = []>
+                  <cfset variables.subCategoryStruct[variables.categoryId] = {
+                    "categoryName" = local.item.categoryName,
+                    "subCategories" = []
+                }>
               </cfif>
-              <cfset arrayAppend(variables.subCategoryStruct[variables.categoryId], local.subItem)>
+              <cfif structKeyExists(local.item, "subCategoryId")>
+                <cfset arrayAppend(variables.subCategoryStruct[variables.categoryId].subCategories, {
+                    "subCategoryId" = local.item.subCategoryId,
+                    "subCategoryName" = local.item.subCategoryName
+                })>
+            </cfif>
           </cfloop>
 
           <nav class="navbar-expand-lg bg-light">
             <div class="container-fluid">
-              <div class="collapse navbar-collapse">
-                <ul class="navbar-nav justify-content-evenly w-100">
-                  <cfloop array="#variables.getAllCategories#" item="item">
-                    <cfset variables.encryptedCategoryId = encrypt("#item.categoryId#",application.key,"AES","Base64")>
-                    <cfset variables.encodedCategoryId = encodeForURL(variables.encryptedCategoryId)>
-                    <li class="nav-item toggleContainer">
-                      <a class="nav-link linkTxt" href="userCategory.cfm?categoryId=#variables.encodedCategoryId#" id="#item.categoryId#" role="button">
-                        #item.categoryName#
-                      </a>
-                      <ul class="dropdown-menu">
-                        <cfif structKeyExists(variables.subCategoryStruct, item.categoryId)>
-                            <cfloop array="#variables.subCategoryStruct[item.categoryId]#" item="subItem">
-                                <cfset variables.encryptedSubCategoryId = encrypt("#subItem.subCategoryId#", application.key, "AES", "Base64")>
-                                <cfset variables.encodedSubCategoryId = encodeForURL(variables.encryptedSubCategoryId)>
-                                <li>
-                                  <a class="dropdown-item linkTxt" href="userSubCategory.cfm?subCategoryId=#variables.encodedSubCategoryId#">
-                                    #subItem.subCategoryName#
-                                  </a>
-                                </li>
-                            </cfloop>
-                        </cfif>
-                      </ul>
-                    </li>
-                  </cfloop>
-                </ul>
-              </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="navbar-nav justify-content-evenly w-100">
+                        <cfloop collection="#variables.subCategoryStruct#" item="categoryId">
+                            <cfset variables.encryptedCategoryId = encrypt("#categoryId#", application.key, "AES", "Base64")>
+                            <cfset variables.encodedCategoryId = encodeForURL(variables.encryptedCategoryId)>
+                            <li class="nav-item toggleContainer">
+                                <a class="nav-link linkTxt" href="userCategory.cfm?categoryId=#variables.encodedCategoryId#">
+                                    #variables.subCategoryStruct[categoryId].categoryName#
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <cfloop array="#variables.subCategoryStruct[categoryId].subCategories#" item="subItem">
+                                        <cfset variables.encryptedSubCategoryId = encrypt("#subItem.subCategoryId#", application.key, "AES", "Base64")>
+                                        <cfset variables.encodedSubCategoryId = encodeForURL(variables.encryptedSubCategoryId)>
+                                        <li>
+                                            <a class="dropdown-item linkTxt" href="userSubCategory.cfm?subCategoryId=#variables.encodedSubCategoryId#">
+                                                #subItem.subCategoryName#
+                                            </a>
+                                        </li>
+                                    </cfloop>
+                                </ul>
+                            </li>
+                        </cfloop>
+                    </ul>
+                </div>
             </div>
           </nav>
         </cfif>

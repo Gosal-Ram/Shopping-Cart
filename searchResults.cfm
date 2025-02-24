@@ -28,7 +28,7 @@
                     <a class = "card m-2 p-2 productCard text-decoration-none" 
                         href = "/userProduct.cfm?productId=#variables.encodedProductId#">
                         <div>
-                            <img src="./assets/images/productImages/#local.product.imageFilenames[1]#" 
+                            <img src="./productImages/#local.product.imageFilenames[1]#" 
                                 class="w-100 productImg"  
                                 alt="" 
                                 height ="150">

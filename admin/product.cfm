@@ -41,7 +41,7 @@
               class="border-0"  
               data-bs-toggle="modal" 
               data-bs-target="##imgModal">
-              <img src="./assets/images/productImages/#local.product.imageFilenames[1]#" 
+              <img src="/productImages/#local.product.imageFilenames[1]#" 
                 alt="" 
                 width="85">
             </button>
@@ -53,11 +53,11 @@
             class = "btn btn-outline-info  px-3 my-2" 
             data-bs-toggle="modal" 
             data-bs-target="##staticBackdrop">
-            <img src="./assets/images/editing.png" alt="" width="18" height="18" class="">
+            <img src="/assets/images/editing.png" alt="" width="18" height="18" class="">
           </button>
           <button class = "btn btn-outline-info  px-3 my-2" 
             onClick = "deleteProduct(#variables.decryptedProductId#)">
-            <img src="./assets/images/trash.png" alt="" width="18" height="18" class="">
+            <img src="/assets/images/trash.png" alt="" width="18" height="18" class="">
           </button>
         </div>
       </div>
@@ -107,7 +107,7 @@
             <label class="modalLabel mb-2">Product Brand</label>
             <select class="form-select mb-2" id = "brandSelect"  name= "selectedBrandId">
               <option selected value> - Select a Brand - </option>
-              <cfset variables.queryGetAllBrands = application.shoppingCart.fetchBrands()>
+              <cfset variables.queryGetAllBrands = application.admin.fetchBrands()>
               <cfloop query="variables.queryGetAllBrands">
                 <option 
                   value="#variables.queryGetAllBrands.fldBrand_Id#">

@@ -16,7 +16,7 @@ function saveSubCategory(categoryId){
     if (document.getElementById("modalSubmitBtn").value.length==0){          // add NEW SUB CATEGORY
         $.ajax({
             type:"POST",
-            url: "component/shoppingcart.cfc",
+            url: "/component/admin.cfc",
             data:{subCategoryName: subCategoryName, 
                 selectedCategoryId:selectedCategoryId,
                 method : "addSubCategory"},
@@ -33,13 +33,13 @@ function saveSubCategory(categoryId){
                                     class = "btn btn-outline-info  px-3 my-2" 
                                     data-bs-toggle="modal" 
                                     data-bs-target="#staticBackdrop">
-                                <img src="./assets/images/editing.png" alt="" width="18" height="18" class="">
+                                <img src="/assets/images/editing.png" alt="" width="18" height="18" class="">
                             </button>
                             <button class = "btn btn-outline-info  px-3 my-2" onClick = "deleteSubCategory(${subCategoryId})">
-                                <img src="./assets/images/trash.png" alt="" width="18" height="18" class="">
+                                <img src="/assets/images/trash.png" alt="" width="18" height="18" class="">
                             </button>
                             <a class = "btn btn-outline-info  px-3 my-2" href ="/product.cfm?subCategoryId=${subCategoryId}&subCategoryName=${subCategoryName}">
-                                <img src="./assets/images/right-arrow.png" alt="" width="18" height="18" class="">
+                                <img src="/assets/images/right-arrow.png" alt="" width="18" height="18" class="">
                             </a>
                             </div>
                         </div>`;
@@ -52,7 +52,7 @@ function saveSubCategory(categoryId){
         const subCategoryId =  document.getElementById("modalSubmitBtn").value;   // edit EXISTING SUB CATEGORY
         $.ajax({
             type:"POST",
-            url: "component/shoppingcart.cfc",
+            url: "/component/admin.cfc",
             data:{subCategoryName: subCategoryName, 
                 selectedCategoryId:selectedCategoryId, 
                 subCategoryId : subCategoryId,
@@ -65,7 +65,7 @@ function saveSubCategory(categoryId){
                 if (categoryId != selectedCategoryId){
                     document.getElementById(subCategoryId).remove();
                 }
-                if(responseParsed.resultMsg != "Sub Category Name already exists"){
+                if(responseParsed.resultMsg == "Sub Category Edited"){
                     document.getElementById("subcategoryname-"+subCategoryId).textContent=responseParsed.subCategoryName;
                 }
                 // location.reload();
@@ -85,17 +85,26 @@ function editSubCategory(subCategoryId){
     
 }
 
-function deleteSubCategory(subCategoryId){
-    if(confirm("Confirm delete")){
-        $.ajax({
-            type:"POST",
-            url: "component/shoppingcart.cfc",
-            data:{subCategoryId: subCategoryId,
-                method : "deleteSubCategory"
-            },
-            success:function(){
-            document.getElementById(subCategoryId).remove();  
-            }
-        })
-    }
+function deleteSubCategory(subCategoryId) {
+    alertify.confirm("Confirm delete",
+        function() { 
+            $.ajax({
+                type:"POST",
+                url: "/component/admin.cfc",
+                data:{subCategoryId: subCategoryId,
+                    method : "deleteSubCategory"
+                },
+                success:function(){
+                document.getElementById(subCategoryId).remove();  
+                },
+                error: function() {
+                    alertify.error('Failed to delete subCategory');
+                }
+            })
+        },
+        function() { 
+            alertify.error('Delete canceled');
+        }
+    );
 }
+

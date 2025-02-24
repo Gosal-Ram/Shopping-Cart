@@ -7,12 +7,12 @@
         <!--- Product Ordering via Buy Now --->
         <cfset variables.productId = decrypt(url.productId, application.key, "AES", "Base64")>
         <cfset variables.cartId = decrypt(url.cartId, application.key, "AES", "Base64")>
-        <cfset variables.getCartDetails = application.shoppingCart.fetchCart(cartId = variables.cartId)>
+        <cfset variables.getCartDetails = application.user.fetchCart(cartId = variables.cartId)>
     <cfelse>
         <!---Product Ordering via Cart Checkout--->
-        <cfset variables.getCartDetails = application.shoppingCart.fetchCart()>
+        <cfset variables.getCartDetails = application.user.fetchCart()>
     </cfif>
-    <cfset variables.queryGetAddresses = application.shoppingCart.fetchAddresses()>
+    <cfset variables.queryGetAddresses = application.user.fetchAddresses()>
     <cfoutput>
     <main>
         <div class="container orderContainer my-3">
@@ -89,10 +89,14 @@
                                 <div class="accordion-body">      
                                     <cfloop array="#variables.getCartDetails#" index="local.item">
                                         <div class="card mb-3 p-3 d-flex flex-row align-items-center" id = "cartId_#local.item.cartId#">
-                                            <img src="assets/images/productImages/#local.item.defaultImg#" alt="#local.item.productName#"
-                                                class="img-fluid me-3 cartProductImg" 
-                                                width = "100"
-                                                height = "100">
+                                            <cfset variables.encryptedProductId = encrypt("#local.item.productId#",application.key,"AES","Base64")>
+                                            <cfset variables.encodedProductId = encodeForURL(variables.encryptedProductId)>
+                                            <a href = "/userProduct.cfm?productId=#encodedProductId#">
+                                                <img src="productImages/#local.item.defaultImg#" alt="#local.item.productName#"
+                                                    class="img-fluid me-3 cartProductImg" 
+                                                    width = "100"
+                                                    height = "100">
+                                            </a>
                                             <div class="flex-grow-1">
                                                 <h5 class="mb-1">#local.item.productName#</h5>
                                                 <p class="text-muted">Brand: #local.item.brandName#</p>

@@ -1,8 +1,10 @@
 <cfset variables.subCategoryId = decrypt(url.subCategoryId,application.key,"AES","Base64")>
 <cfset variables.getAllProducts = application.shoppingCart.fetchProducts(subCategoryId = variables.subCategoryId,
                                     limit = 4)>
-<cfset variables.categoryId = variables.getAllProducts[1].categoryId>
-<cfset variables.subCategoryName = variables.getAllProducts[1].subCategoryName>
+<cfif arrayLen(variables.getAllProducts) GT 0>
+    <cfset variables.categoryId = variables.getAllProducts[1].categoryId>
+    <cfset variables.subCategoryName = variables.getAllProducts[1].subCategoryName>
+</cfif>
 <cfif structKeyExists(form, "sortASC")>
     <cfset variables.sortFlag = 1>
     <cfset variables.getAllProducts = application.shoppingCart.fetchProducts(subCategoryId = variables.subCategoryId,
@@ -56,7 +58,7 @@
                 <a class = "card m-2 p-2 productCard text-decoration-none" 
                     href = "/userProduct.cfm?productId=#variables.encodedProductId#">
                     <div>
-                        <img src="./assets/images/productImages/#local.product.imageFilenames[1]#" 
+                        <img src="/productImages/#local.product.imageFilenames[1]#" 
                             class="w-100 productImg"  
                             alt="" 
                             height ="150">
