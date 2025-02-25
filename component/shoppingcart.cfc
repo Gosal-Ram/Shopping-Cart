@@ -174,8 +174,10 @@
     <cffunction name="fetchSubCategories" access="remote" returnFormat="JSON" returnType="array">
         <cfargument name="categoryId" type="integer" required="false">
         <cfargument name="subCategoryId" type="integer" required="false">
+        <cfargument name="getFromCache" type="boolean" required="false" default = "true">
         
-        <cfquery name="local.queryGetSubCategories">
+        <cfquery name="local.queryGetSubCategories"  
+         cachedWithin = "#(arguments.getFromCache EQ true ? createTimespan(0, 1, 0, 0): createTimespan(0, 0, 0, 0))#">
             SELECT 
                 SC.fldSubCategoryName,
                 C.fldCategoryName,
@@ -258,10 +260,9 @@
                         OR P.fldDescription LIKE <cfqueryparam value="%#arguments.searchInput#%" cfsqltype="varchar">
                         OR B.fldBrandName LIKE <cfqueryparam value="%#arguments.searchInput#%" cfsqltype="varchar">)
                 </cfif>
-                <cfif structKeyExists(arguments, "filterMin") AND structKeyExists(arguments, "filterMax")
-                    AND val(arguments.filterMin) AND val(arguments.filterMax)>
-                    AND P.fldPrice BETWEEN <cfqueryparam value="#arguments.filterMin#" cfsqltype="INTEGER"> 
-                    AND <cfqueryparam value="#arguments.filterMax#" cfsqltype="INTEGER">  
+                <cfif structKeyExists(arguments, "filterMin") AND structKeyExists(arguments, "filterMax")>
+                    AND P.fldPrice >= <cfqueryparam value="#val(arguments.filterMin)#" cfsqltype="INTEGER"> 
+                    AND P.fldPrice <= <cfqueryparam value="#val(arguments.filterMax)#" cfsqltype="INTEGER">  
                 </cfif>
 
             GROUP BY 
@@ -273,9 +274,13 @@
             <cfelseif structKeyExists(arguments, "sortFlag")>
                 <cfif arguments.sortFlag EQ 1>  
                     ORDER BY P.fldPrice
+                    LIMIT 4  
                 <cfelseif arguments.sortFlag EQ 2>
                     ORDER BY P.fldPrice DESC
+                    LIMIT 4  
                 </cfif>
+            <cfelseif structKeyExists(arguments, "filterMin") AND structKeyExists(arguments, "filterMax")>
+                LIMIT 4  
             <cfelse>
                 ORDER BY P.fldProductName
             </cfif>

@@ -1,5 +1,7 @@
 <cfset variables.categoryId = decrypt(url.categoryId,application.key,"AES","Base64")>
-<cfset variables.getAllSubCategories = application.shoppingCart.fetchSubCategories(variables.categoryId)>
+<cfset variables.getAllSubCategories = application.shoppingCart.fetchSubCategories( categoryId = variables.categoryId,
+                                                                                   getFromCache = false )>
+
 <cfif  arrayLen(variables.getAllSubCategories) EQ 0>
   <cfset variables.getCategoryName = application.shoppingCart.fetchCategories(variables.categoryId)>
   <cfset variables.categoryName = variables.getCategoryName[1].categoryName>

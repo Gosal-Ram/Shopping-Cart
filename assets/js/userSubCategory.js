@@ -1,6 +1,6 @@
 let offset = 0;
 let limit = 4;
-function toggleView(subCategoryId){
+function toggleView(subCategoryId, sortFlag, filterMin, filterMax){
     offset += 4;
     $.ajax({
         type:"POST",

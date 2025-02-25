@@ -83,24 +83,24 @@
                     <form id ="userUpdateForm" method="POST" onsubmit = "userProfileValidate()">
                         <div class="mb-3">
                             <label class="form-label">First Name</label>
-                            <input type="text" class="form-control" id="userFirstName" name="userFirstName" value = "#session.firstName#">
+                            <input type="text" class="form-control" id="userFirstName" name="userFirstName" value = "#session.firstName#" maxlength = "25">
                             <span id="firstNameError" class="text-danger"></span>
 
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Last Name</label>
-                            <input type="text" class="form-control" id="userLastName" name="userLastName" value = "#session.lastName#">
+                            <input type="text" class="form-control" id="userLastName" name="userLastName" value = "#session.lastName#" maxlength = "25">
                             <span id="lastNameError" class="text-danger"></span>
 
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Email</label>
-                            <input type="text" class="form-control" id="userEmail" name="userEmail" value = "#session.email#">
+                            <input type="text" class="form-control" id="userEmail" name="userEmail" value = "#session.email#" maxlength = "25">
                             <span id="emailIdError" class="text-danger"></span>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Phone</label>
-                            <input type="text" class="form-control" id="userPhone" name="userPhone" value = "#session.phone#">
+                            <input type="text" class="form-control" id="userPhone" name="userPhone" value = "#session.phone#" maxlength = "10">
                             <span id="phoneError" class="text-danger"></span>
                         </div>
                         <button type="submit" name = "userSubmitBtn" class="btn btn-primary w-100">Save Changes</button>

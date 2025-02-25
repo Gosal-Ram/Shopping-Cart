@@ -176,16 +176,20 @@
           <!---  NAV BAR EXCLUDED FOR ADMIN DASHBOARD ,LOGIN ,SIGNUP PAGES  --->
         <cfelse>
           <!---  NAV BAR  --->
-          <cfif NOT structKeyExists(application, "cachedSubCategories")>
+          <!--- <cfif NOT structKeyExists(application, "cachedSubCategories")>
             <cflock name="cacheDataLock" type="exclusive" timeout="10">
               <cfif NOT structKeyExists(application, "cachedSubCategories")>
                 <cfset application.cachedSubCategories = application.shoppingCart.fetchSubCategories()>
               </cfif>
             </cflock>
+          </cfif> 
+          <cfset variables.getAllSubCategories = application.cachedSubCategories> --->
+          <cfif structKeyExists(session, "roleId") AND session.roleId EQ 1>
+            <cfset variables.getFromCache = false>
+          <cfelse>
+            <cfset variables.getFromCache = true>
           </cfif>
-          <!--- <cfset variables.getFromCache = true>
-          <cfset variables.getAllSubCategories = application.shoppingCart.fetchSubCategories(getFromCache = variables.getFromCache)> --->
-          <cfset variables.getAllSubCategories = application.cachedSubCategories> 
+          <cfset variables.getAllSubCategories = application.shoppingCart.fetchSubCategories(getFromCache = variables.getFromCache)>
           <cfset variables.subCategoryStruct = structNew()>
           <!---storing all subcategories in a struct to skip database call inside loop --->
           <cfloop array="#variables.getAllSubCategories#" item="local.item">
@@ -203,6 +207,7 @@
                 })>
             </cfif>
           </cfloop>
+<!---           <cfdump  var="#variables.getAllSubCategories#"> --->  
 
           <nav class="navbar-expand-lg bg-light">
             <div class="container-fluid">

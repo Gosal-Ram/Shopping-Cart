@@ -1,3 +1,6 @@
+<cfparam  name="variables.filterMax" default = "0">
+<cfparam  name="variables.filterMin" default = "0">
+<cfparam  name="variables.sortFlag" default = "0">
 <cfset variables.subCategoryId = decrypt(url.subCategoryId,application.key,"AES","Base64")>
 <cfset variables.getAllProducts = application.shoppingCart.fetchProducts(subCategoryId = variables.subCategoryId,
                                     limit = 4)>
@@ -14,9 +17,9 @@
     <cfset variables.getAllProducts = application.shoppingCart.fetchProducts(subCategoryId = variables.subCategoryId,
                                       sortFlag = variables.sortFlag)>
 </cfif>
-<cfif structKeyExists(form, "filterBtn")>
-    <cfset variables.filterMin = form.filterMin>
-    <cfset variables.filterMax = form.filterMax>
+<cfif structKeyExists(form, "filterBtn") AND form.filterMax NEQ "" >
+    <cfset variables.filterMin = val(form.filterMin)>
+    <cfset variables.filterMax = val(form.filterMax)>
     <cfset variables.getAllProducts = application.shoppingCart.fetchProducts(subCategoryId = variables.subCategoryId,
                                       filterMin = variables.filterMin,
                                       filterMax = variables.filterMax)>
@@ -44,7 +47,7 @@
                 </button>
                 <div class="dropdown-menu">
                     <div class="d-flex filterInputContainer justify-content-between w-100">
-                        <input class="w-75" type="number" name="filterMin" placeholder="MIN" value="">
+                        <input class="w-75" type="number"  name="filterMin" placeholder="MIN" value="">
                         <input class="w-75 ms-2" type="number" name="filterMax" placeholder="MAX" value=""> 
                     </div>
                     <button class = "ms-5 mt-2 btn btn-success" name ="filterBtn"  type = "submit">Filter</button>
@@ -83,15 +86,18 @@
                 id= "viewEditBtn" 
                 type = "button" 
                 name = "viewEditBtn" 
-                onclick = "toggleView(#variables.subCategoryId#)"
+                onclick = "toggleView(#variables.subCategoryId# ,#variables.sortFlag#, #variables.filterMin# ,#variables.filterMax#)"
                 <!---button being hidden for subcategories which contain less than 4 products--->
-                <cfif structKeyExists(form, "filterBtn") OR 
+                <cfif arrayLen(variables.getAllProducts) LT 4>
+                hidden
+                </cfif>>
+                <!--- <cfif structKeyExists(form, "filterBtn") OR 
                 structKeyExists(form, "sortASC") OR 
                 structKeyExists(form, "sortDESC") OR 
                 (structKeyExists(variables, "getAllProducts") 
                 AND arrayLen(variables.getAllProducts) LT 4)>
                 hidden
-                </cfif>>
+                </cfif>> --->
                 View More
             </button>
         </div>

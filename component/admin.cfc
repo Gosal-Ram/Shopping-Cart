@@ -150,7 +150,7 @@
             </cfquery> 
             <cfset local.addCategoryResult["categoryId"] = local.resultQueryAddCategory.generated_Key> 
             <cfset local.addCategoryResult["resultMsg"]  = "Category Added">
-            <cfset structDelete(application, "cachedCategories")>
+            <!--- <cfset structDelete(application, "cachedCategories")> --->
         </cfif>
         <cfreturn local.addCategoryResult>
     </cffunction>
@@ -183,7 +183,7 @@
             </cfquery> 
             <cfset local.addSubCategoryResult["resultMsg"] = "SubCategory Added">
             <cfset local.addSubCategoryResult["subCategoryid"] = local.resultQueryAddSubCategory.generated_key>
-            <cfset structDelete(application, "cachedSubCategories")>
+            <!--- <cfset structDelete(application, "cachedSubCategories")> --->
         </cfif>
         <cfreturn local.addSubCategoryResult>
     </cffunction>
@@ -293,7 +293,7 @@
                 fldCategory_Id = <cfqueryparam value = "#arguments.categoryId#" cfsqltype = "INTEGER">
             </cfquery> 
             <cfset local.editCategoryResult = "Category Edited">
-            <cfset structDelete(application, "cachedSubCategories")>
+            <!--- <cfset structDelete(application, "cachedSubCategories")> --->
         </cfif>
         <cfreturn local.editCategoryResult>
     </cffunction>
@@ -332,7 +332,7 @@
             <cfset local.editSubCategoryResult["subCategoryName"] = arguments.subCategoryName>
             <cfset local.editSubCategoryResult["subCategoryId"] = arguments.subCategoryId>
             <cfset local.editSubCategoryResult["selectedCategoryId"] = arguments.selectedCategoryId>
-            <cfset structDelete(application, "cachedSubCategories")>
+            <!--- <cfset structDelete(application, "cachedSubCategories")> --->
         </cfif>
         <cfreturn local.editSubCategoryResult>
     </cffunction>
@@ -467,7 +467,7 @@
             WHERE 
                 C.fldCategory_Id = <cfqueryparam value = "#arguments.categoryId#" cfsqltype="integer">
         </cfquery>
-        <cfset structDelete(application, "cachedCategories")>
+        <!--- <cfset structDelete(application, "cachedCategories")> --->
         <cfreturn true>
     </cffunction>
     
@@ -511,7 +511,7 @@
             WHERE 
                 SC.fldSubCategory_Id = <cfqueryparam value = "#arguments.subCategoryId#" cfsqltype="integer">
         </cfquery>
-        <cfset structDelete(application, "cachedSubCategories")>
+        <!--- <cfset structDelete(application, "cachedSubCategories")> --->
         <cfreturn true>
     </cffunction>
 
