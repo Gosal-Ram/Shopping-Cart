@@ -8,20 +8,22 @@ function toggleView(subCategoryId, sortFlag, filterMin, filterMax){
         data:{
             subCategoryId: subCategoryId,
             offset : offset,
-            limit : limit,
+            limit : limit, 
+            sortFlag : sortFlag,
+            filterMin : filterMin,
+            filterMax : filterMax,
             method : "fetchProducts"
         },
         success:function(response){
             let data = JSON.parse(response);
-            // console.log(data);
+            console.log(data);
             if(data.length < 4 ){
                 $("#viewEditBtn").hide();
             }
             data.forEach(product => {
                 console.log(product);
                 let productId = encodeURIComponent(product.productId)
-              let productHTML = `
-                  <a class="card m-2 p-2 productCard text-decoration-none" href="/userProduct.cfm?productId=${productId}">
+               $(`<a class="card m-2 p-2 productCard text-decoration-none" href="/userProduct.cfm?productId=${productId}">
                       <div>
                           <img src="./productImages/${product.imageFilenames[0]}" 
                                class="w-100"  
@@ -43,10 +45,10 @@ function toggleView(subCategoryId, sortFlag, filterMin, filterMax){
                               </div>
                           </div>
                       </div>
-                  </a>
-              `;
-         // Append each product card to the container
-              $("#productListingContainer").append(productHTML);
+                  </a>`).hide().appendTo("#productListingContainer").fadeToggle();
+                 // Append each product card to the container
+            //   $("#productListingContainer").append(productHTML);
+
           }); 
         }
     });

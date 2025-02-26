@@ -11,18 +11,21 @@
 <cfif structKeyExists(form, "sortASC")>
     <cfset variables.sortFlag = 1>
     <cfset variables.getAllProducts = application.shoppingCart.fetchProducts(subCategoryId = variables.subCategoryId,
-                                      sortFlag = variables.sortFlag)>
+                                      sortFlag = variables.sortFlag,
+                                      limit = 4)>
 <cfelseif structKeyExists(form, "sortDESC")>
     <cfset variables.sortFlag = 2>
     <cfset variables.getAllProducts = application.shoppingCart.fetchProducts(subCategoryId = variables.subCategoryId,
-                                      sortFlag = variables.sortFlag)>
+                                      sortFlag = variables.sortFlag,
+                                      limit = 4)>
 </cfif>
 <cfif structKeyExists(form, "filterBtn") AND form.filterMax NEQ "" >
     <cfset variables.filterMin = val(form.filterMin)>
     <cfset variables.filterMax = val(form.filterMax)>
     <cfset variables.getAllProducts = application.shoppingCart.fetchProducts(subCategoryId = variables.subCategoryId,
                                       filterMin = variables.filterMin,
-                                      filterMax = variables.filterMax)>
+                                      filterMax = variables.filterMax,
+                                      limit = 4)>
 </cfif>
 <cfoutput>
 <main>

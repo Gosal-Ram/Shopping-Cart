@@ -90,13 +90,13 @@
                 </div>
             </cfoutput>
 
-            <!--- <cfmail to ="gosalram554@gmail.com" from = "gosalram554@gmail.com" subject="An error occured in shoppingcart.com">
+            <cfmail to ="gosalram554@gmail.com" from = "gosalram554@gmail.com" subject="An error occured in shoppingcart.com">
                 Error Event: #Arguments.EventName#
                 Error message: #Arguments.Exception.message#
                 Line: #arguments.exception.tagContext[1].Line#
                 Template: #arguments.exception.tagContext[1].template#
                 #arguments.exception.tagContext[1].raw_trace#
-            </cfmail> --->
+            </cfmail>
         </cfif>
     </cffunction>
 

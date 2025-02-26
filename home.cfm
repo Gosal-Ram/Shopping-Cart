@@ -6,7 +6,8 @@
         height = "550">
   </div>
   <cfset variables.random = 1 >
-  <cfset variables.getAllProducts = application.shoppingCart.fetchProducts(random = variables.random)>
+  <cfset variables.getAllProducts = application.shoppingCart.fetchProducts(random = variables.random,
+                                                                          limit = 8)>
   <cfif arrayLen(variables.getAllProducts) GT 0>
     <h3 class = "m-2 p-1">Random Products</h3>
     <div class= "productListingContainer d-flex flex-sm-wrap ms-5 mb-3 ">

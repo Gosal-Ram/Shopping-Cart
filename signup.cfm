@@ -19,11 +19,11 @@
       <span id="phoneError" class="text-danger"></span>
     
       <label for="pwd1">Password <span class="text-danger">*</span></label>
-      <input type="password" name="pwd1" id="pwd1" class="form-control my-2 p-2" placeholder="Enter your password" required>
+      <input type="password" name="pwd1" id="pwd1" class="form-control my-2 p-2" placeholder="Enter your password" autocomplete = "new-password" required>
       <span id="pwd1Error" class="text-danger"></span>
     
       <label for="pwd2">Confirm Password <span class="text-danger">*</span></label>
-      <input type="password" name="pwd2" id="pwd2" class="form-control my-2 p-2" placeholder="Confirm your password" required>
+      <input type="password" name="pwd2" id="pwd2" class="form-control my-2 p-2" placeholder="Confirm your password" autocomplete = "new-password" required>
       <span id="pwd2Error" class="text-danger"></span>
     
       <input type="submit" name="submitBtn" class="btn btn-primary rounded mt-4" value="Sign Up">

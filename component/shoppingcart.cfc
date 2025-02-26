@@ -260,36 +260,30 @@
                         OR P.fldDescription LIKE <cfqueryparam value="%#arguments.searchInput#%" cfsqltype="varchar">
                         OR B.fldBrandName LIKE <cfqueryparam value="%#arguments.searchInput#%" cfsqltype="varchar">)
                 </cfif>
-                <cfif structKeyExists(arguments, "filterMin") AND structKeyExists(arguments, "filterMax")>
-                    AND P.fldPrice >= <cfqueryparam value="#val(arguments.filterMin)#" cfsqltype="INTEGER"> 
+                <cfif structKeyExists(arguments, "filterMin")>
+                    AND P.fldPrice >= <cfqueryparam value="#val(arguments.filterMin)#" cfsqltype="INTEGER">  
+                </cfif>
+                <cfif structKeyExists(arguments, "filterMax") AND val(arguments.filterMax)>
                     AND P.fldPrice <= <cfqueryparam value="#val(arguments.filterMax)#" cfsqltype="INTEGER">  
                 </cfif>
-
             GROUP BY 
                 P.fldProduct_Id
     
-            <cfif structKeyExists(arguments, "random") AND val(arguments.random) EQ 1>
+            <cfif (structKeyExists(arguments, "random") AND val(arguments.random) EQ 1)>
                 ORDER BY RAND()
-                LIMIT 8
             <cfelseif structKeyExists(arguments, "sortFlag")>
-                <cfif arguments.sortFlag EQ 1>  
-                    ORDER BY P.fldPrice
-                    LIMIT 4  
-                <cfelseif arguments.sortFlag EQ 2>
-                    ORDER BY P.fldPrice DESC
-                    LIMIT 4  
+                <cfif arguments.sortFlag EQ 2>  
+                    ORDER BY P.fldPrice DESC 
                 </cfif>
-            <cfelseif structKeyExists(arguments, "filterMin") AND structKeyExists(arguments, "filterMax")>
-                LIMIT 4  
             <cfelse>
                 ORDER BY P.fldProductName
             </cfif>
-    
-            <cfif structKeyExists(arguments, "offset") AND val(arguments.offset)>
-                LIMIT <cfqueryparam value="#arguments.limit#" cfsqltype="INTEGER"> 
-                OFFSET <cfqueryparam value="#arguments.offset#" cfsqltype="INTEGER">
-            <cfelseif structKeyExists(arguments, "limit") AND val(arguments.limit)>
+
+            <cfif structKeyExists(arguments, "limit") AND val(arguments.limit)>
                 LIMIT <cfqueryparam value="#arguments.limit#" cfsqltype="INTEGER">
+                <cfif structKeyExists(arguments, "offset") AND val(arguments.offset)>
+                    OFFSET <cfqueryparam value="#arguments.offset#" cfsqltype="INTEGER">
+                </cfif>
             <cfelseif structKeyExists(arguments, "page") AND val(arguments.page)>
                 <cfset local.offset = (arguments.page - 1) * 10>
                 LIMIT 10 OFFSET #local.offset#
@@ -392,3 +386,8 @@
     </cffunction> 
 
 </cfcomponent>
+
+
+
+
+
