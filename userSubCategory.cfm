@@ -1,0 +1,111 @@
+<cfparam  name="variables.filterMax" default = "0">
+<cfparam  name="variables.filterMin" default = "0">
+<cfparam  name="variables.sortFlag" default = "0">
+<cfset variables.subCategoryId = decrypt(url.subCategoryId,application.key,"AES","Base64")>
+<cfset variables.getAllProducts = application.shoppingCart.fetchProducts(subCategoryId = variables.subCategoryId,
+                                    limit = 4)>
+<cfif arrayLen(variables.getAllProducts) GT 0>
+    <cfset variables.categoryId = variables.getAllProducts[1].categoryId>
+    <cfset variables.subCategoryName = variables.getAllProducts[1].subCategoryName>
+</cfif>
+<cfif structKeyExists(form, "sortASC")>
+    <cfset variables.sortFlag = 1>
+    <cfset variables.getAllProducts = application.shoppingCart.fetchProducts(subCategoryId = variables.subCategoryId,
+                                      sortFlag = variables.sortFlag,
+                                      limit = 4)>
+<cfelseif structKeyExists(form, "sortDESC")>
+    <cfset variables.sortFlag = 2>
+    <cfset variables.getAllProducts = application.shoppingCart.fetchProducts(subCategoryId = variables.subCategoryId,
+                                      sortFlag = variables.sortFlag,
+                                      limit = 4)>
+</cfif>
+<cfif structKeyExists(form, "filterBtn") AND form.filterMax NEQ "" >
+    <cfset variables.filterMin = val(form.filterMin)>
+    <cfset variables.filterMax = val(form.filterMax)>
+    <cfset variables.getAllProducts = application.shoppingCart.fetchProducts(subCategoryId = variables.subCategoryId,
+                                      filterMin = variables.filterMin,
+                                      filterMax = variables.filterMax,
+                                      limit = 4)>
+</cfif>
+<cfoutput>
+<main>
+<cfif arrayLen(variables.getAllProducts) EQ 0>
+    <h3 class= "m-2 p-3">No products found</h3>
+<cfelse>
+    <form method ="post"> 
+    <div class="container-fluid my-3">
+        <div class = "d-flex justify-content-between align-items-center">
+            <div>
+                <h3 class="ms-3">#variables.subCategoryName#</h3>
+                <button class = "btn" name ="sortASC"  type = "submit">
+                    <span class = "min ASC">Price low to High</span>
+                </button>
+                <button class = "btn" name ="sortDESC" type = "submit">
+                    <span class = "max DESC ms-4">Price High to low</span>
+                </button>
+            </div>
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle me-3" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Filter
+                </button>
+                <div class="dropdown-menu">
+                    <div class="d-flex filterInputContainer justify-content-between w-100">
+                        <input class="w-75" type="number"  name="filterMin" placeholder="MIN" value="">
+                        <input class="w-75 ms-2" type="number" name="filterMax" placeholder="MAX" value=""> 
+                    </div>
+                    <button class = "ms-5 mt-2 btn btn-success" name ="filterBtn"  type = "submit">Filter</button>
+                </div>
+            </div>
+        </div>
+        <div class= "productListingContainer d-flex flex-sm-wrap ms-5 mb-3" id ="productListingContainer">
+            <cfloop array="#variables.getAllProducts#" item = "local.product">
+                <cfset variables.encryptedProductId = local.product.productId>
+                <cfset variables.encodedProductId = encodeForURL(variables.encryptedProductId)>
+                <a class = "card m-2 p-2 productCard text-decoration-none" 
+                    href = "/userProduct.cfm?productId=#variables.encodedProductId#">
+                    <div>
+                        <img src="/productImages/#local.product.imageFilenames[1]#" 
+                            class="w-100 productImg"  
+                            alt="" 
+                            height ="150">
+                        <div class="card-body">
+                            <h6 class="card-title" id = "#local.product.productId#">
+                                #local.product.productName#
+                            </h6>
+                            <div class="card-text text-muted">  #local.product.brandName#</div>
+                            <div class="card-text text-dark fw-semibold">
+                                <i class="fa-solid fa-indian-rupee-sign me-1"></i>
+                                #local.product.price#
+                            </div>
+                            <div class="card-text productDescription">#local.product.description#</div>
+                        </div>
+                    </div>
+                </a>
+            </cfloop>
+        </div>
+        <div class = "viewEditBtnDiv d-flex justify-content-end me-3">
+            <button class = "btn btn-secondary" 
+                value = "4" 
+                id= "viewEditBtn" 
+                type = "button" 
+                name = "viewEditBtn" 
+                onclick = "toggleView(#variables.subCategoryId# ,#variables.sortFlag#, #variables.filterMin# ,#variables.filterMax#)"
+                <!---button being hidden for subcategories which contain less than 4 products--->
+                <cfif arrayLen(variables.getAllProducts) LT 4>
+                hidden
+                </cfif>>
+                <!--- <cfif structKeyExists(form, "filterBtn") OR 
+                structKeyExists(form, "sortASC") OR 
+                structKeyExists(form, "sortDESC") OR 
+                (structKeyExists(variables, "getAllProducts") 
+                AND arrayLen(variables.getAllProducts) LT 4)>
+                hidden
+                </cfif>> --->
+                View More
+            </button>
+        </div>
+    </div>
+    <form>
+</cfif>
+</main>
+</cfoutput>
