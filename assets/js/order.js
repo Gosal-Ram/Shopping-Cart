@@ -22,7 +22,6 @@ function removeProduct(cartId) {
     );
 }
 
-
 function placeOrder(productId){ 
     let isValidCard = cardValidate();
     if(!isValidCard){

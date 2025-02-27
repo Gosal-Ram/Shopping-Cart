@@ -19,18 +19,18 @@ function loginValidate() {
 }
 
 function signupValidate() {
-    let firstName = $("#firstName");
-    let lastName = $("#lastName");
-    let emailId = $("#emailId");
-    let pwd1 = $("#pwd1");
-    let pwd2 = $("#pwd2");
-    let phone = $("#phone");
-    let firstNameError = document.getElementById("firstNameError");
-    let lastNameError = document.getElementById("lastNameError");
-    let emailIdError = document.getElementById("emailIdError");
-    let pwd1Error = document.getElementById("pwd1Error");
-    let pwd2Error = document.getElementById("pwd2Error");
-    let phoneError = document.getElementById("phoneError");
+    const firstName = $("#firstName");
+    const lastName = $("#lastName");
+    const emailId = $("#emailId");
+    const pwd1 = $("#pwd1");
+    const pwd2 = $("#pwd2");
+    const phone = $("#phone");
+    const firstNameError = document.getElementById("firstNameError");
+    const lastNameError = document.getElementById("lastNameError");
+    const emailIdError = document.getElementById("emailIdError");
+    const pwd1Error = document.getElementById("pwd1Error");
+    const pwd2Error = document.getElementById("pwd2Error");
+    const phoneError = document.getElementById("phoneError");
     let isValid = true;
 
     if (!validateName(firstName, firstNameError)) isValid = false;
@@ -117,8 +117,8 @@ function userProfileValidate() {
 }
 
 function saveProductValidate(){
-    let productName = $("#productName");
-    let productDescription = $("#productDescription");
+    const productName = $("#productName");
+    const productDescription = $("#productDescription");
     const productPrice = $("#productPrice");
     const productTax = $("#productTax");
     const productTaxValue = productTax.val().trim();
@@ -178,16 +178,16 @@ function saveProductValidate(){
 }
 
 function saveSubCategoryValidate(){
-    let subCategoryName = $("#subCategoryName");
-    let subCategoryNameError = document.getElementById("subCategoryNameError");
+    const subCategoryName = $("#subCategoryName");
+    const subCategoryNameError = document.getElementById("subCategoryNameError");
     let isValid = true;
     if (!validateNameWithDigits(subCategoryName, subCategoryNameError, "Enter a valid sub category name")) isValid = false;
     return isValid;
 }
 
 function saveCategoryValidate(){
-    let categoryName = $("#categoryName");
-    let categoryNameError = document.getElementById("categoryNameError");
+    const categoryName = $("#categoryName");
+    const categoryNameError = document.getElementById("categoryNameError");
     let isValid = true;
     if (!validateNameWithDigits(categoryName, categoryNameError, "Enter a valid category name")) isValid = false;
     return isValid;

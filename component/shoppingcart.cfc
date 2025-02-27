@@ -234,7 +234,6 @@
                 P.fldPrice,
                 P.fldTax,
                 B.fldBrandName,
-                -- PI.fldImageFilename
                 GROUP_CONCAT(DISTINCT PI.fldImageFilename ORDER BY PI.fldDefaultImage DESC) AS fldAllImages
             FROM 
                 tblproduct P      
@@ -245,7 +244,6 @@
             WHERE 
                 P.fldActive = 1 
                 AND PI.fldActive = 1
-                --  AND PI.fldDefaultImage = 1
                 <cfif structKeyExists(arguments, "productId") AND val(arguments.productId)>
                     AND P.fldProduct_Id = <cfqueryparam value="#arguments.productId#" cfsqltype="INTEGER">
                 </cfif>
@@ -268,7 +266,6 @@
                 </cfif>
             GROUP BY 
                 P.fldProduct_Id
-    
             <cfif (structKeyExists(arguments, "random") AND val(arguments.random) EQ 1)>
                 ORDER BY RAND()
             <cfelseif structKeyExists(arguments, "sortFlag")>
@@ -305,8 +302,7 @@
                 "price" = local.queryGetProducts.fldPrice,
                 "tax" = local.queryGetProducts.fldTax,
                 "brandName" = local.queryGetProducts.fldBrandName,
-                <!---"imageFilename" = local.queryGetProducts.fldImageFilename --->
-                 "imageFilenames" = listToArray(local.queryGetProducts.fldAllImages) 
+                "imageFilenames" = listToArray(local.queryGetProducts.fldAllImages) 
             }>
             <cfset arrayAppend(local.productsArray, local.product)>
         </cfloop>
@@ -386,8 +382,3 @@
     </cffunction> 
 
 </cfcomponent>
-
-
-
-
-

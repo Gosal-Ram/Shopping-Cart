@@ -134,14 +134,12 @@ function openImgCarousal(productId) {
         },
         success: function(response) {
             const responseParsed = JSON.parse(response);
+            console.log(responseParsed)
             $("#carousalDiv").empty();
-            for (let i = 0; i < responseParsed.DATA.length; i++) {
-                /*  responseParsed.DATA[i][3]   -- fldDefaultImg 
-                    responseParsed.DATA[i][0]   -- fldImageId 
-                    responseParsed.DATA[i][2]   -- fldImageFileName */
+            for (let i = 0; i < responseParsed.length; i++) {
                 let activeAttribute = "";
                 let imgDiv = "";
-                if (responseParsed.DATA[i][3] === 1) {     //if thumbnail img
+                if (responseParsed[i].thumbnailFlag == 1) {     //if thumbnail img
                     activeAttribute = "active";
                     imgDiv = `
                         <div class="text-center p-2">
@@ -151,15 +149,15 @@ function openImgCarousal(productId) {
                     activeAttribute = "";
                     imgDiv = `
                         <div class="d-flex justify-content-center pb-3 gap-5">
-                            <button class="btn btn-outline-success" value="${responseParsed.DATA[i][0]}" onclick="setDefaultImage(${responseParsed.DATA[i][1]})">Set Thumbnail</button>
-                            <button class="btn btn-outline-danger" value="${responseParsed.DATA[i][0]}" onclick="deleteImage()">Delete</button>
+                            <button class="btn btn-outline-success" value="${responseParsed[i].productImageId}" onclick="setDefaultImage(${responseParsed[i].productId})">Set Thumbnail</button>
+                            <button class="btn btn-outline-danger" value="${responseParsed[i].productImageId}" onclick="deleteImage('${responseParsed[i].imageFileName}')">Delete</button>
                         </div>`;
                 }
             
                 const carouselItem = `
                     <div class="carousel-item ${activeAttribute}">
                         ${imgDiv}
-                        <img src="/productImages/${responseParsed.DATA[i][2]}" class="d-block w-100" alt="Product Image">
+                        <img src="/productImages/${responseParsed[i].imageFileName}" class="d-block w-100" alt="Product Image">
                     </div>`;
                 $("#carousalDiv").append(carouselItem);
             }
@@ -182,15 +180,18 @@ function setDefaultImage(productId){
     })
 }
 
-function deleteImage(){
+function deleteImage(fileName){
     const productImageId = event.target.value;
+    console.log(fileName);
     $.ajax({
         type:"POST",
         url: "/component/admin.cfc",
         data:{productImageId:productImageId,
+                fileName : fileName,
               method: "deleteImg"},
-        success:function(){
-            location.reload();
+        success:function(response){
+            console.log(response);
+            // location.reload();
         }
     })
 }

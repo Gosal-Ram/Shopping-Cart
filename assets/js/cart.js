@@ -117,7 +117,6 @@ function removeProduct(cartId) {
     );
 }
 
-
 function updateCartTotals() {
     let totalActualPrice = 0;
     let totalTax = 0;

@@ -13,9 +13,11 @@
         <cfreturn local.queryGetBrands>
     </cffunction>
     
-    <cffunction  name="fetchProductImages" access = "remote" returnFormat = "JSON" returnType="query" >
-        <cfargument  name="productId" type="integer" required="true">
+    <cffunction  name="fetchProductImages" access = "remote" returnFormat = "JSON" returnType="array" >
+        <cfargument  name="productId" type="integer" required="false">
+        <cfargument  name="productImageId" type="integer" required="false">
 
+        <cfset hardDelete()>
         <cfquery name="local.queryGetProductImages">
             SELECT 
                 fldProductImage_Id,
@@ -25,10 +27,24 @@
             FROM 
                 tblproductimages      
             WHERE 
-                fldProductId = <cfqueryparam value = "#arguments.productId#" cfsqltype = "integer"> 
+                <cfif structKeyExists(arguments, "productId") AND val(arguments.productId)>
+                    fldProductId = <cfqueryparam value = "#arguments.productId#" cfsqltype = "integer"> 
+                <cfelseif structKeyExists(arguments, "productImageId") AND val(arguments.productImageId)>
+                    fldProductImage_Id = <cfqueryparam value = "#arguments.productImageId#" cfsqltype = "integer">
+                </cfif>
                 AND fldActive = 1
-        </cfquery> 
-        <cfreturn local.queryGetProductImages>
+        </cfquery>
+        <cfset local.productImagesArray = []>
+        <cfloop query="local.queryGetProductImages">
+            <cfset local.productImage = {
+                "productId" = local.queryGetProductImages.fldProductId,
+                "productImageId" = local.queryGetProductImages.fldProductImage_Id,
+                "thumbnailFlag" = local.queryGetProductImages.fldDefaultImage,
+                "imageFileName" = local.queryGetProductImages.fldImageFilename
+            }>
+            <cfset arrayAppend(local.productImagesArray, local.productImage)>
+        </cfloop>
+        <cfreturn local.productImagesArray>
     </cffunction>
 
     <cffunction  name="categoryUniqueCheck" access = "public" returnType="numeric">
@@ -217,7 +233,7 @@
         <cfelse>
             <cffile
                 action="uploadall"
-                destination="#expandpath("../productImages")#"
+                destination="#expandpath("/productImages")#"
                 nameconflict="MakeUnique"
                 accept="image/*"
                 strict="true"
@@ -367,7 +383,7 @@
         <cfelse>
             <cffile
                 action="uploadall"
-                destination="#expandpath("../assets/productImages")#"
+                destination="#expandpath("/productImages")#"
                 nameconflict="MakeUnique"
                 accept="image/*"
                 strict="true"
@@ -427,9 +443,10 @@
         </cfquery>
     </cffunction>
 
-    <cffunction  name="deleteImg" access = "remote" returnType = "void">
-        <cfargument name="productImageId" type="integer" required="true">
+    <cffunction  name="deleteImg" access = "remote" returnType = "any">
+        <cfargument name="productImageId" type="integer" required="false">
 
+        <cfset local.getProductImages = fetchProductImages(productImageId = arguments.productImageId)>
         <cfquery name="local.queryDeleteDefaultImg" >
             UPDATE 
                 tblproductimages
@@ -440,11 +457,46 @@
             WHERE 
                 fldProductImage_Id = <cfqueryparam value = "#arguments.productImageId#" cfsqltype = "integer"> 
         </cfquery>
+        <cffile action = "delete" file = "#expandPath('/productImages/#local.getProductImages[1].imageFileName#')#">
+        <cfreturn local.getProductImages>
+    </cffunction>
+
+    <cffunction  name="hardDeleteImg" access = "public" returnType = "void">
+        <cfargument  name="productId" type="integer"  required ="false">
+        <cfargument  name="subCategoryId" type="integer"  required ="false">
+        <cfargument  name="categoryId" type="integer"  required ="false">
+
+        <cfquery name="local.queryGetProductImages">
+            SELECT 
+                fldImageFilename
+            FROM 
+                tblproductimages PI
+                LEFT JOIN 
+                    tblProduct P ON P.fldProduct_Id = PI.fldProductId
+                LEFT JOIN 
+                    tblsubCategory SC ON SC.fldSubCategory_Id = P.fldSubCategoryId
+                LEFT JOIN 
+                    tblcategory C ON C.fldCategory_Id = SC.fldCategoryId
+            WHERE 
+                <cfif structKeyExists(arguments, "productId") AND val(arguments.productId)>
+                    P.fldProduct_Id = <cfqueryparam value = "#arguments.productId#" cfsqltype = "integer"> 
+                <cfelseif structKeyExists(arguments, "categoryId") AND val(arguments.categoryId)>
+                    C.fldCategory_Id = <cfqueryparam value = "#arguments.categoryId#" cfsqltype = "integer">
+                <cfelseif structKeyExists(arguments, "subCategoryId") AND val(arguments.subCategoryId)>
+                    SC.fldSubCategory_Id = <cfqueryparam value = "#arguments.subCategoryId#" cfsqltype = "integer">
+                </cfif>
+                AND fldDefaultImage != 1
+        </cfquery>
+        <cfloop query="local.queryGetProductImages">
+            <cffile action = "delete" file = "#expandPath('/productImages/#local.queryGetProductImages.fldImageFilename#')#">
+        </cfloop>
     </cffunction>
 
     <cffunction  name="deleteCategory" access="remote" returnType = "boolean">
         <cfargument  name="categoryId" type="integer" required ="true">
-        <cfquery name = "locA.querySoftDeleteCategory">
+
+        <cfset hardDeleteImg(categoryId = arguments.categoryId)>
+        <cfquery name = "local.querySoftDeleteCategory">
             UPDATE 
                 tblcategory C
                 LEFT JOIN 
@@ -466,6 +518,7 @@
 
             WHERE 
                 C.fldCategory_Id = <cfqueryparam value = "#arguments.categoryId#" cfsqltype="integer">
+                AND PI.fldDefaultImage != 1 
         </cfquery>
         <!--- <cfset structDelete(application, "cachedCategories")> --->
         <cfreturn true>
@@ -473,6 +526,8 @@
     
     <cffunction  name="deleteProduct" access="remote" returnType = "boolean" >
         <cfargument  name="productId" type="integer"  required ="true">
+        
+        <cfset hardDeleteImg(productId = arguments.productId)>
         <cfquery name = "local.querySoftDeleteproduct">
             UPDATE 
                 tblproduct P
@@ -486,12 +541,15 @@
                 PI.fldDeactivatedDate = now()
             WHERE 
                 P.fldProduct_Id = <cfqueryparam value = "#arguments.productId#" cfsqltype="integer">
+                AND PI.fldDefaultImage != 1 
         </cfquery>
         <cfreturn true>
     </cffunction>
     
     <cffunction  name="deleteSubCategory" access="remote" returnType = "boolean" >
         <cfargument  name="subCategoryId" type="integer" required ="true">
+
+        <cfset hardDeleteImg(subCategoryId = arguments.subCategoryId)>
         <cfquery name = "local.querySoftDeleteSubCategory">
             UPDATE 
                 tblsubCategory SC
@@ -510,6 +568,7 @@
 
             WHERE 
                 SC.fldSubCategory_Id = <cfqueryparam value = "#arguments.subCategoryId#" cfsqltype="integer">
+                AND PI.fldDefaultImage != 1 
         </cfquery>
         <!--- <cfset structDelete(application, "cachedSubCategories")> --->
         <cfreturn true>

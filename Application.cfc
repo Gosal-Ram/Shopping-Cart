@@ -28,9 +28,9 @@
             <cfreturn true> 
         </cfif>
 
-        <cfset local.adminPages = ["/category.cfm", 
-                                    "/subCategory.cfm", 
-                                    "/product.cfm"]>
+        <cfset local.adminPages = ["/admin/category.cfm", 
+                                    "/admin/subCategory.cfm", 
+                                    "/admin/product.cfm"]>
         <cfset local.loggedInUserAllowedPages = ["/order.cfm",
                                     "/orderDetails.cfm", 
                                     "/generateInvoice.cfm"]>
@@ -71,7 +71,7 @@
         <cfreturn true  >
     </cffunction>
 
-    <cffunction name="onError">
+<!---     <cffunction name="onError">
         <cfargument name="Exception" required=true>
         <cfargument type="String" name="EventName" required=true>
 
@@ -98,6 +98,6 @@
                 #arguments.exception.tagContext[1].raw_trace#
             </cfmail>
         </cfif>
-    </cffunction>
+    </cffunction> --->
 
 </cfcomponent>
