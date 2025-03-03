@@ -134,7 +134,7 @@ function openImgCarousal(productId) {
         },
         success: function(response) {
             const responseParsed = JSON.parse(response);
-            console.log(responseParsed)
+            // console.log(responseParsed)
             $("#carousalDiv").empty();
             for (let i = 0; i < responseParsed.length; i++) {
                 let activeAttribute = "";
