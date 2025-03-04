@@ -459,7 +459,7 @@
                 INNER JOIN tblproduct P ON OI.fldProductId = P.fldProduct_Id
                 INNER JOIN tblbrands B ON B.fldBrand_Id  = P.fldBrandId 
                 INNER JOIN tblproductimages PI ON PI.fldProductId  = P.fldProduct_Id 
-                    AND PI.fldDefaultImage = 1 AND PI.fldActive = 1
+                    AND PI.fldDefaultImage = 1
             WHERE 
                 O.fldUserId = <cfqueryparam value="#session.userId#" cfsqltype="integer">
                 <cfif structKeyExists(arguments, "orderId")>

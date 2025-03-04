@@ -210,7 +210,7 @@
                             </strong>
                         </h4>
                         <button class="btn btn-success w-100 mt-3 proceedBtn text-dark fw-semibold rounded-pill"
-                            onClick= "placeOrder(#variables.productId#)"
+                            onClick= "placeOrder('#variables.productId#')"
                             <!---button being hidden for if no address (or) removal of orders using buyNow--->
                             <cfif structKeyExists(variables, "queryGetAddresses") 
                                 AND structKeyExists(variables, "getCartDetails") 

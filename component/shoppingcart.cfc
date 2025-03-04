@@ -46,8 +46,7 @@
                         <!--- to order a product of a  not logged in user(after logging in)--->
                         <cfset local.encodedCartId = local.CartResult.cartId>
                         <cfset local.quantityCount = local.CartResult.quantity>
-                        <cfset local.encryptedProductId = encrypt("#arguments.productId#",application.key,"AES","Base64")>
-                        <cfset local.encodedProductId = encodeForURL(local.encryptedProductId)>
+                        <cfset local.encodedProductId = encodeForURL(arguments.productId)>
                         <cflocation  url="order.cfm?productId=#local.encodedProductId#&cartId=#local.encodedCartId#" addToken="no">
                     </cfif>
                     <cflocation  url="/cart.cfm" addtoken = "no">

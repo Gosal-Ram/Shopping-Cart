@@ -17,7 +17,6 @@
         <cfargument  name="productId" type="integer" required="false">
         <cfargument  name="productImageId" type="integer" required="false">
 
-        <cfset hardDelete()>
         <cfquery name="local.queryGetProductImages">
             SELECT 
                 fldProductImage_Id,
@@ -374,7 +373,7 @@
             val(arguments.productPrice) EQ 0 OR 
             val(arguments.productTax) EQ 0>
             <cfset local.editProductResult= "Please fill in all the required fields for adding a product.">
-        <cfelseif reFind("[^a-zA-Z0-9\s]", arguments.productName) OR reFind("[^a-zA-Z0-9\s]", arguments.productDescription)>
+        <cfelseif reFind("[^a-zA-Z0-9\s]", arguments.productName) OR reFind("[^a-zA-Z0-9,.-_\s]", arguments.productDescription)>
             <cfset local.editProductResult = "Enter a valid product Name and product description">
         <cfelseif productUniqueCheck(productName = arguments.productName,
                                      productId = arguments.productId,
@@ -485,10 +484,12 @@
                 <cfelseif structKeyExists(arguments, "subCategoryId") AND val(arguments.subCategoryId)>
                     SC.fldSubCategory_Id = <cfqueryparam value = "#arguments.subCategoryId#" cfsqltype = "integer">
                 </cfif>
-                AND fldDefaultImage != 1
+                AND PI.fldDefaultImage = 0
         </cfquery>
         <cfloop query="local.queryGetProductImages">
-            <cffile action = "delete" file = "#expandPath('/productImages/#local.queryGetProductImages.fldImageFilename#')#">
+            <cfif fileExists(expandPath('/productImages/#local.queryGetProductImages.fldImageFilename#'))>
+                <cffile action = "delete" file = "#expandPath('/productImages/#local.queryGetProductImages.fldImageFilename#')#">
+            </cfif>
         </cfloop>
     </cffunction>
 
@@ -515,12 +516,9 @@
                 PI.fldActive = 0,
                 PI.fldDeactivatedBy = <cfqueryparam value = "#session.userId#" cfsqltype = "integer">,
                 PI.fldDeactivatedDate = now()
-
             WHERE 
                 C.fldCategory_Id = <cfqueryparam value = "#arguments.categoryId#" cfsqltype="integer">
-                AND PI.fldDefaultImage != 1 
         </cfquery>
-        <!--- <cfset structDelete(application, "cachedCategories")> --->
         <cfreturn true>
     </cffunction>
     
@@ -541,7 +539,6 @@
                 PI.fldDeactivatedDate = now()
             WHERE 
                 P.fldProduct_Id = <cfqueryparam value = "#arguments.productId#" cfsqltype="integer">
-                AND PI.fldDefaultImage != 1 
         </cfquery>
         <cfreturn true>
     </cffunction>
@@ -565,12 +562,9 @@
                 PI.fldActive = 0,
                 PI.fldDeactivatedBy = <cfqueryparam value = "#session.userId#" cfsqltype = "integer">,
                 PI.fldDeactivatedDate = now()
-
             WHERE 
                 SC.fldSubCategory_Id = <cfqueryparam value = "#arguments.subCategoryId#" cfsqltype="integer">
-                AND PI.fldDefaultImage != 1 
         </cfquery>
-        <!--- <cfset structDelete(application, "cachedSubCategories")> --->
         <cfreturn true>
     </cffunction>
 

@@ -176,14 +176,6 @@
           <!---  NAV BAR EXCLUDED FOR ADMIN DASHBOARD ,LOGIN ,SIGNUP PAGES  --->
         <cfelse>
           <!---  NAV BAR  --->
-          <!--- <cfif NOT structKeyExists(application, "cachedSubCategories")>
-            <cflock name="cacheDataLock" type="exclusive" timeout="10">
-              <cfif NOT structKeyExists(application, "cachedSubCategories")>
-                <cfset application.cachedSubCategories = application.shoppingCart.fetchSubCategories()>
-              </cfif>
-            </cflock>
-          </cfif> 
-          <cfset variables.getAllSubCategories = application.cachedSubCategories> --->
           <cfif structKeyExists(session, "roleId") AND session.roleId EQ 1>
             <cfset variables.getFromCache = false>
           <cfelse>
@@ -207,7 +199,6 @@
                 })>
             </cfif>
           </cfloop>
-<!---           <cfdump  var="#variables.getAllSubCategories#"> --->  
 
           <nav class="navbar-expand-lg bg-light">
             <div class="container-fluid">

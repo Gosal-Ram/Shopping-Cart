@@ -95,7 +95,7 @@ function saveProduct(){
             success:function(response){
                 let responseParsed = JSON.parse(response);
                 document.getElementById("productFunctionResult").innerHTML = responseParsed;
-                location.reload();
+                // location.reload();
             }
     })
     }
@@ -134,7 +134,7 @@ function openImgCarousal(productId) {
         },
         success: function(response) {
             const responseParsed = JSON.parse(response);
-            // console.log(responseParsed)
+            console.log(responseParsed)
             $("#carousalDiv").empty();
             for (let i = 0; i < responseParsed.length; i++) {
                 let activeAttribute = "";
@@ -150,7 +150,7 @@ function openImgCarousal(productId) {
                     imgDiv = `
                         <div class="d-flex justify-content-center pb-3 gap-5">
                             <button class="btn btn-outline-success" value="${responseParsed[i].productImageId}" onclick="setDefaultImage(${responseParsed[i].productId})">Set Thumbnail</button>
-                            <button class="btn btn-outline-danger" value="${responseParsed[i].productImageId}" onclick="deleteImage('${responseParsed[i].imageFileName}')">Delete</button>
+                            <button class="btn btn-outline-danger" value="${responseParsed[i].productImageId}" onclick="deleteImage()">Delete</button>
                         </div>`;
                 }
             
@@ -180,20 +180,25 @@ function setDefaultImage(productId){
     })
 }
 
-function deleteImage(fileName){
-    const productImageId = event.target.value;
-    console.log(fileName);
-    $.ajax({
-        type:"POST",
-        url: "/component/admin.cfc",
-        data:{productImageId:productImageId,
-                fileName : fileName,
-              method: "deleteImg"},
-        success:function(response){
-            console.log(response);
-            // location.reload();
+function deleteImage(){
+    alertify.confirm("Confirm delete",
+        function() { 
+            const productImageId = event.target.value;
+            $.ajax({
+            type:"POST",
+            url: "/component/admin.cfc",
+            data:{productImageId:productImageId,
+                  method: "deleteImg"},
+                success:function(response){
+                    console.log(response);
+                    location.reload();
+                }
+            });
+        },
+        function() { 
+            alertify.error('Delete canceled');
         }
-    })
+    );
 }
 
 function deleteProduct(productId) {
@@ -219,3 +224,4 @@ function deleteProduct(productId) {
         }
     );
 }
+

@@ -86,8 +86,18 @@ function cardValidate() {
 
     let isValid = true;
 
-    if (!validateCardNumber(cardNumber, cardNumberError)) isValid = false;
-    if (!validateCVV(cvv, cvvError)) isValid = false;
+    if (!validateCardNumber(cardNumber, cardNumberError)) {
+        isValid = false;
+        document.getElementById("flush-collapseThree").classList.add("show");
+        document.getElementById("flush-collapseOne").classList.remove("show");
+        document.getElementById("flush-collapseTwo").classList.remove("show");
+    }
+    if (!validateCVV(cvv, cvvError)) {
+        isValid = false;
+        document.getElementById("flush-collapseThree").classList.add("show");
+        document.getElementById("flush-collapseOne").classList.remove("show");
+        document.getElementById("flush-collapseTwo").classList.remove("show");
+    }
 
     return isValid;
 }
@@ -209,7 +219,7 @@ const regexPatterns = {
     phone: /^[0-9]{10}$/,
     email: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
     name: /^[A-Za-z]{2,}( [A-Za-z]{1,})?$/,
-    nameWithDigits : /^[A-Za-z0-9 &-_]+$/,
+    nameWithDigits : /^[A-Za-z0-9 &-_,.]+$/,
     password: /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/,
     card: /^[0-9]{16}$/,
     cvv: /^[0-9]{3}$/,

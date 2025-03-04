@@ -1,8 +1,6 @@
-function changeMainImage(src) {
-    const activeItem = document.querySelector(".carousel-item.active img");
-    if (activeItem) {
-        activeItem.src = src;    
-    }
+function changeSlide(i) {
+    const productCarousel = $("#productCarousel");
+    productCarousel.carousel(i);
 }
 
 function addToCartAndBuy(logInFlag, productId, buyNowFlag,encodedProductId){

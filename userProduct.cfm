@@ -7,7 +7,7 @@
     <cfset variables.categoryId = variables.getAllProducts[1].categoryId>
     <cfset variables.categoryName = variables.getAllProducts[1].categoryName>
     <cfset variables.productImages = variables.getAllProducts[1].imageFilenames>
-    <cfset variables.productDefaultImage = variables.getAllProducts[1].imageFilenames[1]>
+    <!---<cfset variables.productDefaultImage = variables.getAllProducts[1].imageFilenames[1]> --->
 
     <cfset variables.encryptedCategoryId = encrypt("#variables.categoryId#",application.key,"AES","Base64")>
     <cfset variables.encodedCategoryId = encodeForURL(variables.encryptedCategoryId)>
@@ -43,28 +43,21 @@
                         <div class="d-flex">
                             <div class="me-3">
                                 <div class="d-flex flex-column">
-                                    <cfloop array="#variables.productImages#" item = "local.imgItem">
+                                    <cfloop array="#variables.productImages#" item = "local.imgItem" index = "i">
                                         <img src="productImages/#local.imgItem#" 
                                         class="img-thumbnail mb-2" 
                                         alt = "" 
                                         height ="65"
                                         width = "90"
                                         id = "productThumbnailImg"
-                                        onmouseover="changeMainImage(this.src)">
+                                        onmouseover="changeSlide(#i-1#)">
                                     </cfloop>
                                 </div>
                             </div>
-                            <div id="productCarousel" class="carousel slide w-100" data-bs-ride="carousel">
+                            <div id="productCarousel" class="carousel slide w-100" <!--- data-bs-ride="carousel" --->>
                                 <div class="carousel-inner">
-                                    <div class="carousel-item active">
-                                        <img src="productImages/#variables.productDefaultImage#" 
-                                        id = "mainProductImage"
-                                        class="d-block w-100 productImg" 
-                                        alt="" 
-                                        height="350">
-                                    </div>
-                                    <cfloop array="#variables.productImages#" item = "local.imgItem">
-                                        <div class="carousel-item">
+                                    <cfloop array="#variables.productImages#" item = "local.imgItem" index = "i">
+                                        <div class="carousel-item #(i==1 ? "active" : "")#" data-bs-interval="2000">
                                             <img src="productImages/#local.imgItem#" 
                                             class="d-block w-100 productImg" 
                                             alt="Product Image"
