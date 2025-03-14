@@ -270,6 +270,8 @@
             <cfelseif structKeyExists(arguments, "sortFlag")>
                 <cfif arguments.sortFlag EQ 2>  
                     ORDER BY P.fldPrice DESC 
+                <cfelse>
+                    ORDER BY P.fldPrice ASC
                 </cfif>
             <cfelse>
                 ORDER BY P.fldProductName

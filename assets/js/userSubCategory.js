@@ -19,6 +19,7 @@ function toggleView(subCategoryId, sortFlag, filterMin, filterMax){
             console.log(data);
             if(data.length < 4 ){
                 $("#viewEditBtn").hide();
+                $("#viewEditBtnDiv").text("No more products found.");
             }
             data.forEach(product => {
                 console.log(product);
