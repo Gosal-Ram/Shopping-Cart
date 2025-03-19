@@ -219,6 +219,9 @@
         <cfargument name="offset" type="integer" required="false">
         <cfargument name="limit" type="integer" required="false">
         <cfargument name="page" type="integer" required="false">
+
+        <cfset local.priceDecendingOrder = "P.fldPrice DESC">
+        <cfset local.priceAscendingOrder = "P.fldPrice ASC">
     
         <cfquery name="local.queryGetProducts">
             SELECT 
@@ -265,18 +268,18 @@
                 </cfif>
             GROUP BY 
                 P.fldProduct_Id
-            <cfif (structKeyExists(arguments, "random") AND val(arguments.random) EQ 1)>
-                ORDER BY RAND()
-            <cfelseif structKeyExists(arguments, "sortFlag")>
-                <cfif arguments.sortFlag EQ 2>  
-                    ORDER BY P.fldPrice DESC 
+            ORDER BY
+                <cfif (structKeyExists(arguments, "random") AND val(arguments.random) EQ 1)>
+                    RAND()
+                <cfelseif structKeyExists(arguments, "sortFlag")>
+                    <cfif arguments.sortFlag EQ 2>  
+                        #local.priceDecendingOrder# 
+                    <cfelse>
+                        #local.priceAscendingOrder#
+                    </cfif>
                 <cfelse>
-                    ORDER BY P.fldPrice ASC
+                    P.fldProductName
                 </cfif>
-            <cfelse>
-                ORDER BY P.fldProductName
-            </cfif>
-
             <cfif structKeyExists(arguments, "limit") AND val(arguments.limit)>
                 LIMIT <cfqueryparam value="#arguments.limit#" cfsqltype="INTEGER">
                 <cfif structKeyExists(arguments, "offset") AND val(arguments.offset)>
@@ -291,7 +294,7 @@
         <cfset local.productsArray = []>
         <cfloop query="local.queryGetProducts">
             <cfset local.encryptedProductId = encrypt(local.queryGetProducts.fldProduct_Id, application.key, "AES", "Base64")>
-            <cfset local.product = {
+            <cfset arrayAppend(local.productsArray, {
                 "productName" = local.queryGetProducts.fldProductName,
                 "subCategoryName" = local.queryGetProducts.fldSubCategoryName,
                 "categoryName" = local.queryGetProducts.fldCategoryName,
@@ -304,8 +307,7 @@
                 "tax" = local.queryGetProducts.fldTax,
                 "brandName" = local.queryGetProducts.fldBrandName,
                 "imageFilenames" = listToArray(local.queryGetProducts.fldAllImages) 
-            }>
-            <cfset arrayAppend(local.productsArray, local.product)>
+            })>
         </cfloop>
     
         <cfreturn local.productsArray>
