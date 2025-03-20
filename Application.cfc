@@ -35,13 +35,14 @@
                                     "/orderDetails.cfm", 
                                     "/generateInvoice.cfm"]>
         <cfif arrayContains(local.adminPages, arguments.requestPage)>
-            <cfif structKeyExists(session, "userId") AND session.roleId EQ 1>
+            <cfif structKeyExists(session, "admin") AND session.admin.isLoggedIn EQ true>
                 <cfreturn true>
             <cfelse>
                 <cflocation  url = "/home.cfm" addtoken = "no">  
             </cfif>
         <cfelseif arrayContains(local.loggedInUserAllowedPages, arguments.requestPage)>
-            <cfif structKeyExists(session, "userId") AND (session.roleId EQ 2 OR session.roleId EQ 1)>
+            <cfif (structKeyExists(session, "admin") AND session.admin.isLoggedIn EQ true)
+                OR (structKeyExists(session, "user") AND session.user.isLoggedIn EQ true)>
                 <cfreturn true>
             <cfelse>
                 <cflocation  url = "/home.cfm" addtoken = "no">  
@@ -71,7 +72,7 @@
         <cfreturn true  >
     </cffunction>
 
-    <cffunction name="onError">
+   <!---  <cffunction name="onError">
         <cfargument name="Exception" required=true>
         <cfargument type="String" name="EventName" required=true>
 
@@ -98,6 +99,6 @@
                 #arguments.exception.tagContext[1].raw_trace#
             </cfmail>
         </cfif>
-    </cffunction>
+    </cffunction> --->
 
 </cfcomponent>

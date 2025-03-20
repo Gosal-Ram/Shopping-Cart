@@ -1,4 +1,5 @@
 <main class="d-flex flex-column">
+  <cfdump  var="#session#">
 <cfoutput>
   <div class="homeImgContainer mx-auto">
      <img src="/assets/images/Photo Modern New Collection Banner.png" alt="" 

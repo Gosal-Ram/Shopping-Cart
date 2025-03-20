@@ -3,8 +3,12 @@
 <cfelse>
     <cfset variables.currentPage = 1>
 </cfif>
-
-<cfset variables.queryGetAllOrders = application.user.fetchOrderHistory(page = variables.currentPage)>
+<cfif structKeyExists(url, "orderId")>
+    <cfset variables.queryGetAllOrders = application.user.fetchOrderHistory(page = variables.currentPage,
+    orderId = url.orderId)>
+<cfelse>
+    <cfset variables.queryGetAllOrders = application.user.fetchOrderHistory(page = variables.currentPage)>
+</cfif>
 
 <cfif structKeyExists(form, "submitBtn")>
     <cfset variables.queryGetAllOrders = application.user.fetchOrderHistory(searchTerm = form.searchInput)>
@@ -87,30 +91,32 @@
                     </div>
                 </div>
             </cfloop>
-            <nav>
-                <ul class="pagination justify-content-end">
-                    <li class="page-item 
-                    <cfif variables.currentPage EQ 1>
-                        disabled">
-                    <cfelse>
-                        ">
-                    </cfif> 
-                    <a class="page-link" href="/orderDetails.cfm?page=#(variables.currentPage-1)#">Previous</a>
-                    </li>
-                    <li class="page-item active">
-                        <a class="page-link" href="##">#variables.currentPage#</a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="/orderDetails.cfm?page=#(variables.currentPage + 1)#">#variables.currentPage + 1 #</a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="/orderDetails.cfm?page=#(variables.currentPage+ 2)#">#variables.currentPage+ 2#</a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="/orderDetails.cfm?page=#(variables.currentPage+1)#">Next</a>
-                    </li>
-                </ul>
-              </nav>
+            <cfif arrayLen(variables.queryGetAllOrders) GT 1>
+                <nav>
+                    <ul class="pagination justify-content-end">
+                        <li class="page-item 
+                        <cfif variables.currentPage EQ 1>
+                            disabled">
+                        <cfelse>
+                            ">
+                        </cfif> 
+                        <a class="page-link" href="/orderDetails.cfm?page=#(variables.currentPage-1)#">Previous</a>
+                        </li>
+                        <li class="page-item active">
+                            <a class="page-link" href="##">#variables.currentPage#</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="/orderDetails.cfm?page=#(variables.currentPage + 1)#">#variables.currentPage + 1 #</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="/orderDetails.cfm?page=#(variables.currentPage+ 2)#">#variables.currentPage+ 2#</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="/orderDetails.cfm?page=#(variables.currentPage+1)#">Next</a>
+                        </li>
+                    </ul>
+                </nav>
+            </cfif>
         </cfif>
     </div>
 </main>

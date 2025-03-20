@@ -53,7 +53,7 @@ function placeOrder(productId){
                 <div class="text-center mt-4">
                     <h4>${responseParsed.resultMsg}</h4>
                     <a href="/home.cfm" class="btn btn-primary m-2">Go to Home</a>
-                    <a href="/orderDetails.cfm" class="btn btn-success m-2">View Order Details</a>
+                    <a href="/orderDetails.cfm?orderId=${responseParsed.orderId}" class="btn btn-success m-2">View Order Details</a>
                 </div>
             `;
         

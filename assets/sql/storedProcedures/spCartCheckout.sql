@@ -7,6 +7,7 @@ CREATE PROCEDURE IF NOT EXISTS spOrderCartCheckout(
     IN totalPrice  DECIMAL(10,2),
     IN totalTax  DECIMAL(10,2)
 )
+
 BEGIN
     -- Order Tbl insertion
     INSERT INTO 

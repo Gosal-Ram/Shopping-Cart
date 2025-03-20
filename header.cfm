@@ -78,6 +78,8 @@
     </head>
     <body class = "overflow-x-hidden">
       <cfoutput>
+        <cfset isAdmin = structKeyExists(session, "admin") AND structKeyExists(session.admin, "isLoggedIn") AND session.admin.isLoggedIn>
+        <cfset isUser = structKeyExists(session, "user") AND structKeyExists(session.user, "isLoggedIn") AND session.user.isLoggedIn>
         <header class="d-flex p-1 justify-content-between align-items-center w-100 bg-primary sticky-top">
             <div class="ms-2 me-4">
               <a href = "/home.cfm" class = "text-light text-decoration-none">
@@ -101,8 +103,8 @@
                 </div>
               </form>  
             </cfif>
-            <cfif structKeyExists(session, "roleId") AND structKeyExists(session, "isLoggedIn")>
-              <cfif session.roleId EQ 1 AND session.isLoggedIn EQ true>
+            <cfif isAdmin OR isUser>
+              <cfif isAdmin>
                 <!-- ADMIN UI -->
                 <div class="mx-2">
                   <a href = "/cart.cfm">
@@ -116,7 +118,7 @@
                       </cfif>
                     </button>
                   </a>
-                  <span class="fw-semibold text-light">Hello #session.firstName#!</span>
+                  <span class="fw-semibold text-light">Hello #session.admin.firstName#!</span>
                   <a class="btn text-light" href="/profile.cfm">
                     <img src="/assets/images/user.png" alt="" width="18" height="18" class="">
                   </a>
@@ -128,7 +130,7 @@
                     Logout
                   </a>          
                 </div>
-              <cfelseif session.roleId EQ 2 AND session.isLoggedIn EQ true>
+              <cfelseif isUser>
                 <!-- LOGGED IN USER UI-->
                 <div class="mx-2">
                   <a href = "/cart.cfm">
@@ -144,7 +146,7 @@
                   </a>
                   <a class="btn text-light" href= "/profile.cfm">
                     <img src="/assets/images/user.png" alt="" width="18" height="18" class="">
-                    <span class="fw-semibold text-light">#session.firstName#</span>
+                    <span class="fw-semibold text-light">#session.user.firstName#</span>
                   </a>
                   <a class="btn text-light" onClick="logOut()"> 
                     <img src="/assets/images/exit.png" alt="" width="18" height="18">
@@ -176,7 +178,7 @@
           <!---  NAV BAR EXCLUDED FOR ADMIN DASHBOARD ,LOGIN ,SIGNUP PAGES  --->
         <cfelse>
           <!---  NAV BAR  --->
-          <cfif structKeyExists(session, "roleId") AND session.roleId EQ 1>
+          <cfif structKeyExists(session, "admin.userId") AND session.admin.userId NEQ 0>
             <cfset variables.getFromCache = false>
           <cfelse>
             <cfset variables.getFromCache = true>

@@ -1,5 +1,12 @@
 <cfcomponent>
     <!---User--->
+    <cfset isAdmin = structKeyExists(session, "admin") AND structKeyExists(session.admin, "isLoggedIn") AND session.admin.isLoggedIn>
+    <cfset isUser = structKeyExists(session, "user") AND structKeyExists(session.user, "isLoggedIn") AND session.user.isLoggedIn>
+    <cfif isAdmin>
+        <cfset userData = session.admin>
+    <cfelseif isUser>
+        <cfset userData = session.user>
+    </cfif>
     <cffunction  name="addToCart" access = "remote" returnType = "struct" returnFormat = "JSON">
         <cfargument name="productId" type="integer" required="false">
         
@@ -13,7 +20,7 @@
                     tblcart 
                 WHERE
                     fldProductId = <cfqueryparam value = "#arguments.productId#" cfsqltype = "integer">
-                    AND fldUserId = <cfqueryparam value = "#session.userId#" cfsqltype = "integer">     
+                    AND fldUserId = <cfqueryparam value = "#userData.userId#" cfsqltype = "integer">     
             </cfquery>
             <cfif local.queryAddToCartNewProductCheck.recordcount GT 0>
                 <cfset local.updatedQuantity = local.queryAddToCartNewProductCheck.fldQuantity + 1>
@@ -28,7 +35,7 @@
                         fldQuantity = <cfqueryparam value = "#local.updatedQuantity#"  cfsqltype = "integer">
                     WHERE 
                         fldProductId = <cfqueryparam value = "#arguments.productId#" cfsqltype = "integer">
-                        AND fldUserId = <cfqueryparam value = "#session.userId#" cfsqltype="integer"> 
+                        AND fldUserId = <cfqueryparam value = "#userData.userId#" cfsqltype="integer"> 
                 </cfquery>
                 <cfset local.addToCartResult["resultMsg"] = "Cart Updated">
                 <cfset local.addToCartResult["quantity"] = local.updatedQuantity>
@@ -42,7 +49,7 @@
                                 fldQuantity
                             )
                     VALUES(
-                        <cfqueryparam value = "#session.userId#" cfsqltype = "integer">,
+                        <cfqueryparam value = "#userData.userId#" cfsqltype = "integer">,
                         <cfqueryparam value = "#arguments.productId#" cfsqltype = "integer">,
                         <cfqueryparam value = "1" cfsqltype = "integer">
                     )
@@ -80,7 +87,7 @@
                 INNER JOIN tblproductimages PI ON C.fldProductId = PI.fldProductId 
                 INNER JOIN tblbrands B ON P.fldBrandId = B.fldBrand_Id
             WHERE
-                C.fldUserId = <cfqueryparam value = "#session.userId#" cfsqltype = "integer">     
+                C.fldUserId = <cfqueryparam value = "#userData.userId#" cfsqltype = "integer">     
                 AND PI.fldDefaultImage = 1
             <cfif structKeyExists(arguments, "cartId")>
                 AND C.fldCart_Id = <cfqueryparam value = "#arguments.cartId#" cfsqltype="integer">
@@ -150,7 +157,7 @@
             FROM 
                 tblcart 
             WHERE
-                fldUserId = <cfqueryparam value = "#session.userId#" cfsqltype = "integer">     
+                fldUserId = <cfqueryparam value = "#userData.userId#" cfsqltype = "integer">     
         </cfquery>
         <cfreturn local.querygetCartCount.recordCount>
     </cffunction>
@@ -185,8 +192,8 @@
             WHERE(
                 fldEmail = <cfqueryparam value = "#arguments.emailId#" cfsqltype="VARCHAR"> 
                 OR fldPhone = <cfqueryparam value = "#arguments.phone#" cfsqltype="VARCHAR">)
-                AND fldEmail !=<cfqueryparam value = "#session.email#" cfsqltype="VARCHAR">
-                AND fldPhone != <cfqueryparam value = "#session.phone#" cfsqltype="VARCHAR">
+                AND fldEmail !=<cfqueryparam value = "#userData.email#" cfsqltype="VARCHAR">
+                AND fldPhone != <cfqueryparam value = "#userData.phone#" cfsqltype="VARCHAR">
                 AND fldActive = <cfqueryparam value="1" cfsqltype="INTEGER">       
         </cfquery>
         <cfif local.queryUserUniqueCheck.recordcount GT 0>
@@ -204,12 +211,12 @@
                     fldEmail = <cfqueryparam value = "#arguments.emailId#" cfsqltype = "VARCHAR">,
                     fldPhone = <cfqueryparam value = "#arguments.phone#" cfsqltype = "VARCHAR">
                 WHERE
-                    fldUser_Id = <cfqueryparam value = "#session.userId#" cfsqltype = "integer">
+                    fldUser_Id = <cfqueryparam value = "#userData.userId#" cfsqltype = "integer">
             </cfquery>
-            <cfset session.firstName = arguments.firstName>
-            <cfset session.lastName = arguments.lastName>
-            <cfset session.email = arguments.emailId>
-            <cfset session.phone = arguments.phone>
+            <cfset userData.firstName = arguments.firstName>
+            <cfset userData.lastName = arguments.lastName>
+            <cfset userData.email = arguments.emailId>
+            <cfset userData.phone = arguments.phone>
             <cfset local.updateUserInfoResult["resultMsg"] = "User details Updated">
         </cfif>
         <cfreturn local.updateUserInfoResult>
@@ -232,7 +239,7 @@
                 tbladdress
             WHERE 
                 fldActive = 1
-                AND fldUserId = <cfqueryparam value="#session.userId#" cfsqltype="integer">
+                AND fldUserId = <cfqueryparam value="#userData.userId#" cfsqltype="integer">
                 <cfif structKeyExists(arguments, "addressId")>
                     AND fldAddress_Id = <cfqueryparam value="#arguments.addressId#" cfsqltype="integer">
                 </cfif>
@@ -310,7 +317,7 @@
                             fldPincode,
                             fldActive)
                 VALUES(
-                    <cfqueryparam value = "#session.userId#" cfsqltype = "INTEGER">,
+                    <cfqueryparam value = "#userData.userId#" cfsqltype = "INTEGER">,
                     <cfqueryparam value = "#arguments.firstName#" cfsqltype = "VARCHAR">,
                     <cfqueryparam value = "#arguments.lastName#" cfsqltype = "VARCHAR">,
                     <cfqueryparam value = "#arguments.phone#" cfsqltype = "VARCHAR">,
@@ -369,7 +376,7 @@
                     <!---Product ordering using  Buy Now  --->
                     <cfstoredproc procedure="spOrderBuyNow">
                         <cfprocparam cfsqltype="VARCHAR" variable="orderId" value="#local.orderId#">
-                        <cfprocparam cfsqltype="integer" variable="userId" value="#session.userId#">
+                        <cfprocparam cfsqltype="integer" variable="userId" value="#userData.userId#">
                         <cfprocparam cfsqltype="integer" variable="addressId" value="#arguments.selectedAddress#">
                         <cfprocparam cfsqltype="decimal" variable="totalPrice" value="#arguments.totalPrice#">
                         <cfprocparam cfsqltype="decimal" variable="totalTax" value="#arguments.totalTax#">
@@ -379,7 +386,7 @@
                     <!---Product ordering using Cart Checkout --->
                     <cfstoredproc procedure="spOrderCartCheckout">
                         <cfprocparam cfsqltype="VARCHAR" variable="orderId" value="#local.orderId#">
-                        <cfprocparam cfsqltype="integer" variable="userId" value="#session.userId#">
+                        <cfprocparam cfsqltype="integer" variable="userId" value="#userData.userId#">
                         <cfprocparam cfsqltype="integer" variable="addressId" value="#arguments.selectedAddress#">
                         <cfprocparam cfsqltype="decimal" variable="totalPrice" value="#arguments.totalPrice#">
                         <cfprocparam cfsqltype="decimal" variable="totalTax" value="#arguments.totalTax#">
@@ -388,10 +395,11 @@
                 <!--- updating cart count for header display purpose--->
                 <cfset session.cartCount = getUserCartCount()>
                 <cfset local.placeOrderResult["resultMsg"] = "Order placed SuccessFully and cart updated">
+                <cfset local.placeOrderResult["orderId"] = local.orderId>
                 <cfset local.placeOrderResult["cartCount"] = session.cartCount>
                 <cfset local.orderDetails = fetchOrderHistory(orderId = local.orderId)>
                 <cfset local.order = local.orderDetails[1]>
-                <cfmail to ="#session.email#" from="gosalram554@gmail.com" subject="Your Order Confirmation - #local.orderId#">
+                <cfmail to ="#userData.email#" from="gosalram554@gmail.com" subject="Your Order Confirmation - #local.orderId#">
                 Dear #local.order.firstName# #local.order.lastName#,
                 
                 Your order has been successfully placed.  
@@ -461,7 +469,7 @@
                 INNER JOIN tblproductimages PI ON PI.fldProductId  = P.fldProduct_Id 
                     AND PI.fldDefaultImage = 1
             WHERE 
-                O.fldUserId = <cfqueryparam value="#session.userId#" cfsqltype="integer">
+                O.fldUserId = <cfqueryparam value="#userData.userId#" cfsqltype="integer">
                 <cfif structKeyExists(arguments, "orderId")>
                     AND O.fldOrder_Id = <cfqueryparam value="#arguments.orderId#" cfsqltype="VARCHAR">
                 </cfif>
@@ -475,18 +483,21 @@
 				O.fldOrder_Id
             ORDER BY
                 O.fldOrderDate DESC
-            <cfif structKeyExists(arguments, "page") AND val(arguments.page) GT 0>
-                <cfset local.offset = (arguments.page - 1) * arguments.limit>
-            <cfelse>
-                <cfset local.offset = 0>
-            </cfif>
-            LIMIT #arguments.limit# OFFSET #local.offset#
+            LIMIT 
+                #arguments.limit# 
+            OFFSET
+                <cfif structKeyExists(arguments, "page") AND val(arguments.page) GT 0>
+                    <cfset local.offset = (arguments.page - 1) * arguments.limit>
+                <cfelse>
+                    <cfset local.offset = 0>
+                </cfif>
+                #local.offset#
         </cfquery>
 
         <cfset local.ordersArray = []>
 
         <cfloop query="local.queryGetOrders">
-            <cfset local.order = {
+            <cfset arrayAppend(local.ordersArray, {
                 "orderId" = local.queryGetOrders.fldOrder_Id,
                 "totalPrice" = local.queryGetOrders.fldTotalPrice,
                 "totalTax" = local.queryGetOrders.fldTotalTax,
@@ -504,9 +515,7 @@
                 "phone" = local.queryGetOrders.fldPhone,
                 "productNames" = ListToArray(local.queryGetOrders.fldProductName),
                 "productImages" = ListToArray(local.queryGetOrders.fldImageFileName)
-            }>
-
-            <cfset arrayAppend(local.ordersArray, local.order)>
+            })>
         </cfloop>
          <cfreturn local.ordersArray> 
     </cffunction>

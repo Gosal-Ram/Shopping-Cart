@@ -1,5 +1,12 @@
 <cfcomponent>
     <!--- COMMON--->
+    <cfset isAdmin = structKeyExists(session, "admin") AND structKeyExists(session.admin, "isLoggedIn") AND session.admin.isLoggedIn>
+    <cfset isUser = structKeyExists(session, "user") AND structKeyExists(session.user, "isLoggedIn") AND session.user.isLoggedIn>
+    <cfif isAdmin>
+        <cfset userData = session.admin>
+    <cfelseif isUser>
+        <cfset userData = session.user>
+    </cfif>
     <cffunction  name="logIn" access = "public" returnType="string" >
         <cfargument name ="userInput" type="string" required ="true">
         <cfargument name ="password" type="string" required = "true">
@@ -31,13 +38,36 @@
         <!--- if username exists--->
             <cfif local.queryUserLogin.fldHashedPassword EQ hash(arguments.password & local.queryUserLogin.fldUserSaltString, "SHA-512")>
                 <cfset local.loginResult = "User Login Successful">
-                <cfset session.isLoggedIn = true>
+
+
+                <cfif local.queryUserLogin.fldRoleId EQ 1>
+                    <!--- Admin Login ---> 
+<!---                     <cfset structClear(session.admin)> --->
+                    <cfset session.admin.isLoggedIn = true>
+                    <cfset session.admin.firstName = local.queryUserLogin.fldFirstName>
+                    <cfset session.admin.lastName = local.queryUserLogin.fldLastName>
+                    <cfset session.admin.email = local.queryUserLogin.fldEmail>
+                    <cfset session.admin.phone = local.queryUserLogin.fldPhone>
+                    <cfset session.admin.userId = local.queryUserLogin.fldUser_Id>
+                    <cfset session.admin.roleId = local.queryUserLogin.fldRoleId>
+                <cfelse>
+                    <!--- Regular User Login ---> 
+<!---                     <cfset structClear(session.user)> --->
+                    <cfset session.user.isLoggedIn = true>
+                    <cfset session.user.firstName = local.queryUserLogin.fldFirstName>
+                    <cfset session.user.lastName = local.queryUserLogin.fldLastName>
+                    <cfset session.user.email = local.queryUserLogin.fldEmail>
+                    <cfset session.user.phone = local.queryUserLogin.fldPhone>
+                    <cfset session.user.userId = local.queryUserLogin.fldUser_Id>
+                    <cfset session.user.roleId = local.queryUserLogin.fldRoleId>
+                </cfif>
+                <!--- <cfset session.isLoggedIn = true>
                 <cfset session.firstName = local.queryUserLogin.fldFirstName>
                 <cfset session.lastName = local.queryUserLogin.fldLastName>
                 <cfset session.email = local.queryUserLogin.fldEmail>
                 <cfset session.phone = local.queryUserLogin.fldPhone>
                 <cfset session.userId = local.queryUserLogin.fldUser_Id>
-                <cfset session.roleId = local.queryUserLogin.fldRoleId>
+                <cfset session.roleId = local.queryUserLogin.fldRoleId> --->
                 <cfif structKeyExists(arguments, "productId")>
                     <!--- to add product to the cart of a not logged in user(after logging in)--->
                     <cfset local.productId = decrypt(arguments.productId,application.key,"AES","Base64")>
@@ -71,7 +101,11 @@
     </cffunction>   
 
     <cffunction  name="logOut" access="remote" returnType = "void" >
-        <cfset structClear(session)>
+        <cfif isAdmin>
+            <cfset structClear(session.admin)>
+        <cfelseif isUser>
+            <cfset structClear(session.user)>
+        </cfif>
     </cffunction>
  
     <cffunction  name="signUp" access = "public" returnType="string" >
@@ -220,8 +254,9 @@
         <cfargument name="limit" type="integer" required="false">
         <cfargument name="page" type="integer" required="false">
 
-        <cfset local.priceDecendingOrder = "P.fldPrice DESC">
+        <cfset local.priceDescendingOrder = "P.fldPrice DESC">
         <cfset local.priceAscendingOrder = "P.fldPrice ASC">
+        <cfset local.productsAscendingOrder = "P.fldProductName ASC"> 
     
         <cfquery name="local.queryGetProducts">
             SELECT 
@@ -273,22 +308,28 @@
                     RAND()
                 <cfelseif structKeyExists(arguments, "sortFlag")>
                     <cfif arguments.sortFlag EQ 2>  
-                        #local.priceDecendingOrder# 
+                        #local.priceDescendingOrder# 
                     <cfelse>
                         #local.priceAscendingOrder#
                     </cfif>
                 <cfelse>
-                    P.fldProductName
+                    #local.productsAscendingOrder#
                 </cfif>
-            <cfif structKeyExists(arguments, "limit") AND val(arguments.limit)>
-                LIMIT <cfqueryparam value="#arguments.limit#" cfsqltype="INTEGER">
+            LIMIT
+                <cfif structKeyExists(arguments, "limit") AND val(arguments.limit)>
+                    <cfqueryparam value="#arguments.limit#" cfsqltype="INTEGER">
+                <cfelse>
+                    10
+                </cfif>
+            OFFSET 
                 <cfif structKeyExists(arguments, "offset") AND val(arguments.offset)>
-                    OFFSET <cfqueryparam value="#arguments.offset#" cfsqltype="INTEGER">
+                    <cfqueryparam value="#arguments.offset#" cfsqltype="INTEGER">
+                <cfelseif structKeyExists(arguments, "page") AND val(arguments.page)>
+                    <cfset local.offset = (arguments.page - 1) * 10>
+                    #local.offset#
+                <cfelse>
+                    0
                 </cfif>
-            <cfelseif structKeyExists(arguments, "page") AND val(arguments.page)>
-                <cfset local.offset = (arguments.page - 1) * 10>
-                LIMIT 10 OFFSET #local.offset#
-            </cfif>
         </cfquery>
     
         <cfset local.productsArray = []>
@@ -314,13 +355,20 @@
     </cffunction>
     
     <cffunction  name="getUserCartCount" access = "public" returnType = "numeric"> 
+        <cfset isAdmin = structKeyExists(session, "admin") AND structKeyExists(session.admin, "isLoggedIn") AND session.admin.isLoggedIn>
+        <cfset isUser = structKeyExists(session, "user") AND structKeyExists(session.user, "isLoggedIn") AND session.user.isLoggedIn>
+        <cfif isAdmin>
+            <cfset userData = session.admin>
+        <cfelseif isUser>
+            <cfset userData = session.user>
+        </cfif>
         <cfquery name ="local.querygetCartCount">
             SELECT 
                 fldProductId
             FROM 
                 tblcart 
             WHERE
-                fldUserId = <cfqueryparam value = "#session.userId#" cfsqltype = "integer">     
+                fldUserId = <cfqueryparam value = "#userData.userId#" cfsqltype = "integer">     
         </cfquery>
         <cfreturn local.querygetCartCount.recordCount>
     </cffunction>
@@ -338,7 +386,7 @@
                     tblcart 
                 WHERE
                     fldProductId = <cfqueryparam value = "#arguments.productId#" cfsqltype = "integer">
-                    AND fldUserId = <cfqueryparam value = "#session.userId#" cfsqltype = "integer">     
+                    AND fldUserId = <cfqueryparam value = "#userData.userId#" cfsqltype = "integer">     
             </cfquery>
             <cfif local.queryAddToCartNewProductCheck.recordcount GT 0>
                 <cfset local.updatedQuantity = local.queryAddToCartNewProductCheck.fldQuantity + 1>
@@ -353,7 +401,7 @@
                         fldQuantity = <cfqueryparam value = "#local.updatedQuantity#"  cfsqltype = "integer">
                     WHERE 
                         fldProductId = <cfqueryparam value = "#arguments.productId#" cfsqltype = "integer">
-                        AND fldUserId = <cfqueryparam value = "#session.userId#" cfsqltype="integer"> 
+                        AND fldUserId = <cfqueryparam value = "#userData.userId#" cfsqltype="integer"> 
                 </cfquery>
                 <cfset local.addToCartResult["resultMsg"] = "Cart Updated">
                 <cfset local.addToCartResult["quantity"] = local.updatedQuantity>
@@ -367,7 +415,7 @@
                                 fldQuantity
                             )
                     VALUES(
-                        <cfqueryparam value = "#session.userId#" cfsqltype = "integer">,
+                        <cfqueryparam value = "#userData.userId#" cfsqltype = "integer">,
                         <cfqueryparam value = "#arguments.productId#" cfsqltype = "integer">,
                         <cfqueryparam value = "1" cfsqltype = "integer">
                     )
