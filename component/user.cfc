@@ -69,6 +69,14 @@
     <cffunction  name="fetchCart" access = "public" returnType = "array">
         <cfargument  name="cartId" type="integer" required ="false">
 
+        <cfset isAdmin = structKeyExists(session, "admin") AND structKeyExists(session.admin, "isLoggedIn") AND session.admin.isLoggedIn>
+        <cfset isUser = structKeyExists(session, "user") AND structKeyExists(session.user, "isLoggedIn") AND session.user.isLoggedIn>
+        <cfif isAdmin>
+            <cfset userData = session.admin>
+        <cfelseif isUser>
+            <cfset userData = session.user>
+        </cfif>
+
         <cfset local.fetchCartResultMsg = "">
         <cfquery name ="local.queryFetchCartDetails">
             SELECT 
@@ -224,6 +232,14 @@
 
     <cffunction  name="fetchAddresses" access = "public" returnType = "array">
         <cfargument name="addressId" type="integer" required="no">
+
+        <cfset isAdmin = structKeyExists(session, "admin") AND structKeyExists(session.admin, "isLoggedIn") AND session.admin.isLoggedIn>
+        <cfset isUser = structKeyExists(session, "user") AND structKeyExists(session.user, "isLoggedIn") AND session.user.isLoggedIn>
+        <cfif isAdmin>
+            <cfset userData = session.admin>
+        <cfelseif isUser>
+            <cfset userData = session.user>
+        </cfif>
         <cfquery name="local.queryGetAddresses">
             SELECT 
                 fldAddress_Id,
@@ -372,26 +388,17 @@
 
             <cfif (arguments.cardNumber EQ local.cardNumber) AND (arguments.cvv EQ local.cvv)>
                 <cfset local.orderId = createUUID()>
-                <cfif arguments.productId NEQ 0>
-                    <!---Product ordering using  Buy Now  --->
-                    <cfstoredproc procedure="spOrderBuyNow">
-                        <cfprocparam cfsqltype="VARCHAR" variable="orderId" value="#local.orderId#">
-                        <cfprocparam cfsqltype="integer" variable="userId" value="#userData.userId#">
-                        <cfprocparam cfsqltype="integer" variable="addressId" value="#arguments.selectedAddress#">
-                        <cfprocparam cfsqltype="decimal" variable="totalPrice" value="#arguments.totalPrice#">
-                        <cfprocparam cfsqltype="decimal" variable="totalTax" value="#arguments.totalTax#">
+
+                <cfstoredproc procedure="spPlaceOrder">
+                    <cfprocparam cfsqltype="VARCHAR" variable="orderId" value="#local.orderId#">
+                    <cfprocparam cfsqltype="integer" variable="userId" value="#userData.userId#">
+                    <cfprocparam cfsqltype="integer" variable="addressId" value="#arguments.selectedAddress#">
+                    <cfif arguments.productId NEQ 0>  
                         <cfprocparam cfsqltype="integer" variable="productId" value="#arguments.productId#">
-                    </cfstoredproc>
-                <cfelse>
-                    <!---Product ordering using Cart Checkout --->
-                    <cfstoredproc procedure="spOrderCartCheckout">
-                        <cfprocparam cfsqltype="VARCHAR" variable="orderId" value="#local.orderId#">
-                        <cfprocparam cfsqltype="integer" variable="userId" value="#userData.userId#">
-                        <cfprocparam cfsqltype="integer" variable="addressId" value="#arguments.selectedAddress#">
-                        <cfprocparam cfsqltype="decimal" variable="totalPrice" value="#arguments.totalPrice#">
-                        <cfprocparam cfsqltype="decimal" variable="totalTax" value="#arguments.totalTax#">
-                    </cfstoredproc>
-                </cfif>
+                    <cfelse>
+                        <cfprocparam cfsqltype="integer" variable="productId" null="true">
+                    </cfif>
+                </cfstoredproc>
                 <!--- updating cart count for header display purpose--->
                 <cfset session.cartCount = getUserCartCount()>
                 <cfset local.placeOrderResult["resultMsg"] = "Order placed SuccessFully and cart updated">
@@ -416,11 +423,11 @@
                 
                 Items Ordered: 
                 <cfloop from="1" to="#arrayLen(local.order.productNames)#" index="i">
-                - #local.order.productNames[i]#  
-                  Quantity: #local.order.quantities[i]#  
-                  Price per Unit : Rs. #local.order.unitPrices[i]#  
-                  Tax per Unit: Rs. #local.order.unitTaxes[i]#  
-                  Total: Rs. #local.order.totalPrice#
+                    - #local.order.productNames[i]#  
+                    Quantity: #local.order.quantities[i]#  
+                    Price per Unit : Rs. #local.order.unitPrices[i]#  
+                    Tax per Unit: Rs. #local.order.unitTaxes[i]#  
+                    Total: Rs. #local.order.totalPrice#
                 </cfloop>
                 Grand Total: Rs. #local.order.totalPrice#  
                 

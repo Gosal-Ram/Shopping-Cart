@@ -19,6 +19,13 @@
     <cfset variables.encodedProductId = encodeForURL(variables.encryptedProductId)>
 
     <cfset variables.logInFlag = 0>
+    <cfset isAdmin = structKeyExists(session, "admin") AND structKeyExists(session.admin, "isLoggedIn") AND session.admin.isLoggedIn>
+    <cfset isUser = structKeyExists(session, "user") AND structKeyExists(session.user, "isLoggedIn") AND session.user.isLoggedIn>
+    <cfif isAdmin>
+        <cfset userData = session.admin>
+    <cfelseif isUser>
+        <cfset userData = session.user>
+    </cfif>
 
     <cfoutput>
     <main>
@@ -93,7 +100,7 @@
                         </p>
 
                         <div class="mt-4">
-                        <cfif structKeyExists(session,"isLoggedIn") AND session.isloggedIn EQ true>
+                        <cfif isAdmin OR isUser>
                             <cfset variables.logInFlag = 1>
                         </cfif>
                         <form method = "POST">

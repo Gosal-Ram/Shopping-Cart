@@ -1,5 +1,4 @@
 <main>
-  <cfdump  var="#session#">
   <div class="container flex-column mx-auto my-5 p-5 w-50 justify-content-center bg-light shadow">
     <h3 class= "text-center">Login</h3>
     <form class="d-flex flex-column my-5" method="POST" onsubmit = "loginValidate()">
@@ -20,7 +19,6 @@
           <cfset variables.loginResult = application.shoppingCart.logIn(form.userInput,form.password,url.productId)>
         </cfif>
       <cfelse>
-        <cfdump  var="#session#">
         <cfset variables.loginResult = application.shoppingCart.logIn(form.userInput,form.password)>
       </cfif>
       <cfoutput>

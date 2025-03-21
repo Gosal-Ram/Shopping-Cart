@@ -31,21 +31,32 @@
         <cfset local.adminPages = ["/admin/category.cfm", 
                                     "/admin/subCategory.cfm", 
                                     "/admin/product.cfm"]>
+        <cfset local.userPages = ["/userProduct.cfm"]>
         <cfset local.loggedInUserAllowedPages = ["/order.cfm",
                                     "/orderDetails.cfm", 
-                                    "/generateInvoice.cfm"]>
+                                    "/generateInvoice.cfm",
+                                    "/userProduct.cfm"]>
         <cfif arrayContains(local.adminPages, arguments.requestPage)>
             <cfif structKeyExists(session, "admin") AND session.admin.isLoggedIn EQ true>
                 <cfreturn true>
             <cfelse>
                 <cflocation  url = "/home.cfm" addtoken = "no">  
             </cfif>
-        <cfelseif arrayContains(local.loggedInUserAllowedPages, arguments.requestPage)>
-            <cfif (structKeyExists(session, "admin") AND session.admin.isLoggedIn EQ true)
-                OR (structKeyExists(session, "user") AND session.user.isLoggedIn EQ true)>
-                <cfreturn true>
-            <cfelse>
+        <cfelseif arrayContains(local.userPages, arguments.requestPage)>
+            <cfif structKeyExists(session, "admin") AND structKeyExists(session.admin, "isLoggedIn") AND session.admin.isLoggedIn EQ true>
                 <cflocation  url = "/home.cfm" addtoken = "no">  
+            <cfelse>
+                <cfreturn true>
+            </cfif>
+        <cfelseif arrayContains(local.loggedInUserAllowedPages, arguments.requestPage)>
+            <cfif structKeyExists(session, "user")>
+                <cfif structKeyExists(session.user, "isLoggedIn") AND session.user.isLoggedIn EQ true>
+                    <cfreturn true>
+                <cfelse> 
+                    <cflocation  url = "/home.cfm" addtoken = "no"> 
+                </cfif>
+            <cfelse> 
+                <cflocation  url = "/home.cfm" addtoken = "no"> 
             </cfif>
         </cfif>
 

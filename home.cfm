@@ -1,6 +1,6 @@
 <main class="d-flex flex-column">
-  <cfdump  var="#session#">
 <cfoutput>
+  <cfdump  var="#session#">
   <div class="homeImgContainer mx-auto">
      <img src="/assets/images/Photo Modern New Collection Banner.png" alt="" 
         class= "w-100 homeCartImg"

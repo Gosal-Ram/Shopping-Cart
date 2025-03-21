@@ -2,11 +2,6 @@
     <!---Admin  --->
     <cfset isAdmin = structKeyExists(session, "admin") AND structKeyExists(session.admin, "isLoggedIn") AND session.admin.isLoggedIn>
     <cfset isUser = structKeyExists(session, "user") AND structKeyExists(session.user, "isLoggedIn") AND session.user.isLoggedIn>
-    <cfif isAdmin>
-        <cfset userData = session.admin>
-    <cfelseif isUser>
-        <cfset userData = session.user>
-    </cfif>
     <cffunction  name="fetchBrands" access = "public" returnType="query">
         <cfquery name="local.queryGetBrands">
             SELECT 
@@ -167,7 +162,7 @@
                     tblCategory(fldCategoryName,fldCreatedBy)
                 VALUES (
                     <cfqueryparam value = "#arguments.categoryName#" cfsqltype = "VARCHAR">,
-                    <cfqueryparam value = "#userData.userId#" cfsqltype = "integer">
+                    <cfqueryparam value = "#session.admin.userId#" cfsqltype = "integer">
                 )
             </cfquery> 
             <cfset local.addCategoryResult["categoryId"] = local.resultQueryAddCategory.generated_Key> 
@@ -200,7 +195,7 @@
                 VALUES (
                     <cfqueryparam value = "#arguments.subCategoryName#" cfsqltype = "VARCHAR">,
                     <cfqueryparam value = "#arguments.selectedCategoryId#" cfsqltype = "INTEGER">,
-                    <cfqueryparam value = "#userData.userId#" cfsqltype = "integer">
+                    <cfqueryparam value = "#session.admin.userId#" cfsqltype = "integer">
                 )
             </cfquery> 
             <cfset local.addSubCategoryResult["resultMsg"] = "SubCategory Added">
@@ -262,7 +257,7 @@
                     <cfqueryparam value="#arguments.productDescription#" cfsqltype="VARCHAR">,
                     <cfqueryparam value="#abs(arguments.productPrice)#" cfsqltype="DECIMAL">,
                     <cfqueryparam value="#abs(arguments.productTax)#" cfsqltype="DECIMAL">,
-                    <cfqueryparam value="#userData.userId#" cfsqltype="INTEGER">
+                    <cfqueryparam value="#session.admin.userId#" cfsqltype="INTEGER">
                 )
             </cfquery> 
             <cfloop array="#local.productUploadedImages#" item="item" index = "index">
@@ -281,7 +276,7 @@
                         <cfelse>
                              <cfqueryparam value="0" cfsqltype="INTEGER">,
                         </cfif>
-                        <cfqueryparam value="#userData.userId#" cfsqltype="INTEGER">
+                        <cfqueryparam value="#session.admin.userId#" cfsqltype="INTEGER">
                     )
                 </cfquery>
             </cfloop>
@@ -310,7 +305,7 @@
                 tblCategory
             SET 
                 fldCategoryName = <cfqueryparam value = "#arguments.categoryName#" cfsqltype = "VARCHAR">,
-                fldUpdatedBy = <cfqueryparam value = "#userData.userId#" cfsqltype = "integer">
+                fldUpdatedBy = <cfqueryparam value = "#session.admin.userId#" cfsqltype = "integer">
             WHERE 
                 fldCategory_Id = <cfqueryparam value = "#arguments.categoryId#" cfsqltype = "INTEGER">
             </cfquery> 
@@ -346,7 +341,7 @@
                 SET 
                     fldSubCategoryName = <cfqueryparam value = "#arguments.subCategoryName#" cfsqltype = "VARCHAR">,
                     fldCategoryId = <cfqueryparam value = "#arguments.selectedCategoryId#" cfsqltype = "INTEGER">,
-                    fldUpdatedBy = <cfqueryparam value = "#userData.userId#" cfsqltype = "INTEGER">
+                    fldUpdatedBy = <cfqueryparam value = "#session.admin.userId#" cfsqltype = "INTEGER">
                 WHERE 
                     fldSubCategory_Id = <cfqueryparam value = "#arguments.subCategoryId#" cfsqltype = "INTEGER"> 
             </cfquery> 
@@ -404,7 +399,7 @@
                     fldDescription = <cfqueryparam value = "#arguments.productDescription#" cfsqltype = "VARCHAR">,
                     fldPrice = <cfqueryparam value = "#arguments.productPrice#" cfsqltype = "DECIMAL">,
                     fldTax = <cfqueryparam value = "#arguments.productTax#" cfsqltype = "DECIMAL">,
-                    fldUpdatedBy = <cfqueryparam value = "#userData.userId#" cfsqltype = "integer">
+                    fldUpdatedBy = <cfqueryparam value = "#session.admin.userId#" cfsqltype = "integer">
                 WHERE 
                     fldProduct_Id = <cfqueryparam value = "#arguments.productId#" cfsqltype = "integer"> 
             </cfquery> 
@@ -417,7 +412,7 @@
                         <cfqueryparam value="#arguments.productId#" cfsqltype="INTEGER">,
                         <cfqueryparam value="#item.serverfile#" cfsqltype="VARCHAR">,
                         <cfqueryparam value="0" cfsqltype="INTEGER">,
-                        <cfqueryparam value="#userData.userId#" cfsqltype="INTEGER">
+                        <cfqueryparam value="#session.admin.userId#" cfsqltype="INTEGER">
                     )
                 </cfquery>
             </cfloop>
@@ -458,7 +453,7 @@
                 tblproductimages
             SET 
                 fldActive = 0,
-                fldDeactivatedBy = <cfqueryparam value = "#userData.userId#" cfsqltype = "integer">,
+                fldDeactivatedBy = <cfqueryparam value = "#session.admin.userId#" cfsqltype = "integer">,
                 fldDeactivatedDate = now()
             WHERE 
                 fldProductImage_Id = <cfqueryparam value = "#arguments.productImageId#" cfsqltype = "integer"> 
@@ -515,13 +510,13 @@
                     tblProductImages PI ON P.fldProduct_Id = PI.fldProductId
             SET 
                 C.fldActive = 0, 
-                C.fldUpdatedBy = <cfqueryparam value = "#userData.userId#" cfsqltype="integer">,
+                C.fldUpdatedBy = <cfqueryparam value = "#session.admin.userId#" cfsqltype="integer">,
                 SC.fldActive = 0,
-                SC.fldUpdatedBy = <cfqueryparam value = "#userData.userId#" cfsqltype="integer">,
+                SC.fldUpdatedBy = <cfqueryparam value = "#session.admin.userId#" cfsqltype="integer">,
                 P.fldActive = 0,
-                P.fldUpdatedBy = <cfqueryparam value = "#userData.userId#" cfsqltype="integer">,
+                P.fldUpdatedBy = <cfqueryparam value = "#session.admin.userId#" cfsqltype="integer">,
                 PI.fldActive = 0,
-                PI.fldDeactivatedBy = <cfqueryparam value = "#userData.userId#" cfsqltype = "integer">,
+                PI.fldDeactivatedBy = <cfqueryparam value = "#session.admin.userId#" cfsqltype = "integer">,
                 PI.fldDeactivatedDate = now()
             WHERE 
                 C.fldCategory_Id = <cfqueryparam value = "#arguments.categoryId#" cfsqltype="integer">
@@ -540,9 +535,9 @@
                     tblProductImages PI ON P.fldProduct_Id = PI.fldProductId
             SET 
                 P.fldActive = 0,
-                P.fldUpdatedBy = <cfqueryparam value = "#userData.userId#" cfsqltype="integer">,
+                P.fldUpdatedBy = <cfqueryparam value = "#session.admin.userId#" cfsqltype="integer">,
                 PI.fldActive = 0,
-                PI.fldDeactivatedBy = <cfqueryparam value = "#userData.userId#" cfsqltype = "integer">,
+                PI.fldDeactivatedBy = <cfqueryparam value = "#session.admin.userId#" cfsqltype = "integer">,
                 PI.fldDeactivatedDate = now()
             WHERE 
                 P.fldProduct_Id = <cfqueryparam value = "#arguments.productId#" cfsqltype="integer">
@@ -563,11 +558,11 @@
                     tblProductImages PI ON P.fldProduct_Id = PI.fldProductId
             SET 
                 SC.fldActive = 0,
-                SC.fldUpdatedBy = <cfqueryparam value = "#userData.userId#" cfsqltype="integer">,
+                SC.fldUpdatedBy = <cfqueryparam value = "#session.admin.userId#" cfsqltype="integer">,
                 P.fldActive = 0,
-                P.fldUpdatedBy = <cfqueryparam value = "#userData.userId#" cfsqltype="integer">,
+                P.fldUpdatedBy = <cfqueryparam value = "#session.admin.userId#" cfsqltype="integer">,
                 PI.fldActive = 0,
-                PI.fldDeactivatedBy = <cfqueryparam value = "#userData.userId#" cfsqltype = "integer">,
+                PI.fldDeactivatedBy = <cfqueryparam value = "#session.admin.userId#" cfsqltype = "integer">,
                 PI.fldDeactivatedDate = now()
             WHERE 
                 SC.fldSubCategory_Id = <cfqueryparam value = "#arguments.subCategoryId#" cfsqltype="integer">

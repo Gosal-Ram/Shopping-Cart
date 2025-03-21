@@ -39,10 +39,8 @@
             <cfif local.queryUserLogin.fldHashedPassword EQ hash(arguments.password & local.queryUserLogin.fldUserSaltString, "SHA-512")>
                 <cfset local.loginResult = "User Login Successful">
 
-
                 <cfif local.queryUserLogin.fldRoleId EQ 1>
                     <!--- Admin Login ---> 
-<!---                     <cfset structClear(session.admin)> --->
                     <cfset session.admin.isLoggedIn = true>
                     <cfset session.admin.firstName = local.queryUserLogin.fldFirstName>
                     <cfset session.admin.lastName = local.queryUserLogin.fldLastName>
@@ -52,7 +50,6 @@
                     <cfset session.admin.roleId = local.queryUserLogin.fldRoleId>
                 <cfelse>
                     <!--- Regular User Login ---> 
-<!---                     <cfset structClear(session.user)> --->
                     <cfset session.user.isLoggedIn = true>
                     <cfset session.user.firstName = local.queryUserLogin.fldFirstName>
                     <cfset session.user.lastName = local.queryUserLogin.fldLastName>
@@ -61,13 +58,6 @@
                     <cfset session.user.userId = local.queryUserLogin.fldUser_Id>
                     <cfset session.user.roleId = local.queryUserLogin.fldRoleId>
                 </cfif>
-                <!--- <cfset session.isLoggedIn = true>
-                <cfset session.firstName = local.queryUserLogin.fldFirstName>
-                <cfset session.lastName = local.queryUserLogin.fldLastName>
-                <cfset session.email = local.queryUserLogin.fldEmail>
-                <cfset session.phone = local.queryUserLogin.fldPhone>
-                <cfset session.userId = local.queryUserLogin.fldUser_Id>
-                <cfset session.roleId = local.queryUserLogin.fldRoleId> --->
                 <cfif structKeyExists(arguments, "productId")>
                     <!--- to add product to the cart of a not logged in user(after logging in)--->
                     <cfset local.productId = decrypt(arguments.productId,application.key,"AES","Base64")>
