@@ -1,7 +1,5 @@
 <cfcomponent>
     <!---Admin  --->
-    <cfset isAdmin = structKeyExists(session, "admin") AND structKeyExists(session.admin, "isLoggedIn") AND session.admin.isLoggedIn>
-    <cfset isUser = structKeyExists(session, "user") AND structKeyExists(session.user, "isLoggedIn") AND session.user.isLoggedIn>
     <cffunction  name="fetchBrands" access = "public" returnType="query">
         <cfquery name="local.queryGetBrands">
             SELECT 

@@ -1,14 +1,15 @@
 <cfcomponent>
     <!---User--->
-    <cfset isAdmin = structKeyExists(session, "admin") AND structKeyExists(session.admin, "isLoggedIn") AND session.admin.isLoggedIn>
-    <cfset isUser = structKeyExists(session, "user") AND structKeyExists(session.user, "isLoggedIn") AND session.user.isLoggedIn>
-    <cfif isAdmin>
-        <cfset userData = session.admin>
-    <cfelseif isUser>
-        <cfset userData = session.user>
-    </cfif>
     <cffunction  name="addToCart" access = "remote" returnType = "struct" returnFormat = "JSON">
         <cfargument name="productId" type="integer" required="false">
+
+        <cfset isAdmin = structKeyExists(session, "admin") AND structKeyExists(session.admin, "isLoggedIn") AND session.admin.isLoggedIn>
+        <cfset isUser = structKeyExists(session, "user") AND structKeyExists(session.user, "isLoggedIn") AND session.user.isLoggedIn>
+        <cfif isAdmin>
+            <cfset userData = session.admin>
+        <cfelseif isUser>
+            <cfset userData = session.user>
+        </cfif>
         
         <cfset local.addToCartResult = { "resultMsg" = "","cartId" = "", "quantity" = ""}>
         <cfif structKeyExists(arguments, "productId")>
@@ -159,6 +160,13 @@
     </cffunction>
 
     <cffunction  name="getUserCartCount" access = "public" returnType = "numeric"> 
+        <cfset isAdmin = structKeyExists(session, "admin") AND structKeyExists(session.admin, "isLoggedIn") AND session.admin.isLoggedIn>
+        <cfset isUser = structKeyExists(session, "user") AND structKeyExists(session.user, "isLoggedIn") AND session.user.isLoggedIn>
+        <cfif isAdmin>
+            <cfset userData = session.admin>
+        <cfelseif isUser>
+            <cfset userData = session.user>
+        </cfif>
         <cfquery name ="local.querygetCartCount">
             SELECT 
                 fldProductId
@@ -175,6 +183,14 @@
         <cfargument name="lastName" type="string" required="yes">
         <cfargument name="emailId" type="string" required="yes">
         <cfargument name="phone" type="string" required="yes">
+
+        <cfset isAdmin = structKeyExists(session, "admin") AND structKeyExists(session.admin, "isLoggedIn") AND session.admin.isLoggedIn>
+        <cfset isUser = structKeyExists(session, "user") AND structKeyExists(session.user, "isLoggedIn") AND session.user.isLoggedIn>
+        <cfif isAdmin>
+            <cfset userData = session.admin>
+        <cfelseif isUser>
+            <cfset userData = session.user>
+        </cfif>
 
         <!---Validation--->
         <cfset local.updateUserInfoResult = {"resultMsg" = ""}>
@@ -290,6 +306,14 @@
         <cfargument name="city" type="string" required="yes">
         <cfargument name="state" type="string" required="yes">
         <cfargument name="pincode" type="string" required="yes">
+
+        <cfset isAdmin = structKeyExists(session, "admin") AND structKeyExists(session.admin, "isLoggedIn") AND session.admin.isLoggedIn>
+        <cfset isUser = structKeyExists(session, "user") AND structKeyExists(session.user, "isLoggedIn") AND session.user.isLoggedIn>
+        <cfif isAdmin>
+            <cfset userData = session.admin>
+        <cfelseif isUser>
+            <cfset userData = session.user>
+        </cfif>
         <!---Validation--->
         <cfset local.addNewAddressResult = { "resultMsg" = ""}>
         <cfif len(trim(arguments.firstName)) EQ 0>
@@ -373,6 +397,14 @@
         <cfargument  name="totalTax" type="string" required ="true">
         <cfargument  name="productId" type="string" required ="true">
 
+        <cfset isAdmin = structKeyExists(session, "admin") AND structKeyExists(session.admin, "isLoggedIn") AND session.admin.isLoggedIn>
+        <cfset isUser = structKeyExists(session, "user") AND structKeyExists(session.user, "isLoggedIn") AND session.user.isLoggedIn>
+        <cfif isAdmin>
+            <cfset userData = session.admin>
+        <cfelseif isUser>
+            <cfset userData = session.user>
+        </cfif>
+
         <cfset local.cardNumber = "1111111111111111">
         <cfset local.cvv = "111">
         <cfset local.placeOrderResult = { "resultMsg" = "","cartCount" = ""}>
@@ -447,6 +479,14 @@
         <cfargument  name="searchTerm" type="string" required ="false">
         <cfargument  name="page" type="integer" required ="false">
         <cfargument  name="limit" type="integer" required ="false" default = "10">
+
+        <cfset isAdmin = structKeyExists(session, "admin") AND structKeyExists(session.admin, "isLoggedIn") AND session.admin.isLoggedIn>
+        <cfset isUser = structKeyExists(session, "user") AND structKeyExists(session.user, "isLoggedIn") AND session.user.isLoggedIn>
+        <cfif isAdmin>
+            <cfset userData = session.admin>
+        <cfelseif isUser>
+            <cfset userData = session.user>
+        </cfif>
 
         <cfquery name="local.queryGetOrders">
             SELECT 

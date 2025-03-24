@@ -1,17 +1,18 @@
 <cfcomponent>
     <!--- COMMON--->
-    <cfset isAdmin = structKeyExists(session, "admin") AND structKeyExists(session.admin, "isLoggedIn") AND session.admin.isLoggedIn>
-    <cfset isUser = structKeyExists(session, "user") AND structKeyExists(session.user, "isLoggedIn") AND session.user.isLoggedIn>
-    <cfif isAdmin>
-        <cfset userData = session.admin>
-    <cfelseif isUser>
-        <cfset userData = session.user>
-    </cfif>
     <cffunction  name="logIn" access = "public" returnType="string" >
         <cfargument name ="userInput" type="string" required ="true">
         <cfargument name ="password" type="string" required = "true">
         <cfargument name ="productId" type="string" required = "false">
         <cfargument name ="buyNow" type="integer" required = "false">
+
+        <cfset isAdmin = structKeyExists(session, "admin") AND structKeyExists(session.admin, "isLoggedIn") AND session.admin.isLoggedIn>
+        <cfset isUser = structKeyExists(session, "user") AND structKeyExists(session.user, "isLoggedIn") AND session.user.isLoggedIn>
+        <cfif isAdmin>
+            <cfset userData = session.admin>
+        <cfelseif isUser>
+            <cfset userData = session.user>
+        </cfif>
 
         <cfset local.loginResult = "">
         <cfquery name ="local.queryUserLogin">
@@ -91,6 +92,13 @@
     </cffunction>   
 
     <cffunction  name="logOut" access="remote" returnType = "void" >
+        <cfset isAdmin = structKeyExists(session, "admin") AND structKeyExists(session.admin, "isLoggedIn") AND session.admin.isLoggedIn>
+        <cfset isUser = structKeyExists(session, "user") AND structKeyExists(session.user, "isLoggedIn") AND session.user.isLoggedIn>
+        <cfif isAdmin>
+            <cfset userData = session.admin>
+        <cfelseif isUser>
+            <cfset userData = session.user>
+        </cfif>
         <cfif isAdmin>
             <cfset structClear(session.admin)>
         <cfelseif isUser>
