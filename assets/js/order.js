@@ -1,81 +1,25 @@
-function removeProduct(cartId){
-    if(confirm("Confirm remove cart item")){
-        $.ajax({
-            type:"POST",
-            url: "component/shoppingcart.cfc",
-            data:{cartId: cartId,
-                method : "deleteCartItem"
-            },
-            success:function(){
-                document.getElementById(`cartId_${cartId}`).remove();
-                location.reload();
-            }
-        })
-    }
-}
-
-function cardValidate() {
-    let cardNumber = $("#cardNumber");
-    let cvv = $("#cvv");
-    let cardNumberError = document.getElementById("cardNumberError");
-    let cvvError = document.getElementById("cvvError");
-
-    cardNumberError.textContent = "";
-    cvvError.textContent = "";
-    cardNumber.removeClass("border-danger");
-    cvv.removeClass("border-danger");
-
-    let isValid = true;
-    const cardRegex = /^[0-9]{16}$/;
-    const cvvRegex = /^[0-9]{3}$/;
-
-    const setError = (element, errorElement, message) => {
-        errorElement.textContent = message;
-        element.addClass("border-danger");
-        isValid = false;
-    };
-
-    const clearError = (element, errorElement) => {
-        errorElement.textContent = "";
-        element.removeClass("border-danger");
-    };
-
-    const cardNumberValue = cardNumber.val().trim();
-    if (cardNumberValue === "") {
-        setError(cardNumber, cardNumberError, "Enter your card number");
-        // alert("Enter your card number");
-        document.getElementById("flush-collapseThree").classList.add("show");
-        document.getElementById("flush-collapseOne").classList.remove("show");
-        document.getElementById("flush-collapseTwo").classList.remove("show");
-    } else if (!cardRegex.test(cardNumberValue)) {
-        setError(cardNumber, cardNumberError, "Card number must be exactly 16 digits");
-        // alert("Card number must be exactly 16 digits");
-        document.getElementById("flush-collapseThree").classList.add("show");
-        document.getElementById("flush-collapseOne").classList.remove("show");
-        document.getElementById("flush-collapseTwo").classList.remove("show");
-    } else {
-        clearError(cardNumber, cardNumberError);
-    }
-
-    const cvvValue = cvv.val().trim();
-    if (cvvValue === "") {
-        setError(cvv, cvvError, "Enter your CVV");
-        // alert("Enter CVV");
-        document.getElementById("flush-collapseThree").classList.add("show");
-        document.getElementById("flush-collapseOne").classList.remove("show");
-        document.getElementById("flush-collapseTwo").classList.remove("show");
-
-    } else if (!cvvRegex.test(cvvValue)) {
-        setError(cvv, cvvError, "CVV must be exactly 3 digits");
-        // alert("CVV must be exactly 3 digits");
-        document.getElementById("flush-collapseThree").classList.add("show");
-        document.getElementById("flush-collapseOne").classList.remove("show");
-        document.getElementById("flush-collapseTwo").classList.remove("show");
-
-    } else {
-        clearError(cvv, cvvError);
-    }
-    return isValid;
+function removeProduct(cartId) {
+    alertify.confirm("Confirm remove cart item",
+        function() { 
+            $.ajax({
+                type:"POST",
+                url: "/component/user.cfc",
+                data:{cartId: cartId,
+                    method : "deleteCartItem"
+                },
+                success:function(){
+                    document.getElementById(`cartId_${cartId}`).remove();
+                    location.reload();
+                },
+                error: function() {
+                    alertify.error('Failed to remove product');
+                }
+            })
+        },
+        function() { 
+            alertify.error('remove canceled');
+        }
+    );
 }
 
 function placeOrder(productId){ 
@@ -91,7 +35,7 @@ function placeOrder(productId){
     
     $.ajax({
         type:"POST",
-        url: "component/shoppingcart.cfc",
+        url: "/component/user.cfc",
         data:{cardNumber: cardNumber,
             cvv: cvv,
             selectedAddress:selectedAddress,
@@ -108,8 +52,8 @@ function placeOrder(productId){
             let resultHtml = `
                 <div class="text-center mt-4">
                     <h4>${responseParsed.resultMsg}</h4>
-                    <a href="home.cfm" class="btn btn-primary m-2">Go to Home</a>
-                    <a href="orderDetails.cfm" class="btn btn-success m-2">View Order Details</a>
+                    <a href="/home.cfm" class="btn btn-primary m-2">Go to Home</a>
+                    <a href="/orderDetails.cfm?orderId=${responseParsed.orderId}" class="btn btn-success m-2">View Order Details</a>
                 </div>
             `;
         
@@ -136,32 +80,41 @@ function increaseCount(cartId){
 
     let productActualPriceElementValue = Number(productActualPriceElement.text());
     let productTaxElementValue = Number(productTaxElement.text());
+    let increaseBtn = document.getElementById(`btnIncrease_${cartId}`);
+    let decreaseBtn = document.getElementById(`btnDecrease_${cartId}`);
+
+    increaseBtn.disabled = true;
+    decreaseBtn.disabled = true;
 
 
     $.ajax({
         type:"POST",
-        url: "component/shoppingcart.cfc",
+        url: "/component/user.cfc",
         data:{cartId: cartId,
             quantity : newQuantity,
             method : "editCart"
         },
         success:function(response){
-            quantityElement.innerHTML = newQuantity;
+            let responseParsed = JSON.parse(response);
+            quantityElement.innerHTML = responseParsed.updatedQuantity;
 
-            let updatedProductActualPrice = (productActualPriceElementValue / prevCount) * newQuantity;
-            let updatedProductTax = (productTaxElementValue / prevCount) * newQuantity;
+            let updatedProductActualPrice = (productActualPriceElementValue / prevCount) * responseParsed.updatedQuantity;
+            let updatedProductTax = (productTaxElementValue / prevCount) * responseParsed.updatedQuantity;
             let updatedTotalPrice = updatedProductActualPrice + updatedProductTax;
 
-            productActualPriceElement.text(updatedProductActualPrice);
-            totalActualPriceElement.text(updatedProductActualPrice);
+            productActualPriceElement.text(updatedProductActualPrice.toFixed(2));
+            totalActualPriceElement.text(updatedProductActualPrice.toFixed(2));
 
-            productTaxElement.text(updatedProductTax);
-            totalTaxElement.text(updatedProductTax);
+            productTaxElement.text(updatedProductTax.toFixed(2));
+            totalTaxElement.text(updatedProductTax.toFixed(2));
 
-            productPriceElement.text(updatedTotalPrice);
-            totalPriceElement.text(updatedTotalPrice);
+            productPriceElement.text(updatedTotalPrice.toFixed(2));
+            totalPriceElement.text(updatedTotalPrice.toFixed(2));
         }
-    })
+    }).always( function(){
+        increaseBtn.disabled = false;
+        decreaseBtn.disabled = false;
+    });
 
 }
 
@@ -180,31 +133,41 @@ function decreaseCount(cartId){
         let productActualPriceElementValue = Number(productActualPriceElement.text());
         let productTaxElementValue = Number(productTaxElement.text());
 
+        let increaseBtn = document.getElementById(`btnIncrease_${cartId}`);
+        let decreaseBtn = document.getElementById(`btnDecrease_${cartId}`);
+    
+        increaseBtn.disabled = true;
+        decreaseBtn.disabled = true;
+
 
         $.ajax({
             type:"POST",
-            url: "component/shoppingcart.cfc",
+            url: "/component/user.cfc",
             data:{cartId: cartId,
                 quantity : newQuantity,
                 method : "editCart"
             },
             success:function(response){
                 let responseParsed = JSON.parse(response);
-                quantityElement.innerHTML = newQuantity;
-                let updatedProductActualPrice = (productActualPriceElementValue / prevCount) * newQuantity;
-                let updatedProductTax = (productTaxElementValue / prevCount) * newQuantity;
+                quantityElement.innerHTML = responseParsed.updatedQuantity;
+
+                let updatedProductActualPrice = (productActualPriceElementValue / prevCount) * responseParsed.updatedQuantity;
+                let updatedProductTax = (productTaxElementValue / prevCount) * responseParsed.updatedQuantity;
                 let updatedTotalPrice = updatedProductActualPrice + updatedProductTax;
 
-                productActualPriceElement.text(updatedProductActualPrice);
-                totalActualPriceElement.text(updatedProductActualPrice);
+                productActualPriceElement.text(updatedProductActualPrice.toFixed(2));
+                totalActualPriceElement.text(updatedProductActualPrice.toFixed(2));
     
-                productTaxElement.text(updatedProductTax);
-                totalTaxElement.text(updatedProductTax);
+                productTaxElement.text(updatedProductTax.toFixed(2));
+                totalTaxElement.text(updatedProductTax.toFixed(2));
     
-                productPriceElement.text(updatedTotalPrice);
-                totalPriceElement.text(updatedTotalPrice);
+                productPriceElement.text(updatedTotalPrice.toFixed(2));
+                totalPriceElement.text(updatedTotalPrice.toFixed(2));
             }
-        })
+        }).always( function(){
+            increaseBtn.disabled = false;
+            decreaseBtn.disabled = false;
+        });
     }
 
 }

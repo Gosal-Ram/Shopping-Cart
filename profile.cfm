@@ -1,9 +1,16 @@
-<cfset variables.queryGetAddresses = application.shoppingCart.fetchAddresses()>
+<cfset variables.queryGetAddresses = application.user.fetchAddresses()>
 
 <cfoutput>
 <main>
+    <cfset isAdmin = structKeyExists(session, "admin") AND structKeyExists(session.admin, "isLoggedIn") AND session.admin.isLoggedIn>
+    <cfset isUser = structKeyExists(session, "user") AND structKeyExists(session.user, "isLoggedIn") AND session.user.isLoggedIn>
+    <cfif isAdmin>
+        <cfset userData = session.admin>
+    <cfelseif isUser>
+        <cfset userData = session.user>
+    </cfif>
     <cfif structKeyExists(form,"userSubmitBtn")>   
-        <cfset variables.editUserDetailsResult = application.shoppingCart.updateUserInfo(
+        <cfset variables.editUserDetailsResult = application.user.updateUserInfo(
             firstName = form.userFirstName,
             lastName = form.userLastName,
             emailId = form.userEmail,
@@ -13,12 +20,12 @@
         <div class = "text-center">
             <img src = "assets/images/userprofile.jpg" alt="" height="75" width = "125" class="img-fluid">
         </div>
-        <h2 class="mb-4 text-center">Hello #session.firstName# #session.lastName# !</h2>
+        <h2 class="mb-4 text-center">Hello #userData.firstName# #userData.lastName# !</h2>
         <div class="card p-4 shadow-sm">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <p class ="mb-1 text-muted">Name : <span class="fw-semibold text-dark"> #session.firstName# #session.lastName#</span></p>
-                    <p class="mb-1 text-muted">Email :<span class="fw-semibold text-dark"> #session.email#</span></p>
+                    <p class ="mb-1 text-muted">Name : <span class="fw-semibold text-dark"> #userData.firstName# #userData.lastName#</span></p>
+                    <p class="mb-1 text-muted">Email :<span class="fw-semibold text-dark"> #userData.email#</span></p>
                 </div>
 
                 <button onClick = "updateUserInfoModal()" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="##editUserModal">
@@ -65,7 +72,7 @@
                 <button type="button" onClick = "openAddAddressModal()" class="btn btn-outline-success mt-3 fw-semibold" data-bs-toggle="modal" data-bs-target="##addAddressModal">
                     <i class="fa-solid fa-plus me-1"></i> Add Address
                 </button>
-                <a href="orderDetails.cfm" class="btn btn-outline-primary mt-3 ms-3 fw-semibold">
+                <a href="/orderDetails.cfm" class="btn btn-outline-primary mt-3 ms-3 fw-semibold">
                     <i class='fas fa-shopping-bag'></i> My Orders
                 </a>
             </div>
@@ -83,24 +90,24 @@
                     <form id ="userUpdateForm" method="POST" onsubmit = "userProfileValidate()">
                         <div class="mb-3">
                             <label class="form-label">First Name</label>
-                            <input type="text" class="form-control" id="userFirstName" name="userFirstName" value = "#session.firstName#">
+                            <input type="text" class="form-control" id="userFirstName" name="userFirstName" value = "#userData.firstName#" maxlength = "25">
                             <span id="firstNameError" class="text-danger"></span>
 
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Last Name</label>
-                            <input type="text" class="form-control" id="userLastName" name="userLastName" value = "#session.lastName#">
+                            <input type="text" class="form-control" id="userLastName" name="userLastName" value = "#userData.lastName#" maxlength = "25">
                             <span id="lastNameError" class="text-danger"></span>
 
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Email</label>
-                            <input type="text" class="form-control" id="userEmail" name="userEmail" value = "#session.email#">
+                            <input type="text" class="form-control" id="userEmail" name="userEmail" value = "#userData.email#" maxlength = "25">
                             <span id="emailIdError" class="text-danger"></span>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Phone</label>
-                            <input type="text" class="form-control" id="userPhone" name="userPhone" value = "#session.phone#">
+                            <input type="text" class="form-control" id="userPhone" name="userPhone" value = "#userData.phone#" maxlength = "10">
                             <span id="phoneError" class="text-danger"></span>
                         </div>
                         <button type="submit" name = "userSubmitBtn" class="btn btn-primary w-100">Save Changes</button>

@@ -1,7 +1,17 @@
-<cfset variables.queryGetAllOrders = application.shoppingCart.fetchOrderHistory()>
+<cfif structKeyExists(url, "page")>
+    <cfset variables.currentPage = url.page>
+<cfelse>
+    <cfset variables.currentPage = 1>
+</cfif>
+<cfif structKeyExists(url, "orderId")>
+    <cfset variables.queryGetAllOrders = application.user.fetchOrderHistory(page = variables.currentPage,
+    orderId = url.orderId)>
+<cfelse>
+    <cfset variables.queryGetAllOrders = application.user.fetchOrderHistory(page = variables.currentPage)>
+</cfif>
 
 <cfif structKeyExists(form, "submitBtn")>
-    <cfset variables.queryGetAllOrders = application.shoppingCart.fetchOrderHistory(searchTerm = form.searchInput)>
+    <cfset variables.queryGetAllOrders = application.user.fetchOrderHistory(searchTerm = form.searchInput)>
 </cfif>
 
 <cfoutput>
@@ -10,7 +20,7 @@
         <h2 class="mb-4">Your Orders</h2>
         <form method="POST" class="searchInputDiv"> 
             <div class="input-group my-2">  
-                <input class="form-control border-end-0 border rounded-pill" placeholder="Search OrderID" type="search" id="searchInput" name="searchInput">
+                <input class="form-control border-end-0 border rounded-pill" placeholder="Search OrderID, Productname ,OrderDate" type="search" id="searchInput" name="searchInput">
                 <span class="ms-2">
                 <button  name = "submitBtn" class="btn btn-outline-secondary bg-white border-start-0 border rounded-pill" type="submit">
                     <i class="fa fa-search"></i>
@@ -42,7 +52,7 @@
                         </div>
                         <div class = "d-flex flex-column mb-0">
                             <span class="orderTitle">Order ID: #local.order.orderId#</span>
-                            <a href="generateInvoice.cfm?orderId=#local.order.orderId#" target="_blank" class="">
+                            <a href="/generateInvoice.cfm?orderId=#local.order.orderId#" target="_blank" class="">
                                 Invoice
                             </a>
                         </div>
@@ -61,7 +71,7 @@
                                 <cfloop from="1" to="#arrayLen(local.order.productNames)#" index="i">
                                     <tr class="text-center">
                                         <td>
-                                            <img src="./assets/images/productImages/#local.order.productImages[i]#" 
+                                            <img src="./productImages/#local.order.productImages[i]#" 
                                                 alt="#local.order.productNames[i]#" 
                                                 width="50" height="50">
                                         </td>
@@ -81,6 +91,32 @@
                     </div>
                 </div>
             </cfloop>
+            <cfif arrayLen(variables.queryGetAllOrders) GT 1>
+                <nav>
+                    <ul class="pagination justify-content-end">
+                        <li class="page-item 
+                        <cfif variables.currentPage EQ 1>
+                            disabled">
+                        <cfelse>
+                            ">
+                        </cfif> 
+                        <a class="page-link" href="/orderDetails.cfm?page=#(variables.currentPage-1)#">Previous</a>
+                        </li>
+                        <li class="page-item active">
+                            <a class="page-link" href="##">#variables.currentPage#</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="/orderDetails.cfm?page=#(variables.currentPage + 1)#">#variables.currentPage + 1 #</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="/orderDetails.cfm?page=#(variables.currentPage+ 2)#">#variables.currentPage+ 2#</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="/orderDetails.cfm?page=#(variables.currentPage+1)#">Next</a>
+                        </li>
+                    </ul>
+                </nav>
+            </cfif>
         </cfif>
     </div>
 </main>

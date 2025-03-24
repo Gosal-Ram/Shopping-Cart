@@ -24,15 +24,15 @@
                             class = "btn btn-outline-info  px-3 my-2" 
                             data-bs-toggle="modal" 
                             data-bs-target="##staticBackdrop">
-                        <img src="./assets/images/editing.png" alt="" width="18" height="18" class="">
+                        <img src="/assets/images/editing.png" alt="" width="18" height="18" class="">
                     </button>
 
                     <button class = "btn btn-outline-info  px-3 my-2" onClick = "deleteCategory(#local.item.categoryId#)">
-                        <img src="./assets/images/trash.png" alt="" width="18" height="18" class="">
+                        <img src="/assets/images/trash.png" alt="" width="18" height="18" class="">
                     </button>
 
-                    <a class = "btn btn-outline-info  px-3 my-2" href ="subCategory.cfm?categoryId=#variables.encodedCategoryId#">
-                        <img src="./assets/images/right-arrow.png" alt="" width="18" height="18" class="">
+                    <a class = "btn btn-outline-info  px-3 my-2" href ="/admin/subCategory.cfm?categoryId=#variables.encodedCategoryId#">
+                        <img src="/assets/images/right-arrow.png" alt="" width="18" height="18" class="">
                     </a>
                 </div>
             </div>
@@ -42,7 +42,7 @@
 </main>
 
 <!-- Modal -->
-<form method="POST" id="categoryAddForm" onsubmit="modalValidate()">
+<form method="POST" id="categoryAddForm" onsubmit="saveCategoryValidate()">
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">

@@ -1,10 +1,14 @@
 <cfset variables.subCategoryId = decrypt(url.subCategoryId,application.key,"AES","Base64")>
-<!---fetching products's categoryId ,subcategoryname for dynamic switching the categories & subcategories while adding a new product--->
-<cfset variables.getCategoryId = application.shoppingCart.fetchSubCategories(subCategoryId = variables.subCategoryId)>
-<cfset variables.categoryId = variables.getCategoryId[1].categoryId>
-<cfset variables.getSubCategoryName = application.shoppingCart.fetchSubCategories(categoryId = variables.categoryId,
-                                                                                  subCategoryId = variables.subCategoryId)>
-<cfset variables.subCategoryName = variables.getSubCategoryName[1].subCategoryName>
+<cfset variables.queryGetAllProducts = application.shoppingCart.fetchProducts(subCategoryId = variables.subCategoryId)>
+<cfif arrayLen(variables.queryGetAllProducts) EQ 0>
+  <!--- New Sub category   --->
+  <cfset variables.getSubCategoryDetails = application.shoppingCart.fetchSubCategories(subCategoryId = variables.subCategoryId)>
+  <cfset variables.categoryId = variables.getSubCategoryDetails[1].categoryId>
+  <cfset variables.subCategoryName = variables.getSubCategoryDetails[1].subCategoryName>
+<cfelse>
+  <cfset variables.categoryId = variables.queryGetAllProducts[1].categoryId>
+  <cfset variables.subCategoryName = variables.queryGetAllProducts[1].subCategoryName>
+</cfif>
 <cfoutput>
 <main>
   <div class="container flex-column mx-auto my-5 p-5 w-50 justify-content-center bg-light shadow-lg" id ="mainDiv">
@@ -18,7 +22,6 @@
         New
       </button>
     </div>
-    <cfset variables.queryGetAllProducts = application.shoppingCart.fetchProducts(subCategoryId = variables.subCategoryId)>
     <span class="text-success" id ="productFunctionResult"></span>
     <cfloop array="#variables.queryGetAllProducts#" item = "local.product">
       <cfset variables.decryptedProductId = decrypt(local.product.productId, application.key, "AES", "Base64")>
@@ -38,7 +41,7 @@
               class="border-0"  
               data-bs-toggle="modal" 
               data-bs-target="##imgModal">
-              <img src="./assets/images/productImages/#local.product.imageFileName#" 
+              <img src="/productImages/#local.product.imageFilenames[1]#" 
                 alt="" 
                 width="85">
             </button>
@@ -50,11 +53,11 @@
             class = "btn btn-outline-info  px-3 my-2" 
             data-bs-toggle="modal" 
             data-bs-target="##staticBackdrop">
-            <img src="./assets/images/editing.png" alt="" width="18" height="18" class="">
+            <img src="/assets/images/editing.png" alt="" width="18" height="18" class="">
           </button>
           <button class = "btn btn-outline-info  px-3 my-2" 
             onClick = "deleteProduct(#variables.decryptedProductId#)">
-            <img src="./assets/images/trash.png" alt="" width="18" height="18" class="">
+            <img src="/assets/images/trash.png" alt="" width="18" height="18" class="">
           </button>
         </div>
       </div>
@@ -63,7 +66,7 @@
 </main>
 
 <!-- Save product Modal -->
-<form method="POST" id="productAddForm" enctype="multipart/form-data" onsubmit="modalValidate()">
+<form method="POST" id="productAddForm" enctype="multipart/form-data" onsubmit="saveProductValidate()">
   <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -104,7 +107,7 @@
             <label class="modalLabel mb-2">Product Brand</label>
             <select class="form-select mb-2" id = "brandSelect"  name= "selectedBrandId">
               <option selected value> - Select a Brand - </option>
-              <cfset variables.queryGetAllBrands = application.shoppingCart.fetchBrands()>
+              <cfset variables.queryGetAllBrands = application.admin.fetchBrands()>
               <cfloop query="variables.queryGetAllBrands">
                 <option 
                   value="#variables.queryGetAllBrands.fldBrand_Id#">

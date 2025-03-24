@@ -3,12 +3,12 @@
         <img src="assets/images/empty-cart.svg" alt="" class="img-fluid emptyCartImg">
         <h3 class="mt-4 text-muted">Your cart is empty!</h3>
         <p class="text-muted">Looks like you haven't added anything to your cart yet.</p>
-        <a href="home.cfm" class="btn btn-primary mt-3">
+        <a href="/home.cfm" class="btn btn-primary mt-3">
             <i class="fa-solid fa-shopping-cart me-2"></i> Continue Shopping
         </a>
     </div>
 <cfelse>
-    <cfset variables.getCartDetails = application.shoppingCart.fetchCart()>
+    <cfset variables.getCartDetails = application.user.fetchCart()>
     <cfoutput>
     <main>
         <div class="container my-3">
@@ -17,16 +17,20 @@
                 <div class="col-md-8">
                     <cfloop array="#variables.getCartDetails#" index="local.item">
                         <div class="card cartItem mb-3 p-3 d-flex flex-row align-items-center" id = "cartId_#local.item.cartId#">
-                            <img src="assets/images/productImages/#local.item.defaultImg#" alt="#local.item.productName#"
-                                class="img-fluid me-3 cartProductImg" 
-                                width = "100"
-                                height = "100">
+                            <cfset variables.encryptedProductId = encrypt("#local.item.productId#",application.key,"AES","Base64")>
+                            <cfset variables.encodedProductId = encodeForURL(variables.encryptedProductId)>
+                            <a href = "/userProduct.cfm?productId=#encodedProductId#">
+                                <img src="productImages/#local.item.defaultImg#" alt="#local.item.productName#"
+                                    class="img-fluid me-3 cartProductImg" 
+                                    width = "100"
+                                    height = "100">
+                            </a>
                             <div class="flex-grow-1">
                                 <h5 class="mb-1">#local.item.productName#</h5>
                                 <p class="text-muted">Brand: #local.item.brandName#</p>
                                 <div class="d-flex align-items-center">
                                     <button type = "button"
-                                        id = "btnDecrease"
+                                        id="btnDecrease_#local.item.cartId#"
                                         onClick = "decreaseCount(#local.item.cartId#)"
                                         class="btn btn-outline-primary btn-sm me-2 btn-quantity"
                                         >-
@@ -36,7 +40,8 @@
                                         #local.item.quantity#
                                     </span>
 
-                                    <button type = "button" 
+                                    <button type = "button"
+                                        id="btnIncrease_#local.item.cartId#" 
                                         onClick = "increaseCount(#local.item.cartId#)" 
                                         class="btn btn-outline-primary btn-sm btn-remove">+
                                     </button>
@@ -45,14 +50,13 @@
                             <div class="text-end">
                                 <h4>
                                     <i class="fa-solid fa-indian-rupee-sign me-1"></i>
-                                    <cfset variables.productPrice = (local.item.quantity*local.item.price) + 
-                                                                    (local.item.quantity*local.item.tax)>
+                                    <cfset variables.productTax = (local.item.quantity * local.item.price * local.item.tax) / 100>
+                                    <cfset variables.productPrice = (local.item.quantity * local.item.price) + variables.productTax>
                                     <span name ="productPrice">#variables.productPrice#</span>
                                 </h4>
                                 <p class="mb-0">
                                     Tax: 
                                     <i class="fa-solid fa-indian-rupee-sign me-1"></i>
-                                    <cfset variables.productTax = local.item.quantity*local.item.tax>
                                     <span name="productTax">#variables.productTax#</span>
                                 </p>
                                 <p class="text-muted mb-0">
@@ -78,11 +82,10 @@
                         <cfset variables.actualPrice = 0>
                         
                         <cfloop array="#variables.getCartDetails#" index="local.item">
-                            <cfset variables.totalTax = variables.totalTax + (local.item.quantity*local.item.tax)>
+                            <cfset local.itemTax = (local.item.quantity * local.item.price * local.item.tax) / 100>
+                            <cfset variables.totalTax = variables.totalTax + local.itemTax>
                             <cfset variables.actualPrice = variables.actualPrice + (local.item.quantity*local.item.price)>
-                            <cfset variables.totalPrice = variables.totalPrice + 
-                                (local.item.quantity*local.item.price) + 
-                                (local.item.quantity*local.item.tax)>
+                            <cfset variables.totalPrice = variables.actualPrice + variables.totalTax>
                         </cfloop>
 
                         <p class="d-flex justify-content-between">
@@ -108,7 +111,7 @@
                             </strong>
                         </h4>
                         <a class="btn btn-success w-100 mt-3 proceedBtn text-dark fw-semibold rounded-pill"
-                            href = "order.cfm">
+                            href = "/order.cfm">
                             Proceed to Checkout
                         </a>
                     </div>

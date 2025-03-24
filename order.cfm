@@ -7,12 +7,12 @@
         <!--- Product Ordering via Buy Now --->
         <cfset variables.productId = decrypt(url.productId, application.key, "AES", "Base64")>
         <cfset variables.cartId = decrypt(url.cartId, application.key, "AES", "Base64")>
-        <cfset variables.getCartDetails = application.shoppingCart.fetchCart(cartId = variables.cartId)>
+        <cfset variables.getCartDetails = application.user.fetchCart(cartId = variables.cartId)>
     <cfelse>
         <!---Product Ordering via Cart Checkout--->
-        <cfset variables.getCartDetails = application.shoppingCart.fetchCart()>
+        <cfset variables.getCartDetails = application.user.fetchCart()>
     </cfif>
-    <cfset variables.queryGetAddresses = application.shoppingCart.fetchAddresses()>
+    <cfset variables.queryGetAddresses = application.user.fetchAddresses()>
     <cfoutput>
     <main>
         <div class="container orderContainer my-3">
@@ -83,29 +83,34 @@
                                     <div class="alert text-center p-3">
                                         <span class="fw-semibold text-danger">Your order is empty! Please add at least 1 item.</span>
                                         <br>
-                                        <a href="home.cfm" class="btn btn-primary mt-2">Shop Products</a>
+                                        <a href="/home.cfm" class="btn btn-primary mt-2">Shop Products</a>
                                     </div>
                                 </cfif>                            
                                 <div class="accordion-body">      
                                     <cfloop array="#variables.getCartDetails#" index="local.item">
                                         <div class="card mb-3 p-3 d-flex flex-row align-items-center" id = "cartId_#local.item.cartId#">
-                                            <img src="assets/images/productImages/#local.item.defaultImg#" alt="#local.item.productName#"
-                                                class="img-fluid me-3 cartProductImg" 
-                                                width = "100"
-                                                height = "100">
+                                            <cfset variables.encryptedProductId = encrypt("#local.item.productId#",application.key,"AES","Base64")>
+                                            <cfset variables.encodedProductId = encodeForURL(variables.encryptedProductId)>
+                                            <a href = "/userProduct.cfm?productId=#encodedProductId#">
+                                                <img src="productImages/#local.item.defaultImg#" alt="#local.item.productName#"
+                                                    class="img-fluid me-3 cartProductImg" 
+                                                    width = "100"
+                                                    height = "100">
+                                            </a>
                                             <div class="flex-grow-1">
                                                 <h5 class="mb-1">#local.item.productName#</h5>
                                                 <p class="text-muted">Brand: #local.item.brandName#</p>
                                                 <cfif structKeyExists(url, "productId")>
                                                     <div class="d-flex align-items-center">
                                                         <button type = "button"
-                                                            id = "btnDecrease"
+                                                            id="btnDecrease_#local.item.cartId#"
                                                             onClick = "decreaseCount(#local.item.cartId#)"
                                                             class="btn btn-outline-primary btn-sm me-2 btn-quantity"
                                                             >-
                                                         </button>
                                                         <span class="mx-2" id="quantityCount_#local.item.cartId#">#local.item.quantity#</span>
                                                         <button type = "button" 
+                                                            id="btnIncrease_#local.item.cartId#"
                                                             onClick = "increaseCount(#local.item.cartId#,document)" 
                                                             class="btn btn-outline-primary btn-sm btn-remove">+
                                                         </button>
@@ -120,12 +125,14 @@
                                                 <h4>
                                                     <i class="fa-solid fa-indian-rupee-sign me-1"></i>
                                                     <!---#lsCurrencyFormat((local.item.quantity*local.item.price + local.item.quantity*local.item.tax), "none", "en_IN")# --->
-                                                    <span name ="productPrice">#(local.item.quantity*local.item.price + local.item.quantity*local.item.tax)#</span>
+                                                    <span name ="productPrice">
+                                                        #(local.item.quantity * local.item.price) + ((local.item.quantity * local.item.price * local.item.tax) / 100)#
+                                                    </span>
                                                 </h4>
                                                 <p class="mb-0">
                                                     Tax: 
                                                     <i class="fa-solid fa-indian-rupee-sign me-1"></i>
-                                                    <span name="productTax">#(local.item.quantity*local.item.tax)#</span>
+                                                    <span name="productTax">#(local.item.quantity * local.item.price * local.item.tax) / 100#</span>
                                                 </p>
                                                 <p class="text-muted mb-0">
                                                     Price: 
@@ -175,11 +182,10 @@
                         <cfset variables.totalPrice = 0>
                         <cfset variables.actualPrice = 0>
                         <cfloop array="#variables.getCartDetails#" index="local.item">
-                            <cfset variables.totalTax = variables.totalTax + (local.item.quantity*local.item.tax)>
+                            <cfset local.itemTax = (local.item.quantity * local.item.price * local.item.tax) / 100>
+                            <cfset variables.totalTax = variables.totalTax + local.itemTax>
                             <cfset variables.actualPrice = variables.actualPrice + (local.item.quantity*local.item.price)>
-                            <cfset variables.totalPrice = variables.totalPrice + 
-                                (local.item.quantity*local.item.price) + 
-                                (local.item.quantity*local.item.tax)>
+                            <cfset variables.totalPrice = variables.actualPrice + variables.totalTax>
                         </cfloop>
                         <p class="d-flex justify-content-between">
                             <span>Subtotal:</span> 
@@ -204,7 +210,7 @@
                             </strong>
                         </h4>
                         <button class="btn btn-success w-100 mt-3 proceedBtn text-dark fw-semibold rounded-pill"
-                            onClick= "placeOrder(#variables.productId#)"
+                            onClick= "placeOrder('#variables.productId#')"
                             <!---button being hidden for if no address (or) removal of orders using buyNow--->
                             <cfif structKeyExists(variables, "queryGetAddresses") 
                                 AND structKeyExists(variables, "getCartDetails") 

@@ -1,41 +1,65 @@
 <cfcomponent>
     <cfset this.name = "shoppingCart">
     <cfset this.sessionManagement = "true">
+    <cfset this.sessiontimeout =createTimespan(0, 0, 45, 0)>
     <cfset this.dataSource = "ShoppingCart">
 
     <cffunction  name="onApplicationStart" returnType = "boolean">
         <cfset application.shoppingCart = createObject("component","component.shoppingcart")>  
-        <cfset application.key = generateSecretKey("AES")>
+        <cfset application.user = createObject("component","component.user")>  
+        <cfset application.admin = createObject("component","component.admin")>  
+        <cfquery name="local.queryGetAppConfig">
+            SELECT 
+                fldValue
+            FROM 
+                tblappconfiguration
+            WHERE 
+                fldKey = "secretKey"
+        </cfquery>
+        <cfset application.key = local.queryGetAppConfig.fldValue>
         <cfreturn true>
     </cffunction>
 
     <cffunction  name="onRequestStart" returnType="boolean"> 
-        <cfargument name="requestPage" type="String" required=true> 
-
-        <cfset local.adminPages = ["/category.cfm", 
-                                    "/subCategory.cfm", 
-                                    "/product.cfm"]>
-        <cfset local.loggedInUserAllowedPages = ["/order.cfm",
-                                    "/orderDetails.cfm", 
-                                    "/generateInvoice.cfm"]>
-        <cfif arrayContains(local.adminPages, arguments.requestPage)>
-            <cfif structKeyExists(session, "userId") AND session.roleId EQ 1>
-                <cfreturn true>
-            <cfelse>
-                <cflocation  url = "/home.cfm" addtoken = "no">  
-            </cfif>
-        <cfelseif arrayContains(local.loggedInUserAllowedPages, arguments.requestPage)>
-            <cfif structKeyExists(session, "userId") AND (session.roleId EQ 2 OR session.roleId EQ 1)>
-                <cfreturn true>
-            <cfelse>
-                <cflocation  url = "/home.cfm" addtoken = "no">  
-            </cfif>
-        </cfif>
+        <cfargument name="requestPage" type="String" required=true>
 
         <cfif structKeyExists(url,"reload") AND url.reload EQ 1>
             <cfset onApplicationStart()>  
             <cfreturn true> 
-        </cfif>  
+        </cfif>
+
+        <cfset local.adminPages = ["/admin/category.cfm", 
+                                    "/admin/subCategory.cfm", 
+                                    "/admin/product.cfm"]>
+        <cfset local.userPages = ["/userProduct.cfm"]>
+        <cfset local.loggedInUserAllowedPages = ["/order.cfm",
+                                    "/orderDetails.cfm", 
+                                    "/generateInvoice.cfm",
+                                    "/userProduct.cfm"]>
+        <cfif arrayContains(local.adminPages, arguments.requestPage)>
+            <cfif structKeyExists(session, "admin") AND session.admin.isLoggedIn EQ true>
+                <cfreturn true>
+            <cfelse>
+                <cflocation  url = "/home.cfm" addtoken = "no">  
+            </cfif>
+        <cfelseif arrayContains(local.userPages, arguments.requestPage)>
+            <cfif structKeyExists(session, "admin") AND structKeyExists(session.admin, "isLoggedIn") AND session.admin.isLoggedIn EQ true>
+                <cflocation  url = "/home.cfm" addtoken = "no">  
+            <cfelse>
+                <cfreturn true>
+            </cfif>
+        <cfelseif arrayContains(local.loggedInUserAllowedPages, arguments.requestPage)>
+            <cfif structKeyExists(session, "user")>
+                <cfif structKeyExists(session.user, "isLoggedIn") AND session.user.isLoggedIn EQ true>
+                    <cfreturn true>
+                <cfelse> 
+                    <cflocation  url = "/home.cfm" addtoken = "no"> 
+                </cfif>
+            <cfelse> 
+                <cflocation  url = "/home.cfm" addtoken = "no"> 
+            </cfif>
+        </cfif>
+
         <cfreturn true>
     </cffunction>
 
@@ -59,7 +83,7 @@
         <cfreturn true  >
     </cffunction>
 
-    <cffunction name="onError">
+   <!---  <cffunction name="onError">
         <cfargument name="Exception" required=true>
         <cfargument type="String" name="EventName" required=true>
 
@@ -70,13 +94,22 @@
         <cfif NOT (Arguments.EventName IS "onSessionEnd") OR
         (Arguments.EventName IS "onApplicationEnd")>
             <cfoutput>
-                <h2>An unexpected error occurred.</h2>
-                <p>Please provide the following information to technical support:</p>
-                <p>Error Event: #Arguments.EventName#</p>
-                <p>Error details:<br>
-                <cfdump var=#Arguments.Exception#></p>
+                <div class="text-center mt-4">
+                    <h4>An unexpected error occurred.</h4>
+                    <a href="/home.cfm" class="btn btn-primary mt-3">
+                        <i class="fa-solid fa-shopping-cart me-2"></i> Continue Shopping
+                    </a>
+                </div>
             </cfoutput>
+
+            <cfmail to ="gosalram554@gmail.com" from = "gosalram554@gmail.com" subject="An error occured in shoppingcart.com">
+                Error Event: #Arguments.EventName#
+                Error message: #Arguments.Exception.message#
+                Line: #arguments.exception.tagContext[1].Line#
+                Template: #arguments.exception.tagContext[1].template#
+                #arguments.exception.tagContext[1].raw_trace#
+            </cfmail>
         </cfif>
-    </cffunction>
+    </cffunction> --->
 
 </cfcomponent>
